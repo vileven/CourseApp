@@ -1,0 +1,19 @@
+sudo: false
+services:
+- postgresql
+before_script:
+- psql -c "create user root;" -U postgres
+- psql -c "create database course_test;" -U postgres
+- psql -c "grant all on database course_test to root;" -U postgres
+language: java
+jdk:
+- oraclejdk8
+branches:
+  only:
+  - master
+deploy:
+  provider: heroku
+  api_key:
+    secure: Ug13SSVQ+L6xdVmylg/gpmjCU1DBTAL1yCoP6PiPmryi9jhZKYtzbAaafEBBWFoMnVBzPFhcJrSxWlmxoCg/npSkiWUaXTMZJXOoVZQkWs0GRLW7MXlsrnVuZJspYgkwrrVQhZmuo5Ple9LTXaVO5DL8Da/f7DH2bq0LiUjiZh2DG7QE0Icq5IIAy/frpQqDRZkcwD2HXoWnGRUZSrK3xlT+Ap6UEG1VwBILLUYT99dCTjzOrNQJ4onUVuPPzjg+1lUw3rS1nrHALl3f9/+gK5Om0Hdokqk0FDG0b3wD8IzzGz1R+dicEONRjuCIVab8yWMzpACa0b7n1qu0LbBWpgHPjn0GQ84ThdQhqyFbDA/SYBXtgbgP62eUe7B2Y7lEjomLgnVwoQkRj4ytBermFf+SciSMQ2iUMZbu1+LoivT0Aql8QDhtxOHTTJIpTSrlEGkrVlUD9zw3ym7flSRYw5ZWaVDTiakkgP/KTwrIerOAa1EAL5cdIMDAS3dSIia2uZji6XtLQaYCG/QnJNIfDBocJBho+R+QUBmjJAW6sB1QbD1HIqqfnkf6m+j/nCT6PglHfXUcppJ0HYS64t4Lfny5Yb9dPuGxqvJax7uPpeBADLWQHf0qjbIjxpztgLjRg0/mBuMhbwNJKCS3Bwh6vuyBVq6JhaJosGsbGHnlHTA=
+  app:
+    master: course-project-app
