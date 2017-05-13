@@ -17,6 +17,7 @@ import javax.servlet.http.HttpSession;
 
 import static api.controllers.SessionController.USER_ID;
 
+@CrossOrigin(origins = {"http://localhost:3000", "*", "http://127.0.0.1:3000"})
 @RestController
 @RequestMapping(path = "/user")
 public class UserController {
