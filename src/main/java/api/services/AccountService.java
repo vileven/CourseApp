@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * Created by Vileven on 13.05.17.
  */
@@ -85,6 +87,5 @@ public class AccountService {
     public boolean hasEmail(String email) {
         return userRepository.findByEmail(email) != null;
     }
-
 
 }

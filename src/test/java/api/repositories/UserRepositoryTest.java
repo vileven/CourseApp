@@ -16,6 +16,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -120,6 +121,29 @@ public class UserRepositoryTest {
 
         final List<User> res = template.query("SELECT * FROM users", userMapper);
         assertEquals(0, res.size());
+    }
+
+    @Test
+    public void selectWithParams() {
+
+        for (int i = 0; i < 10; i++) {
+            final User newUser = new User(1,"email@mail.ru" + i,"password","sergey",
+                    "volodin",null,"about");
+            userRepository.create(newUser);
+        }
+
+        List<User> res = userRepository.selectWithParams(10, 0, null);
+        assertNotNull(res);
+        assertEquals(10, res.size());
+
+
+        res = userRepository.selectWithParams(5, 6, null);
+        assertEquals(5, res.size());
+        assertEquals('9',res.get(4).getEmail().charAt(13));
+
+        res = userRepository.selectWithParams(5, 6, Collections.singletonMap("id", "DESC"));
+        assertEquals(5, res.size());
+        assertEquals("0", String.valueOf(res.get(3).getEmail().charAt(13)));
     }
 
     private final RowMapper<User> userMapper = ((rs, rowNum) -> new User(rs.getLong("id"),

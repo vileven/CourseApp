@@ -15,6 +15,7 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -164,6 +165,28 @@ public class JdbcUserRepository implements UserRepository {
         }
 
         return findedUser;
+    }
+
+    @Override
+    public List<User> selectWithParams(Integer limit, Integer offset, @Nullable Map<String, String> orders) {
+        final StringBuilder sqlConstructor = new StringBuilder();
+        sqlConstructor.append("SELECT u.id, u.role, u.email, u.password, u.first_name, u.last_name, u.about FROM users AS u ");
+
+        if (orders != null) {
+            sqlConstructor.append("ORDER BY ");
+            for (Map.Entry<String, String> entry: orders.entrySet()) {
+                sqlConstructor
+                        .append(entry.getKey())
+                        .append(' ')
+                        .append(entry.getValue())
+                        .append(", ")
+                ;
+            }
+            sqlConstructor.delete(sqlConstructor.length()-2, sqlConstructor.length()-1);
+        }
+        sqlConstructor.append("LIMIT ? OFFSET ?");
+
+        return template.query(sqlConstructor.toString(), userMapper, limit, offset);
     }
 
     @Override
