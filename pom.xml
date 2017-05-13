@@ -39,6 +39,10 @@
             <version>13.0</version>
         </dependency>
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-core</artifactId>
         </dependency>
@@ -50,7 +54,7 @@
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-core</artifactId>
-            <version>4.1.2</version>
+            <version>4.2.0</version>
         </dependency>
         <dependency>
             <groupId>org.postgresql</groupId>
@@ -71,15 +75,15 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
-            <plugin>
-                <groupId>org.flywaydb</groupId>
-                <artifactId>flyway-maven-plugin</artifactId>
-                <version>4.1.2</version>
-                <configuration>
-                    <driver>org.postgresql.Driver</driver>
-                    <url>jdbc:postgresql://localhost:5432/motion?autoReconnect=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;connectionCollation=utf8_general_ci&amp;characterSetResults=UTF-8</url>
-                </configuration>
-            </plugin>
+            <!--<plugin>-->
+                <!--<groupId>org.flywaydb</groupId>-->
+                <!--<artifactId>flyway-maven-plugin</artifactId>-->
+                <!--<version>4.1.2</version>-->
+                <!--<configuration>-->
+                    <!--<driver>org.postgresql.Driver</driver>-->
+                    <!--<url>jdbc:postgresql://localhost:5432/course?autoReconnect=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;connectionCollation=utf8_general_ci&amp;characterSetResults=UTF-8</url>-->
+                <!--</configuration>-->
+            <!--</plugin>-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
@@ -95,7 +99,7 @@
                                 <artifactItem>
                                     <groupId>org.flywaydb</groupId>
                                     <artifactId>flyway-core</artifactId>
-                                    <version>3.2.1</version>
+                                    <version>4.1.2</version>
                                     <destFileName>flyway.jar</destFileName>
                                 </artifactItem>
                                 <artifactItem>
