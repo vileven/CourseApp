@@ -103,4 +103,9 @@ public class JdbcCourseRepository implements CourseRepository {
     public void deleteAll() {
         template.update("DELETE FROM courses");
     }
+
+    @Override
+    public RowMapper<Course> getMapper() {
+        return courseMapper;
+    }
 }

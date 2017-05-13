@@ -106,4 +106,9 @@ public class JdbcGroupRepository implements GroupRepository {
     public void deleteAll(long id) {
         template.update("DELETE FROM groups");
     }
+
+    @Override
+    public RowMapper<Group> getMapper() {
+        return groupMapper;
+    }
 }

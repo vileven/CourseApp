@@ -3,6 +3,7 @@ package api.repositories;
 import api.models.Course;
 import api.utils.pair.Pair;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.jdbc.core.RowMapper;
 
 import java.util.List;
 
@@ -27,4 +28,5 @@ public interface CourseRepository {
 
     void deleteAll();
 
+    RowMapper<Course> getMapper();
 }

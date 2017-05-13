@@ -3,6 +3,7 @@ package api.repositories;
 import api.models.Group;
 import api.utils.pair.Pair;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.jdbc.core.RowMapper;
 
 import java.util.List;
 
@@ -28,4 +29,6 @@ public interface GroupRepository {
     List<Group> selectWithParams(Integer limit, Integer offset, @Nullable List<Pair<String, String>> orders);
 
     void deleteAll(long id);
+
+    RowMapper<Group> getMapper();
 }
