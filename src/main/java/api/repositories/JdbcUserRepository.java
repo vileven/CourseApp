@@ -1,7 +1,7 @@
 package api.repositories;
 
 import api.models.User;
-import javafx.util.Pair;
+import api.utils.pair.Pair;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;

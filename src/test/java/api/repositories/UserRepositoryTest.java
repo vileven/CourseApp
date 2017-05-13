@@ -2,7 +2,7 @@ package api.repositories;
 
 import api.Application;
 import api.models.User;
-import javafx.util.Pair;
+import api.utils.pair.Pair;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -139,7 +139,7 @@ public class UserRepositoryTest {
         assertEquals(5, res.size());
         assertEquals('9',res.get(4).getEmail().charAt(13));
 
-        List<Pair<String, String>> params = Collections.singletonList(new Pair<>("id", "DESC"));
+        final List<Pair<String, String>> params = Collections.singletonList(new Pair<>("id", "DESC"));
 
         res = userRepository.selectWithParams(5, 6, params);
         assertEquals(5, res.size());
