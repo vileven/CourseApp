@@ -32,10 +32,16 @@ public class JdbcUserRepository implements UserRepository {
         this.insertUser = new SimpleJdbcInsert(template).withTableName("users").usingGeneratedKeyColumns("id");
     }
 
-    private final RowMapper<User> userMapper = ((rs, rowNum) -> new User(rs.getLong("id"),
+    private final RowMapper<User> userMapperWithAvatar = ((rs, rowNum) -> new User(rs.getLong("id"),
             rs.getInt("role"), rs.getString("email"),
             rs.getString("password"), rs.getString("first_name"),
             rs.getString("last_name"), rs.getBytes("avatar"),
+            rs.getString("about")));
+
+    private final RowMapper<User> userMapper = ((rs, rowNum) -> new User(rs.getLong("id"),
+            rs.getInt("role"), rs.getString("email"),
+            rs.getString("password"), rs.getString("first_name"),
+            rs.getString("last_name"), null,
             rs.getString("about")));
 
     @Nullable
@@ -103,7 +109,7 @@ public class JdbcUserRepository implements UserRepository {
     @Nullable
     @Override
     public User find(long id) {
-        final String query = "SELECT * FROM users WHERE id = ?";
+        final String query = "SELECT u.id, u.role, u.email, u.password, u.first_name, u.last_name, u.about FROM users AS u WHERE id = ?";
 
         User findedUser;
         try {
@@ -117,12 +123,42 @@ public class JdbcUserRepository implements UserRepository {
 
     @Nullable
     @Override
+    public User findWithAvatar(long id) {
+        final String query = "SELECT * FROM users WHERE id = ?";
+
+        User findedUser;
+        try {
+            findedUser = template.queryForObject(query, userMapperWithAvatar, id);
+        } catch (EmptyResultDataAccessException e) {
+            findedUser = null;
+        }
+
+        return findedUser;
+    }
+
+    @Nullable
+    @Override
     public User findByEmail(String email) {
-        final String query = "SELECT * FROM users WHERE email = ?";
+        final String query = "SELECT u.id, u.role, u.email, u.password, u.first_name, u.last_name, u.about FROM users AS u WHERE email = ?";
 
         User findedUser;
         try {
             findedUser = template.queryForObject(query, userMapper, email);
+        } catch (EmptyResultDataAccessException e) {
+            findedUser = null;
+        }
+
+        return findedUser;
+    }
+
+    @Nullable
+    @Override
+    public User findByEmailWithAvatar(String email) {
+        final String query = "SELECT * FROM users WHERE email = ?";
+
+        User findedUser;
+        try {
+            findedUser = template.queryForObject(query, userMapperWithAvatar, email);
         } catch (EmptyResultDataAccessException e) {
             findedUser = null;
         }

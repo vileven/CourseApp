@@ -31,7 +31,13 @@ public interface UserRepository {
     User find(long id);
 
     @Nullable
+    User findWithAvatar(long id);
+
+    @Nullable
     User findByEmail(String email);
+
+    @Nullable
+    User findByEmailWithAvatar(String email);
 
     void delete(long id);
 

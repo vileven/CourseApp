@@ -18,7 +18,7 @@ public class User extends Model<Long> {
     private String about;
 
     public User(Long id, Integer role, String email, String password, String firstName, String lastName,
-                byte[] avatar, String about) {
+                @Nullable byte[] avatar, String about) {
         this.id = id;
         this.role = role;
         this.email = email;
