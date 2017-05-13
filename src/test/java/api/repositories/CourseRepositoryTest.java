@@ -3,6 +3,7 @@ package api.repositories;
 import api.Application;
 import api.models.Course;
 import api.utils.pair.Pair;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -46,6 +47,11 @@ public class CourseRepositoryTest {
         final SimpleJdbcInsert courseInsert = new SimpleJdbcInsert(template).withTableName("courses").usingGeneratedKeyColumns("id");
         final Number id = courseInsert.executeAndReturnKey(Collections.singletonMap("name", course.getName()));
         course.setId((Long)id);
+    }
+
+    @After
+    public void after() {
+        template.update("DELETE FROM courses");
     }
 
 
