@@ -82,5 +82,9 @@ public class AccountService {
         userRepository.delete(id);
     }
 
+    public boolean hasEmail(String email) {
+        return userRepository.findByEmail(email) != null;
+    }
+
 
 }
