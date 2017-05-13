@@ -1,13 +1,10 @@
 package api.repositories;
 
 import api.models.User;
-import org.jetbrains.annotations.NotNull;
+import javafx.util.Pair;
 import org.jetbrains.annotations.Nullable;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Map;
 
 public interface UserRepository {
 
@@ -42,7 +39,7 @@ public interface UserRepository {
     @Nullable
     User findByEmailWithAvatar(String email);
 
-    List<User> selectWithParams(Integer limit, Integer offset, @Nullable Map<String, String> orders);
+    List<User> selectWithParams(Integer limit, Integer offset, @Nullable List<Pair<String, String>> orders);
 
     void delete(long id);
 

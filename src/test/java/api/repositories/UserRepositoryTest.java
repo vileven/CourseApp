@@ -2,6 +2,7 @@ package api.repositories;
 
 import api.Application;
 import api.models.User;
+import javafx.util.Pair;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -16,10 +17,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.junit.Assert.*;
 
@@ -141,7 +139,9 @@ public class UserRepositoryTest {
         assertEquals(5, res.size());
         assertEquals('9',res.get(4).getEmail().charAt(13));
 
-        res = userRepository.selectWithParams(5, 6, Collections.singletonMap("id", "DESC"));
+        List<Pair<String, String>> params = Collections.singletonList(new Pair<>("id", "DESC"));
+
+        res = userRepository.selectWithParams(5, 6, params);
         assertEquals(5, res.size());
         assertEquals("0", String.valueOf(res.get(3).getEmail().charAt(13)));
     }

@@ -1,6 +1,7 @@
 package api.repositories;
 
 import api.models.User;
+import javafx.util.Pair;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -168,23 +169,26 @@ public class JdbcUserRepository implements UserRepository {
     }
 
     @Override
-    public List<User> selectWithParams(Integer limit, Integer offset, @Nullable Map<String, String> orders) {
+    public List<User> selectWithParams(Integer limit, Integer offset, @Nullable List<Pair<String, String>> orders) {
         final StringBuilder sqlConstructor = new StringBuilder();
         sqlConstructor.append("SELECT u.id, u.role, u.email, u.password, u.first_name, u.last_name, u.about FROM users AS u ");
 
         if (orders != null) {
             sqlConstructor.append("ORDER BY ");
-            for (Map.Entry<String, String> entry: orders.entrySet()) {
+
+            for (int i = 0; i < orders.size(); i++) {
                 sqlConstructor
-                        .append(entry.getKey())
+                        .append(orders.get(i).getKey())
                         .append(' ')
-                        .append(entry.getValue())
-                        .append(", ")
+                        .append(orders.get(i).getValue())
                 ;
+
+                if (i != orders.size() - 1) {
+                    sqlConstructor.append(", ");
+                }
             }
-            sqlConstructor.delete(sqlConstructor.length()-2, sqlConstructor.length()-1);
         }
-        sqlConstructor.append("LIMIT ? OFFSET ?");
+        sqlConstructor.append(" LIMIT ? OFFSET ?");
 
         return template.query(sqlConstructor.toString(), userMapper, limit, offset);
     }
