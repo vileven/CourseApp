@@ -23,6 +23,10 @@ public interface UserRepository {
      */
     int update(User user);
 
+    int updateEmail(long id, String email);
+
+    int updatePassword(long id, String password);
+
     @Nullable
     User find(long id);
 

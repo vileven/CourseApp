@@ -76,6 +76,30 @@ public class JdbcUserRepository implements UserRepository {
         return Code.OK;
     }
 
+    @Override
+    public int updateEmail(long id, String email) {
+        final String query = "UPDATE users SET email = ? WHERE id = ?";
+        try {
+            template.update(query, email, id);
+        } catch (DuplicateKeyException e) {
+            return Code.ERR_DUPLICATE;
+        }
+
+        return Code.OK;
+    }
+
+    @Override
+    public int updatePassword(long id, String password) {
+        final String query = "UPDATE users SET password = ? WHERE id = ?";
+        try {
+            template.update(query, password, id);
+        } catch (DuplicateKeyException e) {
+            return Code.ERR_DUPLICATE;
+        }
+
+        return Code.OK;
+    }
+
     @Nullable
     @Override
     public User find(long id) {
