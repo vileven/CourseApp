@@ -23,11 +23,6 @@ public class ValidatorContext {
     }
 
     @Bean
-    public LoginValidator loginValidator() {
-        return new LoginValidator(accountService);
-    }
-
-    @Bean
     public EmailValidator emailValidator() {
         return new EmailValidator(accountService);
     }
