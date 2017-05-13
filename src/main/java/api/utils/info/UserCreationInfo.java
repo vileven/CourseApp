@@ -1,5 +1,6 @@
 package api.utils.info;
 
+import api.utils.validator.FieldValidates;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -30,10 +31,12 @@ public final class UserCreationInfo {
         return role;
     }
 
+    @FieldValidates(validators = {"email"})
     public String getEmail() {
         return email;
     }
 
+    @FieldValidates(validators = {"password"})
     public String getPassword() {
         return password;
     }
