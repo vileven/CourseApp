@@ -75,7 +75,7 @@ public class JdbcUserRepository implements UserRepository {
                 "SET role = ?, email = ?, password = ?, first_name = ?, " +
                 "last_name = ?, avatar = ?, about = ? WHERE id = ? ";
         try {
-            template.update(sql, user.getRole(), user.getEmail(), user.getPassword(), user.getFirstName(),
+            final int count = template.update(sql, user.getRole(), user.getEmail(), user.getPassword(), user.getFirstName(),
                     user.getLastName(), user.getAvatar(), user.getAbout(), user.getId());
         } catch (DuplicateKeyException e) {
             return Code.ERR_DUPLICATE;

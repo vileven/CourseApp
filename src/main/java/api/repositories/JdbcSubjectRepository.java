@@ -79,10 +79,43 @@ public class JdbcSubjectRepository implements SubjectRepository {
         template.update("UPDATE subjects SET course_id = ? WHERE id = ?", courseId, id);
     }
 
+    @Nullable
     @Override
-    public List<Subject> selectWithParams(Integer limit, Integer offset, @Nullable List<Pair<String, String>> orders) {
+    public Subject update(Subject subject) {
+        try {
+            final String query = "UPDATE subjects SET course_id = ?, name = ? WHERE id = ? ";
+            final int count =template.update(query, subject.getCourseId(), subject.getName(), subject.getId());
+            if (count == 0) {
+                return null;
+            }
+        } catch (DataIntegrityViolationException e) {
+            return null;
+        }
+        return subject;
+    }
+
+    @Override
+    public List<Subject> selectWithParams(Integer limit, Integer offset, @Nullable List<Pair<String, String>> orders,
+                                          @Nullable List<Pair<String, String>> filters) {
         final StringBuilder queryBuilder = new StringBuilder();
         queryBuilder.append("SELECT * FROM subjects AS s ");
+
+        if (filters != null) {
+            queryBuilder.append(" WHERE ");
+            for (int i = 0; i < filters.size(); i++) {
+                queryBuilder
+                        .append("s.")
+                        .append(filters.get(i).getKey())
+                        .append(" ~* '")
+                        .append(filters.get(i).getValue())
+                        .append('\'')
+                ;
+                if (i != filters.size() - 1) {
+                    queryBuilder.append(" AND ");
+                }
+            }
+        }
+
         if (orders != null) {
             queryBuilder.append("ORDER BY ");
 
@@ -104,7 +137,7 @@ public class JdbcSubjectRepository implements SubjectRepository {
     }
 
     @Override
-    public void deleteAll(long id) {
+    public void deleteAll() {
         template.update("DELETE FROM subjects");
     }
 }

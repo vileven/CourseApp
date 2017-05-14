@@ -80,6 +80,13 @@ public class SubjectRepositoryTest {
     }
 
     @Test
+    public void delete() {
+        subjectRepository.delete(subject.getId());
+
+        assertEquals(0, template.query("SELECT * FROM subjects", subjectMapper).size());
+    }
+
+    @Test
     public void find() {
         final Subject findedSubject = subjectRepository.find(subject.getId());
         assertNotNull(findedSubject);
@@ -108,19 +115,25 @@ public class SubjectRepositoryTest {
             subjectRepository.create(new Subject(subject.getCourseId(), Integer.toString(i)));
         }
 
-        List<Subject> res = subjectRepository.selectWithParams(10, 0, null);
+        List<Subject> res = subjectRepository.selectWithParams(10, 0, null,  null);
         assertNotNull(res);
         assertEquals(10, res.size());
 
-        res = subjectRepository.selectWithParams(5, 6, null);
+        res = subjectRepository.selectWithParams(5, 6, null, null);
         assertEquals(5, res.size());
         assertEquals("9",res.get(4).getName());
 
-        final List<Pair<String, String>> params = Collections.singletonList(new Pair<>("id", "DESC"));
+        List<Pair<String, String>> params = Collections.singletonList(new Pair<>("id", "DESC"));
 
-        res = subjectRepository.selectWithParams(5, 6, params);
+        res = subjectRepository.selectWithParams(5, 6, params, null);
         assertEquals(5, res.size());
         assertEquals("0", res.get(3).getName());
+
+        params = Collections.singletonList(new Pair<>("name", "1"));
+
+        res = subjectRepository.selectWithParams(1000, 0, null, params);
+        assertEquals(1, res.size());
+        assertEquals("1", res.get(0).getName());
     }
 
 }

@@ -1,11 +1,15 @@
 package api.models;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * Created by Vileven on 13.05.17.
  */
 public class Subject extends Model<Long> {
 
     private Long id;
+
+    @JsonProperty("course_id")
     private Long courseId;
     private String name;
 

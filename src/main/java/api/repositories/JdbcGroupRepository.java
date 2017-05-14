@@ -78,10 +78,18 @@ public class JdbcGroupRepository implements GroupRepository {
         template.update("UPDATE groups SET course_id = ? WHERE id = ?", courseId, id);
     }
 
+    @Nullable
     @Override
     public Group update(Group group) {
-        final String query = "UPDATE groups SET course_id = ?, name = ? WHERE id = ? ";
-        template.update(query, group.getCourseId(), group.getName(), group.getId());
+        try {
+            final String query = "UPDATE groups SET course_id = ?, name = ? WHERE id = ? ";
+            final int count = template.update(query, group.getCourseId(), group.getName(), group.getId());
+            if (count == 0) {
+                return null;
+            }
+        } catch (DataIntegrityViolationException e) {
+            return null;
+        }
         return group;
     }
 

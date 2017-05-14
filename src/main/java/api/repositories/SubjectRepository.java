@@ -24,7 +24,11 @@ public interface SubjectRepository {
 
     void updateCourseId(long id, long courseId);
 
-    List<Subject> selectWithParams(Integer limit, Integer offset, @Nullable List<Pair<String, String>> orders);
+    @Nullable
+    Subject update(Subject subject);
 
-    void deleteAll(long id);
+    List<Subject> selectWithParams(Integer limit, Integer offset,@Nullable List<Pair<String, String>> orders,
+                                   @Nullable List<Pair<String, String>> filters);
+
+    void deleteAll();
 }

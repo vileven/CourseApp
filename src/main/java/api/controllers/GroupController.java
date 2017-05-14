@@ -56,7 +56,9 @@ public class GroupController {
     public ResponseEntity<?> updateGroup(@RequestBody GroupInfo groupData, HttpSession session) {
         try {
             final Group group = adminService.updateGroup(groupData, session);
-
+            if (group == null) {
+                return Response.badRequest(ErrorCodes.BAD_VALIDATOR, "wrong course id");
+            }
             return ResponseEntity.ok(group);
         } catch (PermissionDeniedException e) {
 
@@ -77,7 +79,7 @@ public class GroupController {
     }
 
     @PostMapping("/select")
-    public ResponseEntity<?> selectCourses(@RequestBody SelectParametersInfo info, HttpSession session) {
+    public ResponseEntity<?> selectGroups(@RequestBody SelectParametersInfo info, HttpSession session) {
         try {
             return ResponseEntity.ok(adminService.selectGroupWithParams(info, session));
         } catch (PermissionDeniedException e) {
