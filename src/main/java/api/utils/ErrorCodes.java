@@ -10,5 +10,6 @@ public class ErrorCodes {
     public static final int SESSION_INVALID = 604;
     public static final int BAD_VALIDATOR = 605;
     public static final int WRONG_ENVIRONMENT = 606;
+    public static final int PERMISSION_DENIED = 607;
 }
 

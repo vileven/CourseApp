@@ -83,7 +83,7 @@ public class SessionControllerTest {
                                 "\"email\":\"email@mail.ru\"," +
                                 "\"password\":\"wrong password\"" +
                                 '}'))
-                .andExpect(status().isOk())
+                .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("status").value(ErrorCodes.BAD_LOGIN_OR_PASSWORD))
         ;
     }

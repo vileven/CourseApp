@@ -3,6 +3,7 @@ package api.controllers;
 import api.models.Course;
 import api.services.AdminService;
 import api.utils.ErrorCodes;
+import api.utils.error.PermissionDeniedException;
 import api.utils.info.CourseInfo;
 import api.utils.info.IdInfo;
 import api.utils.info.SelectParametersInfo;
@@ -14,6 +15,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpSession;
 
 @CrossOrigin(origins = {"http://localhost:3000", "*", "http://127.0.0.1:3000"})
 @RestController
@@ -40,25 +43,49 @@ public class CourseController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<?> createCourse(@RequestBody CourseInfo courseData) {
-        final Course course = adminService.createCourse(courseData);
-        return Response.okWithCourse(course);
+    public ResponseEntity<?> createCourse(@RequestBody CourseInfo courseData, HttpSession session) {
+        try {
+            final Course course = adminService.createCourse(courseData, session);
+
+            return Response.okWithCourse(course);
+        } catch (PermissionDeniedException e) {
+
+            return Response.badRequest(ErrorCodes.PERMISSION_DENIED, e.message);
+        }
     }
 
     @PostMapping("/update")
-    public ResponseEntity<?> updateCourse(@RequestBody CourseInfo courseData) {
-        final Course course = adminService.updateCourse(courseData);
-        return Response.okWithCourse(course);
+    public ResponseEntity<?> updateCourse(@RequestBody CourseInfo courseData, HttpSession session) {
+        try {
+            final Course course = adminService.updateCourse(courseData, session);
+
+            return Response.okWithCourse(course);
+        } catch (PermissionDeniedException e) {
+
+            return Response.badRequest(ErrorCodes.PERMISSION_DENIED, e.message);
+        }
+
     }
 
     @PostMapping("/delete")
-    public ResponseEntity<?> deleteCourse(@RequestBody IdInfo idInfo) {
-        adminService.deleteCourse(idInfo);
-        return ResponseEntity.ok("success");
+    public ResponseEntity<?> deleteCourse(@RequestBody IdInfo idInfo, HttpSession session) {
+        try {
+            adminService.deleteCourse(idInfo, session);
+
+            return ResponseEntity.ok("success");
+        } catch (PermissionDeniedException e) {
+
+            return Response.badRequest(ErrorCodes.PERMISSION_DENIED, e.message);
+        }
+
     }
 
     @PostMapping("/select")
-    public ResponseEntity<?> selectCourses(@RequestBody SelectParametersInfo info) {
-        return ResponseEntity.ok(adminService.selectWithParams(info));
+    public ResponseEntity<?> selectCourses(@RequestBody SelectParametersInfo info, HttpSession session) {
+        try {
+            return ResponseEntity.ok(adminService.selectWithParams(info, session));
+        } catch (PermissionDeniedException e) {
+            return Response.badRequest(ErrorCodes.PERMISSION_DENIED, e.message);
+        }
     }
 }

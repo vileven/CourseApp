@@ -70,7 +70,7 @@ public class UserControllerTest {
     public void getByIdUserNotFound() throws Exception {
         mockMvc
                 .perform(get(String.format("/user/%d", this.id + 1)))
-                .andExpect(status().isOk())
+                .andExpect(status().isNotFound())
                 .andExpect(jsonPath("status").value(ErrorCodes.USER_NOT_FOUND));
         ;
     }
@@ -106,7 +106,7 @@ public class UserControllerTest {
                                 "\"last_name\":\"surname\"," +
                                 "\"about\":\"about\"" +
                                 '}'))
-                .andExpect(status().isOk())
+                .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("status").value(ErrorCodes.BAD_VALIDATOR))
                 .andExpect(jsonPath("error").value("Bad validator"))
         ;
@@ -125,7 +125,7 @@ public class UserControllerTest {
                                 "\"last_name\":\"surname\"," +
                                 "\"about\":\"about\"" +
                                 '}'))
-                .andExpect(status().isOk())
+                .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("status").value(ErrorCodes.BAD_VALIDATOR))
                 .andExpect(jsonPath("error").value("Bad validator"))
         ;
@@ -144,7 +144,7 @@ public class UserControllerTest {
                                 "\"last_name\":\"surname\"," +
                                 "\"about\":\"about\"" +
                                 '}'))
-                .andExpect(status().isOk())
+                .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("status").value(ErrorCodes.BAD_VALIDATOR))
                 .andExpect(jsonPath("error").value("Bad validator"))
         ;
@@ -168,7 +168,7 @@ public class UserControllerTest {
                 .perform(post("/user/changeEmail")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"email\":\"email123@mail.com\"}"))
-                .andExpect(status().isOk())
+                .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("status").value(ErrorCodes.SESSION_INVALID))
         ;
     }
@@ -180,7 +180,7 @@ public class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .sessionAttr(USER_ID, this.id)
                         .content("{\"email\":\"12\"}"))
-                .andExpect(status().isOk())
+                .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("status").value(ErrorCodes.BAD_VALIDATOR))
         ;
     }
@@ -203,7 +203,7 @@ public class UserControllerTest {
                 .perform(post("/user/changePassword")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"password\":\"email123@mail.com\"}"))
-                .andExpect(status().isOk())
+                .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("status").value(ErrorCodes.SESSION_INVALID))
         ;
     }
@@ -215,7 +215,7 @@ public class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .sessionAttr(USER_ID, this.id)
                         .content("{\"password\":\"12\"}"))
-                .andExpect(status().isOk())
+                .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("status").value(ErrorCodes.BAD_VALIDATOR))
         ;
     }
@@ -236,7 +236,7 @@ public class UserControllerTest {
         mockMvc
                 .perform(post("/user/delete")
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
+                .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("status").value(ErrorCodes.SESSION_INVALID))
         ;
     }
