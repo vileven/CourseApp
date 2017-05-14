@@ -16,6 +16,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
@@ -25,6 +26,7 @@ import static org.junit.Assert.*;
 /**
  * Created by Vileven on 13.05.17.
  */
+@Transactional
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class)
 public class CourseRepositoryTest {

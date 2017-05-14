@@ -13,12 +13,14 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.Assert.*;
 
+@Transactional
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class)
 public class AccountServiceTest {

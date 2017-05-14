@@ -21,10 +21,10 @@ public class UserClass {
     public final String groupName;
 
     @JsonProperty("begin_time")
-    public final Long begin;
+    public final String begin;
 
     @JsonProperty("end_time")
-    public final Long end;
+    public final String end;
 
     public Long getId() {
         return id;
@@ -46,16 +46,16 @@ public class UserClass {
         return groupName;
     }
 
-    public Long getBegin() {
+    public String getBegin() {
         return begin;
     }
 
-    public Long getEnd() {
+    public String getEnd() {
         return end;
     }
 
-    public UserClass(Long id, Long subjectId, String subjectName, Long groupId, String groupName, Long begin,
-                     Long end) {
+    public UserClass(Long id, Long subjectId, String subjectName, Long groupId, String groupName, String begin,
+                     String end) {
         this.id = id;
         this.subjectId = subjectId;
         this.subjectName = subjectName;

@@ -16,6 +16,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -27,6 +28,7 @@ import static org.junit.Assert.*;
 /**
  * Created by Vileven on 13.05.17.
  */
+@Transactional
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class)
 public class GroupRepositoryTest {
@@ -60,11 +62,6 @@ public class GroupRepositoryTest {
         parameters.put("name", group.getName());
         final Number id = insert.executeAndReturnKey(parameters);
         group.setId((Long)id);
-    }
-
-    @After
-    public void after() {
-        template.update("DELETE FROM groups");
     }
 
     @Test

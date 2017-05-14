@@ -25,8 +25,8 @@ public class StudentService {
 
     private final RowMapper<UserClass> userClassMapper = (((rs, rowNum) -> new UserClass(rs.getLong("id"),
             rs.getLong("subject_id"), rs.getString("subject_name"),
-            rs.getLong("group_id"), rs.getString("group_name"), rs.getLong("begin_time"),
-            rs.getLong("end_time"))));
+            rs.getLong("group_id"), rs.getString("group_name"), rs.getString("begin_time"),
+            rs.getString("end_time"))));
 
     @Autowired
     public StudentService(UserRepository userRepository, SubjectRepository subjectRepository,
@@ -68,7 +68,7 @@ public class StudentService {
         return this.template.query(query, courseRepository.getMapper(), id);
     }
 
-    public List<UserClass> getStudentClasses(long id, Long from, Long to) {
+    public List<UserClass> getStudentClasses(long id, String from, String to) {
         final String query =
                 "SELECT " +
                 "  cl.id, " +
@@ -84,8 +84,11 @@ public class StudentService {
                 "  JOIN applications AS a ON g.id = a.group_id " +
                 "  JOIN users AS u ON a.student_id = u.id " +
                 "  JOIN subjects AS s ON cl.subject_id = s.id " +
-                "WHERE u.id = ? AND cl.begin_time >= ? AND cl.begin_time <= ?";
+                "WHERE u.id = ? AND cl.begin_time >= ?::TIMESTAMPTZ AND cl.begin_time <= ?::TIMESTAMPTZ " +
+                "ORDER BY cl.begin_time ";
 
         return template.query(query, userClassMapper, id, from, to);
     }
+
+
 }
