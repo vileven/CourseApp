@@ -77,15 +77,15 @@ public class AdminService {
             throw new PermissionDeniedException("permission denied");
         }
 
-        return courseRepository.update(new Course(courseData.getName()));
+        return courseRepository.update(new Course(courseData.getId(), courseData.getName()));
     }
 
-    public void deleteCourse(IdInfo idInfo, HttpSession session) throws PermissionDeniedException {
+    public void deleteCourse(CourseInfo courseData, HttpSession session) throws PermissionDeniedException {
         if (!isAdmin(session)) {
             throw new PermissionDeniedException("permission denied");
         }
 
-        courseRepository.delete(idInfo.getId());
+        courseRepository.delete(courseData.getId());
     }
 
     public List<Course> selectWithParams(SelectParametersInfo info, HttpSession session) throws PermissionDeniedException {

@@ -68,9 +68,9 @@ public class CourseController {
     }
 
     @PostMapping("/delete")
-    public ResponseEntity<?> deleteCourse(@RequestBody IdInfo idInfo, HttpSession session) {
+    public ResponseEntity<?> deleteCourse(@RequestBody CourseInfo courseData, HttpSession session) {
         try {
-            adminService.deleteCourse(idInfo, session);
+            adminService.deleteCourse(courseData, session);
 
             return ResponseEntity.ok("success");
         } catch (PermissionDeniedException e) {
