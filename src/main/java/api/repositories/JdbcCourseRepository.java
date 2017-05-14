@@ -35,7 +35,6 @@ public class JdbcCourseRepository implements CourseRepository {
 
 
 
-    @Nullable
     @Override
     public Course create(Course course) {
         final Number id = courseInsert.executeAndReturnKey(Collections.singletonMap("name", course.getName()));
@@ -48,6 +47,13 @@ public class JdbcCourseRepository implements CourseRepository {
     public void updateName(long id, String name) {
         final String query = "UPDATE courses SET name=? WHERE id=? ";
         template.update(query, name, id);
+    }
+
+    @Override
+    public Course update(Course course) {
+        final String query = "UPDATE courses SET name=? WHERE id=? ";
+        template.update(query, course.getName(), course.getId());
+        return course;
     }
 
     @Nullable
@@ -69,9 +75,26 @@ public class JdbcCourseRepository implements CourseRepository {
     }
 
     @Override
-    public List<Course> selectWithParams(Integer limit, Integer offset, @Nullable List<Pair<String, String>> orders) {
+    public List<Course> selectWithParams(Integer limit, Integer offset, @Nullable List<Pair<String, String>> orders,
+                                         @Nullable List<Pair<String, String>> filters) {
         final StringBuilder queryBuilder = new StringBuilder();
         queryBuilder.append("SELECT * FROM courses AS c ");
+
+        if (filters != null) {
+            queryBuilder.append(" WHERE ");
+            for (int i = 0; i < filters.size(); i++) {
+                queryBuilder
+                        .append("c.")
+                        .append(filters.get(i).getKey())
+                        .append(" ~* '")
+                        .append(filters.get(i).getValue())
+                        .append('\'')
+                ;
+                if (i != filters.size() - 1) {
+                    queryBuilder.append(" AND ");
+                }
+            }
+        }
 
         if (orders != null) {
             queryBuilder.append("ORDER BY ");
@@ -90,6 +113,8 @@ public class JdbcCourseRepository implements CourseRepository {
 
         }
         queryBuilder.append(" LIMIT ? OFFSET ?");
+
+
 
         return template.query(queryBuilder.toString(), courseMapper, limit, offset);
     }

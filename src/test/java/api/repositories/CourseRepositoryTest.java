@@ -94,19 +94,25 @@ public class CourseRepositoryTest {
             courseRepository.create(new Course(Integer.toString(i)));
         }
 
-        List<Course> res = courseRepository.selectWithParams(10, 0, null);
+        List<Course> res = courseRepository.selectWithParams(10, 0, null, null);
         assertNotNull(res);
         assertEquals(10, res.size());
 
-        res = courseRepository.selectWithParams(5, 6, null);
+        res = courseRepository.selectWithParams(5, 6, null, null);
         assertEquals(5, res.size());
         assertEquals("9",res.get(4).getName());
 
-        final List<Pair<String, String>> params = Collections.singletonList(new Pair<>("id", "DESC"));
+        List<Pair<String, String>> params = Collections.singletonList(new Pair<>("id", "DESC"));
 
-        res = courseRepository.selectWithParams(5, 6, params);
+        res = courseRepository.selectWithParams(5, 6, params, null);
         assertEquals(5, res.size());
         assertEquals("0", res.get(3).getName());
+
+        params = Collections.singletonList(new Pair<>("name", "1"));
+
+        res = courseRepository.selectWithParams(1000, 0, null, params);
+        assertEquals(1, res.size());
+        assertEquals("1", res.get(0).getName());
     }
 
     @Test

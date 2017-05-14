@@ -12,17 +12,19 @@ import java.util.List;
  */
 public interface CourseRepository {
 
-    @Nullable
     Course create(Course course);
 
     void updateName(long id, String name);
+
+    Course update(Course course);
 
     @Nullable
     Course find(long id);
 
     List<Course> findByName(String name);
 
-    List<Course> selectWithParams(Integer limit, Integer offset,@Nullable List<Pair<String, String>> orders);
+    List<Course> selectWithParams(Integer limit, Integer offset,@Nullable List<Pair<String, String>> orders,
+                                  @Nullable List<Pair<String, String>> filters);
 
     void delete(long id);
 

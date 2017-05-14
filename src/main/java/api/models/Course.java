@@ -1,5 +1,7 @@
 package api.models;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 /**
  * Created by Vileven on 13.05.17.
  */

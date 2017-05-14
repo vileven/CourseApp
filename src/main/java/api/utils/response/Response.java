@@ -1,5 +1,6 @@
 package api.utils.response;
 
+import api.models.Course;
 import api.models.User;
 import api.utils.ErrorCodes;
 import api.utils.response.generic.ResponseBody;
@@ -19,11 +20,11 @@ public class Response {
     }
 
     public static ResponseEntity<? extends ResponseBody> notFound(int status, String msg) {
-        return ResponseEntity.status(HttpStatus.OK).body(new ResponseBody(status, msg));
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseBody(status, msg));
     }
 
     public static ResponseEntity<? extends ResponseBody> badRequest(int status, String msg) {
-        return ResponseEntity.status(HttpStatus.OK).body(new ResponseBody(status, msg));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseBody(status, msg));
     }
 
 
@@ -45,6 +46,10 @@ public class Response {
 
     public static ResponseEntity<? extends ResponseBody> badValidator() {
         return Response.badRequest(ErrorCodes.BAD_VALIDATOR, "Bad validator");
+    }
+
+    public static ResponseEntity<?> okWithCourse(Course course) {
+        return ResponseEntity.ok(new CourseBody(course.getId(), course.getName()));
     }
 
 }
