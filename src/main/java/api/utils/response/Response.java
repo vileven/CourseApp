@@ -1,6 +1,7 @@
 package api.utils.response;
 
 import api.models.Course;
+import api.models.Group;
 import api.models.User;
 import api.utils.ErrorCodes;
 import api.utils.response.generic.ResponseBody;
@@ -49,7 +50,11 @@ public class Response {
     }
 
     public static ResponseEntity<?> okWithCourse(Course course) {
-        return ResponseEntity.ok(new CourseBody(course.getId(), course.getName()));
+        return ResponseEntity.ok(course);
     }
+
+//    public static ResponseEntity<?> okWithGroup(Group) {
+//        return ResponseEntity.ok(new GroupBody)
+//    }
 
 }

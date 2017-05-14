@@ -2,8 +2,10 @@ package api.controllers;
 
 import api.Application;
 import api.models.Course;
+import api.models.Group;
 import api.models.User;
 import api.repositories.CourseRepository;
+import api.repositories.GroupRepository;
 import api.repositories.UserRepository;
 import api.utils.ErrorCodes;
 import org.junit.Before;
@@ -34,8 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class)
 @AutoConfigureMockMvc(print = MockMvcPrint.DEFAULT)
-public class CourseControllerTest {
-
+public class GroupControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
@@ -48,15 +49,24 @@ public class CourseControllerTest {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private GroupRepository groupRepository;
+
     private Course course;
 
     private User admin;
 
+    private Group group;
+
     @Before
     public void setup() throws Exception {
         courseRepository.deleteAll();
-        course = courseRepository.create(new Course("some course"));
+        course = courseRepository.create(new Course("course"));
         assertNotNull(course);
+
+        groupRepository.deleteAll();
+        group = groupRepository.create(new Group(course.getId(),"ИУ6-43"));
+        assertNotNull(group);
 
         userRepository.deleteAll();
         admin = userRepository.create(new User(0, "email@mail.ru", passwordEncoder.encode("qwerty123"),
@@ -79,39 +89,42 @@ public class CourseControllerTest {
     }
 
     @Test
-    public void getCourse() throws Exception, java.io.UnsupportedEncodingException {
+    public void getGroup() throws Exception {
         mockMvc
-                .perform(get("/course/"+course.getId())
+                .perform(get("/group/"+group.getId())
                         .sessionAttr(USER_ID, admin.getId()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("id").value(course.getId()))
-                .andExpect(jsonPath("name").value(course.getName()))
+                .andExpect(jsonPath("id").value(group.getId()))
+                .andExpect(jsonPath("course_id").value(course.getId()))
+                .andExpect(jsonPath("name").value(group.getName()))
         ;
     }
 
     @Test
-    public void createCourse() throws Exception {
+    public void createGroup() throws Exception {
         mockMvc
-                .perform(post("/course/create")
+                .perform(post("/group/create")
                         .sessionAttr(USER_ID, admin.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content('{' +
-                                "\"name\":\"created_course\"" +
+                                "\"course_id\":\""+course.getId()+"\"," +
+                                "\"name\":\"created_group\"" +
                                 '}'))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("name").value("created_course"))
+                .andExpect(jsonPath("name").value("created_group"))
                 .andExpect(jsonPath("id").exists())
         ;
     }
 
     @Test
-    public void itShouldNotWorkWithoutAdminAuth() throws Exception {
+    public void itShuoldNotWorkWithotAdminAuth() throws Exception {
         mockMvc
-                .perform(post("/course/create")
-                        .sessionAttr(USER_ID, admin.getId() + 1)
+                .perform(post("/group/create")
+                        .sessionAttr(USER_ID, admin.getId() - 2)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content('{' +
-                                "\"name\":\"created_course\"" +
+                                "\"course_id\":\""+course.getId()+"\"," +
+                                "\"name\":\"created_group\"" +
                                 '}'))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("status").value(ErrorCodes.PERMISSION_DENIED))
@@ -120,56 +133,58 @@ public class CourseControllerTest {
     }
 
     @Test
-    public void updateCourse() throws Exception {
+    public void updateGroup() throws Exception {
         mockMvc
-                .perform(post("/course/update")
+                .perform(post("/group/update")
                         .sessionAttr(USER_ID, admin.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content('{' +
-                                "\"id\":\""+course.getId()+"\"," +
+                                "\"id\":\""+group.getId()+"\"," +
+                                "\"course_id\":\""+course.getId()+"\"," +
                                 "\"name\":\"updated_name\"" +
                                 '}'))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("name").value("updated_name"))
-                .andExpect(jsonPath("id").value(course.getId()))
+                .andExpect(jsonPath("course_id").value(course.getId()))
+                .andExpect(jsonPath("id").value(group.getId()))
         ;
     }
 
     @Test
-    public void deleteCourse() throws Exception {
+    public void deleteGroup() throws Exception {
         mockMvc
-                .perform(post("/course/delete")
+                .perform(post("/group/delete")
                         .sessionAttr(USER_ID, admin.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content('{' +
-                                "\"id\":\""+course.getId()+ '"' +
+                                "\"id\":\""+group.getId()+ '"' +
                                 '}'))
                 .andExpect(status().isOk())
                 .andExpect(result -> assertEquals("success",result.getResponse().getContentAsString()))
         ;
 
-        assertNull(courseRepository.find(course.getId()));
+        assertNull(groupRepository.find(group.getId()));
     }
 
     @Test
-    public void selectCourses() throws Exception {
-        courseRepository.create(new Course("second"));
+    public void select() throws Exception {
+        groupRepository.create(new Group(course.getId(),"second"));
+        groupRepository.create(new Group(course.getId(),"ИУ6-42"));
         mockMvc
-                .perform(post("/course/select")
+                .perform(post("/group/select")
                         .sessionAttr(USER_ID, admin.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content('{' +
-                                "\"limit\":100," +
+                                "\"limit\":1," +
                                 "\"offset\":0," +
                                 "\"orders\": [" +
                                 "[\"id\", \"ASC\"]" +
                                 "]," +
                                 "\"filters\": [" +
-                                "[\"name\", \"some\"]" +
+                                "[\"name\", \"ИУ6\"]" +
                                 ']' +
                                 '}'))
                 .andExpect(jsonPath("length()").value(1));
     }
-
 
 }

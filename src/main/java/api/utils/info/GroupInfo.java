@@ -7,11 +7,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Created by Vileven on 14.05.17.
  */
 public class GroupInfo {
+    private final Long id;
     private final Long courseId;
     private final String name;
 
     @JsonCreator
-    public GroupInfo(@JsonProperty("course_id") Long courseId, @JsonProperty("name") String name) {
+    public GroupInfo(@JsonProperty("id") Long id, @JsonProperty("course_id") Long courseId, @JsonProperty("name") String name) {
+        this.id = id;
         this.courseId = courseId;
         this.name = name;
     }
@@ -22,5 +24,9 @@ public class GroupInfo {
 
     public String getName() {
         return name;
+    }
+
+    public Long getId() {
+        return id;
     }
 }

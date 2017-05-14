@@ -79,9 +79,34 @@ public class JdbcGroupRepository implements GroupRepository {
     }
 
     @Override
-    public List<Group> selectWithParams(Integer limit, Integer offset, @Nullable List<Pair<String, String>> orders) {
+    public Group update(Group group) {
+        final String query = "UPDATE groups SET course_id = ?, name = ? WHERE id = ? ";
+        template.update(query, group.getCourseId(), group.getName(), group.getId());
+        return group;
+    }
+
+    @Override
+    public List<Group> selectWithParams(Integer limit, Integer offset, @Nullable List<Pair<String, String>> orders,
+                                        @Nullable List<Pair<String, String>> filters) {
         final StringBuilder queryBuilder = new StringBuilder();
         queryBuilder.append("SELECT * FROM groups AS g ");
+
+        if (filters != null) {
+            queryBuilder.append(" WHERE ");
+            for (int i = 0; i < filters.size(); i++) {
+                queryBuilder
+                        .append("g.")
+                        .append(filters.get(i).getKey())
+                        .append(" ~* '")
+                        .append(filters.get(i).getValue())
+                        .append('\'')
+                ;
+                if (i != filters.size() - 1) {
+                    queryBuilder.append(" AND ");
+                }
+            }
+        }
+
         if (orders != null) {
             queryBuilder.append("ORDER BY ");
 
@@ -103,7 +128,7 @@ public class JdbcGroupRepository implements GroupRepository {
     }
 
     @Override
-    public void deleteAll(long id) {
+    public void deleteAll() {
         template.update("DELETE FROM groups");
     }
 

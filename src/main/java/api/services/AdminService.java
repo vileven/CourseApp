@@ -58,7 +58,11 @@ public class AdminService {
     }
 
     @Nullable
-    public Group createGroup(GroupInfo groupData) {
+    public Group createGroup(GroupInfo groupData, HttpSession session) throws PermissionDeniedException {
+        if (!isAdmin(session)) {
+            throw new PermissionDeniedException("permission denied");
+        }
+
         return groupRepository.create(new Group(groupData.getCourseId(), groupData.getName()));
     }
 
@@ -72,12 +76,25 @@ public class AdminService {
         return courseRepository.find(id);
     }
 
+    @Nullable
+    public Group getGroup(long id) {
+        return groupRepository.find(id);
+    }
+
     public Course updateCourse(CourseInfo courseData, HttpSession session) throws PermissionDeniedException {
         if (!isAdmin(session)) {
             throw new PermissionDeniedException("permission denied");
         }
 
         return courseRepository.update(new Course(courseData.getId(), courseData.getName()));
+    }
+
+    public Group updateGroup(GroupInfo info, HttpSession session) throws PermissionDeniedException {
+        if (!isAdmin(session)) {
+            throw new PermissionDeniedException("permission denied");
+        }
+
+        return groupRepository.update(new Group(info.getId(), info.getCourseId(), info.getName()));
     }
 
     public void deleteCourse(CourseInfo courseData, HttpSession session) throws PermissionDeniedException {
@@ -88,10 +105,26 @@ public class AdminService {
         courseRepository.delete(courseData.getId());
     }
 
-    public List<Course> selectWithParams(SelectParametersInfo info, HttpSession session) throws PermissionDeniedException {
+    public void deleteGroup(GroupInfo info, HttpSession session)throws PermissionDeniedException {
+        if (!isAdmin(session)) {
+            throw new PermissionDeniedException("permission denied");
+        }
+
+        groupRepository.delete(info.getId());
+    }
+
+    public List<Course> selectCourseWithParams(SelectParametersInfo info, HttpSession session) throws PermissionDeniedException {
         if (!isAdmin(session)) {
             throw new PermissionDeniedException("permission denied");
         }
         return courseRepository.selectWithParams(info.getLimit(), info.getOffset(), info.getOrders(), info.getFilters());
+    }
+
+    public List<Group> selectGroupWithParams(SelectParametersInfo info, HttpSession session) throws PermissionDeniedException {
+        if (!isAdmin(session)) {
+            throw new PermissionDeniedException("permission denied");
+        }
+
+        return groupRepository.selectWithParams(info.getLimit(), info.getOffset(), info.getOrders(), info.getFilters());
     }
 }

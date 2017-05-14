@@ -26,9 +26,12 @@ public interface GroupRepository {
 
     void updateCourseId(long id, long courseId);
 
-    List<Group> selectWithParams(Integer limit, Integer offset, @Nullable List<Pair<String, String>> orders);
+    Group update(Group group);
 
-    void deleteAll(long id);
+    List<Group> selectWithParams(Integer limit, Integer offset,@Nullable List<Pair<String, String>> orders,
+                                 @Nullable List<Pair<String, String>> filters);
+
+    void deleteAll();
 
     RowMapper<Group> getMapper();
 }

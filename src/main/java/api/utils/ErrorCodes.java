@@ -11,5 +11,7 @@ public class ErrorCodes {
     public static final int BAD_VALIDATOR = 605;
     public static final int WRONG_ENVIRONMENT = 606;
     public static final int PERMISSION_DENIED = 607;
+    public static final int COURSE_NOT_FOUND = 608;
+    public static final int GROUP_NOT_FOUND = 609;
 }
 
