@@ -13,5 +13,6 @@ public class ErrorCodes {
     public static final int PERMISSION_DENIED = 607;
     public static final int COURSE_NOT_FOUND = 608;
     public static final int GROUP_NOT_FOUND = 609;
+    public static final int SUBJECT_NOT_FOUND = 610;
 }
 

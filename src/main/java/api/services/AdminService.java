@@ -8,6 +8,7 @@ import api.repositories.CourseRepository;
 import api.repositories.GroupRepository;
 import api.repositories.SubjectRepository;
 import api.repositories.UserRepository;
+import api.utils.error.EntityNotFoundException;
 import api.utils.error.PermissionDeniedException;
 import api.utils.info.*;
 import org.jetbrains.annotations.Nullable;
@@ -90,7 +91,7 @@ public class AdminService {
         return subjectRepository.find(id);
     }
 
-    public Course updateCourse(CourseInfo courseData, HttpSession session) throws PermissionDeniedException {
+    public Course updateCourse(CourseInfo courseData, HttpSession session) throws PermissionDeniedException, EntityNotFoundException {
         if (!isAdmin(session)) {
             throw new PermissionDeniedException("permission denied");
         }
@@ -99,7 +100,7 @@ public class AdminService {
     }
 
     @Nullable
-    public Group updateGroup(GroupInfo info, HttpSession session) throws PermissionDeniedException {
+    public Group updateGroup(GroupInfo info, HttpSession session) throws PermissionDeniedException, EntityNotFoundException {
         if (!isAdmin(session)) {
             throw new PermissionDeniedException("permission denied");
         }
@@ -108,7 +109,7 @@ public class AdminService {
     }
 
     @Nullable
-    public Subject updateSubject(SubjectInfo info, HttpSession session) throws PermissionDeniedException {
+    public Subject updateSubject(SubjectInfo info, HttpSession session) throws PermissionDeniedException, EntityNotFoundException {
         if (!isAdmin(session)) {
             throw new PermissionDeniedException("permission denied");
         }

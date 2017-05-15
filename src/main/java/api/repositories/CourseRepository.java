@@ -1,8 +1,10 @@
 package api.repositories;
 
 import api.models.Course;
+import api.utils.error.EntityNotFoundException;
 import api.utils.pair.Pair;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.util.List;
@@ -16,7 +18,7 @@ public interface CourseRepository {
 
     void updateName(long id, String name);
 
-    Course update(Course course);
+    Course update(Course course) throws EntityNotFoundException;
 
     @Nullable
     Course find(long id);

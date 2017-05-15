@@ -1,5 +1,7 @@
 package api.models;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.time.LocalDateTime;
 
 
@@ -7,12 +9,20 @@ public class ClassModel extends Model<Long> {
 
     private Long id;
     private String topic;
-    private Long subject;
-    private Long group;
-    private LocalDateTime begin;
-    private LocalDateTime end;
 
-    public ClassModel(Long id, String topic, Long subject, Long group, LocalDateTime begin, LocalDateTime end) {
+    @JsonProperty("subject_id")
+    private Long subject;
+
+    @JsonProperty("group_id")
+    private Long group;
+
+    @JsonProperty("begin_id")
+    private String begin;
+
+    @JsonProperty("end_id")
+    private String end;
+
+    public ClassModel(Long id, String topic, Long subject, Long group, String begin, String end) {
         this.id = id;
         this.topic = topic;
         this.subject = subject;
@@ -21,7 +31,7 @@ public class ClassModel extends Model<Long> {
         this.end = end;
     }
 
-    public ClassModel(String topic, Long subject, Long group, LocalDateTime begin, LocalDateTime end) {
+    public ClassModel(String topic, Long subject, Long group, String begin, String end) {
         this.topic = topic;
         this.subject = subject;
         this.group = group;
@@ -57,19 +67,19 @@ public class ClassModel extends Model<Long> {
         this.group = group;
     }
 
-    public LocalDateTime getBegin() {
+    public String getBegin() {
         return begin;
     }
 
-    public void setBegin(LocalDateTime begin) {
+    public void setBegin(String begin) {
         this.begin = begin;
     }
 
-    public LocalDateTime getEnd() {
+    public String getEnd() {
         return end;
     }
 
-    public void setEnd(LocalDateTime end) {
+    public void setEnd(String end) {
         this.end = end;
     }
 

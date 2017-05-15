@@ -3,6 +3,7 @@ package api.controllers;
 import api.models.Group;
 import api.services.AdminService;
 import api.utils.ErrorCodes;
+import api.utils.error.EntityNotFoundException;
 import api.utils.error.PermissionDeniedException;
 import api.utils.info.GroupInfo;
 import api.utils.info.SelectParametersInfo;
@@ -63,6 +64,9 @@ public class GroupController {
         } catch (PermissionDeniedException e) {
 
             return Response.badRequest(ErrorCodes.PERMISSION_DENIED, e.message);
+        } catch (EntityNotFoundException e) {
+
+            return Response.notFound(ErrorCodes.GROUP_NOT_FOUND, e.message);
         }
     }
 

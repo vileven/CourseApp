@@ -1,6 +1,7 @@
 package api.repositories;
 
 import api.models.Group;
+import api.utils.error.EntityNotFoundException;
 import api.utils.pair.Pair;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,15 +81,11 @@ public class JdbcGroupRepository implements GroupRepository {
 
     @Nullable
     @Override
-    public Group update(Group group) {
-        try {
-            final String query = "UPDATE groups SET course_id = ?, name = ? WHERE id = ? ";
-            final int count = template.update(query, group.getCourseId(), group.getName(), group.getId());
-            if (count == 0) {
-                return null;
-            }
-        } catch (DataIntegrityViolationException e) {
-            return null;
+    public Group update(Group group) throws DataIntegrityViolationException, EntityNotFoundException {
+        final String query = "UPDATE groups SET course_id = ?, name = ? WHERE id = ? ";
+        final int count = template.update(query, group.getCourseId(), group.getName(), group.getId());
+        if (count == 0) {
+            throw new EntityNotFoundException("Subject not found");
         }
         return group;
     }

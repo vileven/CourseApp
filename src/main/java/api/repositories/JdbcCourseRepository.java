@@ -1,6 +1,7 @@
 package api.repositories;
 
 import api.models.Course;
+import api.utils.error.EntityNotFoundException;
 import api.utils.pair.Pair;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,9 +51,13 @@ public class JdbcCourseRepository implements CourseRepository {
     }
 
     @Override
-    public Course update(Course course) {
+    public Course update(Course course) throws EntityNotFoundException {
         final String query = "UPDATE courses SET name=? WHERE id=? ";
-        template.update(query, course.getName(), course.getId());
+        final int count = template.update(query, course.getName(), course.getId());
+        if (count == 0) {
+            throw new EntityNotFoundException("Course not found");
+        }
+
         return course;
     }
 

@@ -3,6 +3,7 @@ package api.controllers;
 import api.models.Course;
 import api.services.AdminService;
 import api.utils.ErrorCodes;
+import api.utils.error.EntityNotFoundException;
 import api.utils.error.PermissionDeniedException;
 import api.utils.info.CourseInfo;
 import api.utils.info.IdInfo;
@@ -63,6 +64,9 @@ public class CourseController {
         } catch (PermissionDeniedException e) {
 
             return Response.badRequest(ErrorCodes.PERMISSION_DENIED, e.message);
+        } catch (EntityNotFoundException e) {
+
+            return Response.notFound(ErrorCodes.COURSE_NOT_FOUND, e.message);
         }
 
     }

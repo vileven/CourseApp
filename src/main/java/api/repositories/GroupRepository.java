@@ -1,8 +1,10 @@
 package api.repositories;
 
 import api.models.Group;
+import api.utils.error.EntityNotFoundException;
 import api.utils.pair.Pair;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.util.List;
@@ -26,7 +28,7 @@ public interface GroupRepository {
 
     void updateCourseId(long id, long courseId);
 
-    Group update(Group group);
+    Group update(Group group) throws DataIntegrityViolationException, EntityNotFoundException;;
 
     List<Group> selectWithParams(Integer limit, Integer offset,@Nullable List<Pair<String, String>> orders,
                                  @Nullable List<Pair<String, String>> filters);

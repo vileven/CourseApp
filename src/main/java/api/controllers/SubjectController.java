@@ -4,12 +4,14 @@ import api.models.Group;
 import api.models.Subject;
 import api.services.AdminService;
 import api.utils.ErrorCodes;
+import api.utils.error.EntityNotFoundException;
 import api.utils.error.PermissionDeniedException;
 import api.utils.info.GroupInfo;
 import api.utils.info.SelectParametersInfo;
 import api.utils.info.SubjectInfo;
 import api.utils.response.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -61,13 +63,16 @@ public class SubjectController {
     public ResponseEntity<?> updateSubject(@RequestBody SubjectInfo info, HttpSession session) {
         try {
             final Subject subject = adminService.updateSubject(info, session);
-            if (subject == null) {
-                return Response.badRequest(ErrorCodes.BAD_VALIDATOR, "wrong course id");
-            }
             return ResponseEntity.ok(subject);
         } catch (PermissionDeniedException e) {
 
             return Response.badRequest(ErrorCodes.PERMISSION_DENIED, e.message);
+        } catch (EntityNotFoundException e) {
+
+            return Response.notFound(ErrorCodes.SUBJECT_NOT_FOUND, e.message);
+        } catch (DataIntegrityViolationException e) {
+
+            return Response.badRequest(ErrorCodes.BAD_VALIDATOR, "wrong course id");
         }
     }
 
