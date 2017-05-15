@@ -2,6 +2,7 @@ package api.services;
 
 import api.models.User;
 import api.repositories.UserRepository;
+import api.utils.error.PermissionDeniedException;
 import api.utils.info.UserCreationInfo;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -10,7 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpSession;
 import java.util.List;
+
+import static api.controllers.SessionController.USER_ID;
 
 /**
  * Created by Vileven on 13.05.17.
@@ -27,6 +31,16 @@ public class AccountService {
     AccountService(UserRepository userRepository, PasswordEncoder encoder) {
         this.userRepository = userRepository;
         this.encoder = encoder;
+    }
+
+    private boolean isAdmin(HttpSession session) {
+        final Object number = session.getAttribute(USER_ID);
+        if (number == null) {
+            return false;
+        }
+        final User user = userRepository.find((Long) number);
+        return user != null && user.getRole() == 0;
+
     }
 
     @Nullable
@@ -58,6 +72,14 @@ public class AccountService {
         return null;
     }
 
+    public void deleteUser(UserCreationInfo info, HttpSession session) throws PermissionDeniedException {
+        if (!isAdmin(session)) {
+            throw new PermissionDeniedException("permission denied");
+        }
+
+        userRepository.delete(info.getId());
+    }
+
     @Nullable
     public User getUserByEmail(String email) {
         return userRepository.findByEmail(email);
@@ -76,8 +98,14 @@ public class AccountService {
         userRepository.updatePassword(id, encoder.encode(password));
     }
 
-    public void update(User user) {
-        userRepository.update(user);
+    public User update(UserCreationInfo info, HttpSession session) throws PermissionDeniedException {
+
+        if (info.getRole() != null && !isAdmin(session)) {
+            throw new PermissionDeniedException("permission denied");
+        }
+
+        return userRepository.update(new User(info.getId(), info.getRole(), info.getEmail(), info.getPassword(),
+                info.getFirstName(), info.getLastName(), null, info.getAbout()));
     }
 
     public void deleteUserById(long id) {

@@ -31,7 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class)
-@AutoConfigureMockMvc(print = MockMvcPrint.NONE)
+@AutoConfigureMockMvc(print = MockMvcPrint.DEFAULT)
 public class UserControllerTest {
     @Autowired
     UserRepository userRepository;
@@ -89,7 +89,7 @@ public class UserControllerTest {
                                 "\"about\":\"about\"" +
                                 '}'))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("status").value(ErrorCodes.SUCCESS))
+                .andExpect(jsonPath("email").value("em221ail@mail.ru"))
         ;
     }
 
@@ -222,12 +222,16 @@ public class UserControllerTest {
 
     @Test
     public void deleteUserSucces() throws Exception {
+        final User user = userRepository.create(new User(0, "email1@mail.ru", passwordEncoder.encode("qwerty123"),
+                "sergey", "volodin", null,"about"));
+        assertNotNull(user);
         mockMvc
                 .perform(post("/user/delete")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .sessionAttr(USER_ID, this.id))
+                        .sessionAttr(USER_ID, user.getId())
+                        .content("{\"id\":\""+this.id+"\"}"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("status").value(ErrorCodes.SUCCESS))
+                .andExpect(result -> assertEquals("success",result.getResponse().getContentAsString()))
         ;
     }
 
@@ -235,9 +239,10 @@ public class UserControllerTest {
     public void deleteUserWrongSession() throws Exception {
         mockMvc
                 .perform(post("/user/delete")
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"id\":\""+this.id+"\"}"))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("status").value(ErrorCodes.SESSION_INVALID))
+                .andExpect(jsonPath("status").value(ErrorCodes.PERMISSION_DENIED))
         ;
     }
 }

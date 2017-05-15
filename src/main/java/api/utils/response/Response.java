@@ -15,8 +15,8 @@ public class Response {
         return ResponseEntity.ok(new ResponseBody(ErrorCodes.SUCCESS, msg));
     }
 
-    public static ResponseEntity<? extends ResponseBody> okWithUser(User user, String msg) {
-        return ResponseEntity.ok(new UserResponseBody(ErrorCodes.SUCCESS, msg, user.getRole(), user.getEmail(),
+    public static ResponseEntity<?> okWithUser(User user) {
+        return ResponseEntity.ok(new UserResponseBody(user.getId(), user.getRole(), user.getEmail(),
                 user.getFirstName(), user.getLastName(), user.getAbout()));
     }
 

@@ -119,7 +119,7 @@ public class SessionControllerTest {
                         .perform(get("/session/current")
                                 .sessionAttr(USER_ID, mvcResult.getRequest().getSession().getAttribute(USER_ID)))
                         .andExpect(status().isOk())
-                        .andExpect(jsonPath("status").value(ErrorCodes.SUCCESS))
+                        .andExpect(jsonPath("first_name").value("sergey"))
                         .andExpect(jsonPath("email").value("email@mail.ru")))
         ;
     }

@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Created by Vileven on 13.05.17.
  */
 public final class UserCreationInfo {
+    private final Long id;
     private final Integer role;
     private final String email;
     private final String password;
@@ -16,9 +17,10 @@ public final class UserCreationInfo {
     private final String about;
 
     @JsonCreator
-    public UserCreationInfo(@JsonProperty("role") Integer role,@JsonProperty("email") String email,
+    public UserCreationInfo(@JsonProperty("id") Long id, @JsonProperty("role") Integer role, @JsonProperty("email") String email,
                             @JsonProperty("password") String password, @JsonProperty("first_name") String firstName,
                             @JsonProperty("last_name") String lastName, @JsonProperty("about") String about) {
+        this.id = id;
         this.role = role;
         this.email = email;
         this.password = password;
@@ -51,5 +53,9 @@ public final class UserCreationInfo {
 
     public String getAbout() {
         return about;
+    }
+
+    public Long getId() {
+        return id;
     }
 }

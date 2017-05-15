@@ -1,14 +1,14 @@
 package api.utils.response;
 
-import api.utils.response.generic.ResponseBody;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Тело ответа User
  */
-public class UserResponseBody extends ResponseBody {
+public class UserResponseBody  {
 
+    public final Long id;
     public final Integer role;
     public final String email;
 
@@ -21,8 +21,8 @@ public class UserResponseBody extends ResponseBody {
     public final String about;
 
     @JsonCreator
-    public UserResponseBody(int status, String msg, Integer role, String email, String firstName, String lastName, String about) {
-        super(status, msg);
+    public UserResponseBody(Long id, Integer role, String email, String firstName, String lastName, String about) {
+        this.id = id;
         this.role = role;
         this.email = email;
         this.firstName = firstName;

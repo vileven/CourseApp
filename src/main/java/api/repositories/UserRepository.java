@@ -19,9 +19,9 @@ public interface UserRepository {
     /**
      * Обновить данные пользователя
      * @param user объект user идентификатором и новыми данными
-     * @return код ошибки
+     * @return user
      */
-    int update(User user);
+    User update(User user);
 
     int updateEmail(long id, String email);
 

@@ -65,7 +65,7 @@ public class SessionController {
      * @return json <code>User</code>
      */
     @GetMapping("/current")
-    public ResponseEntity<? extends ResponseBody> getLoggedUser(HttpSession session) {
+    public ResponseEntity<? > getLoggedUser(HttpSession session) {
 
         final User currentUser;
         final Object id = session.getAttribute(USER_ID);
@@ -79,7 +79,7 @@ public class SessionController {
             return Response.invalidSession();
         }
 
-        return Response.okWithUser(currentUser, "success");
+        return Response.okWithUser(currentUser);
     }
 
 }

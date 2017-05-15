@@ -8,10 +8,6 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
@@ -70,18 +66,15 @@ public class JdbcUserRepository implements UserRepository {
     }
 
     @Override
-    public int update(User user) {
+    public User update(User user) {
         final String sql =  "UPDATE users " +
                 "SET role = ?, email = ?, password = ?, first_name = ?, " +
                 "last_name = ?, avatar = ?, about = ? WHERE id = ? ";
-        try {
-            final int count = template.update(sql, user.getRole(), user.getEmail(), user.getPassword(), user.getFirstName(),
-                    user.getLastName(), user.getAvatar(), user.getAbout(), user.getId());
-        } catch (DuplicateKeyException e) {
-            return Code.ERR_DUPLICATE;
-        }
 
-        return Code.OK;
+        final int count = template.update(sql, user.getRole(), user.getEmail(), user.getPassword(), user.getFirstName(),
+                user.getLastName(), user.getAvatar(), user.getAbout(), user.getId());
+
+        return user;
     }
 
     @Override

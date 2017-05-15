@@ -78,12 +78,7 @@ public class UserRepositoryTest {
     @Test
     public void update() throws DataAccessException {
         user.setEmail("mail@mail.ru");
-        final int code = userRepository.update(user);
-
-        assertEquals(Code.OK, code);
-
-        final String query = "SELECT * FROM users WHERE id=" + user.getId();
-        final User newUser = template.queryForObject(query, userMapper);
+        final User newUser = userRepository.update(user);
 
         assertNotNull(newUser);
         assertEquals(user, newUser);

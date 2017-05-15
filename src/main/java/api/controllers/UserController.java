@@ -2,6 +2,8 @@ package api.controllers;
 
 import api.models.User;
 import api.services.AccountService;
+import api.utils.ErrorCodes;
+import api.utils.error.PermissionDeniedException;
 import api.utils.info.UserCreationInfo;
 import api.utils.info.UserEmailInfo;
 import api.utils.info.UserPasswordInfo;
@@ -10,6 +12,7 @@ import api.utils.response.generic.ResponseBody;
 import api.utils.validator.ValidatorChain;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,24 +36,24 @@ public class UserController {
 
 
     @GetMapping("/{id}")
-    public ResponseEntity<? extends ResponseBody> getUserById(@PathVariable Long id) {
+    public ResponseEntity<?> getUserById(@PathVariable Long id) {
         final User user = accountService.getUserById(id);
         if (user == null) {
             return Response.userNotFound();
         }
 
-        return Response.okWithUser(user, "success");
+        return Response.okWithUser(user);
     }
 
     @PostMapping("/create")
-    public ResponseEntity<? extends ResponseBody> createUser(@RequestBody UserCreationInfo requestBody) {
+    public ResponseEntity<?> createUser(@RequestBody UserCreationInfo requestBody) {
 
         if (!ValidatorChain.isValid(requestBody, false, this.appContext)) {
             return Response.badValidator();
         }
 
-        accountService.createUser(requestBody);
-        return Response.ok("User created");
+        final User user = accountService.createUser(requestBody);
+        return Response.okWithUser(user);
     }
 
     @PostMapping("/changeEmail")
@@ -86,18 +89,31 @@ public class UserController {
     }
 
     @PostMapping("/delete")
-    public ResponseEntity<? extends ResponseBody> deleteUser(HttpSession session) {
+    public ResponseEntity<?> deleteUser(@RequestBody UserCreationInfo info, HttpSession session) {
 
-        final Object id = session.getAttribute(USER_ID);
+        try {
+            accountService.deleteUser(info, session);
 
-        if (id instanceof Long) {
-            accountService.deleteUserById((Long) id);
-        } else {
-            return Response.invalidSession();
+            return ResponseEntity.ok("success");
+        } catch (PermissionDeniedException e) {
+
+            return Response.badRequest(ErrorCodes.PERMISSION_DENIED, e.message);
         }
+    }
 
-        session.invalidate();
-        return Response.ok("User deleted");
+    @PostMapping("/update")
+    public ResponseEntity<?> updateUser(@RequestBody UserCreationInfo info, HttpSession session) {
+        try {
+            if (ValidatorChain.isValid(info, false, appContext)) {
+                final User user = accountService.update(info, session);
+                return Response.okWithUser(user);
+            } else {
+                return Response.badValidator();
+            }
+        } catch (PermissionDeniedException e) {
+
+            return Response.badRequest(ErrorCodes.PERMISSION_DENIED, e.message);
+        }
     }
 
 
