@@ -1,13 +1,7 @@
 package api.services;
 
-import api.models.Course;
-import api.models.Group;
-import api.models.Subject;
-import api.models.User;
-import api.repositories.CourseRepository;
-import api.repositories.GroupRepository;
-import api.repositories.SubjectRepository;
-import api.repositories.UserRepository;
+import api.models.*;
+import api.repositories.*;
 import api.utils.error.EntityNotFoundException;
 import api.utils.error.PermissionDeniedException;
 import api.utils.info.*;
@@ -27,6 +21,7 @@ import static api.controllers.SessionController.USER_ID;
 
 @Service
 public class AdminService {
+    private final ClassRepository classRepository;
     private final UserRepository userRepository;
     private final SubjectRepository subjectRepository;
     private final GroupRepository groupRepository;
@@ -34,8 +29,9 @@ public class AdminService {
     private final JdbcTemplate template;
 
     @Autowired
-    public AdminService(UserRepository userRepository, SubjectRepository subjectRepository,
+    public AdminService(ClassRepository classRepository, UserRepository userRepository, SubjectRepository subjectRepository,
                         GroupRepository groupRepository, CourseRepository courseRepository, JdbcTemplate template) {
+        this.classRepository = classRepository;
         this.userRepository = userRepository;
         this.subjectRepository = subjectRepository;
         this.groupRepository = groupRepository;
@@ -77,6 +73,16 @@ public class AdminService {
     }
 
     @Nullable
+    public ClassModel createClass(ClassInfo info, HttpSession session) throws PermissionDeniedException {
+        if (!isAdmin(session)) {
+            throw new PermissionDeniedException("permission denied");
+        }
+
+        return classRepository.create(new ClassModel(info.getTopic(), info.getSubject(), info.getGroup(), info.getBegin(),
+                info.getEnd()));
+    }
+
+    @Nullable
     public Course getCourse(long id) {
         return courseRepository.find(id);
     }
@@ -89,6 +95,11 @@ public class AdminService {
     @Nullable
     public Subject getSubject(long id) {
         return subjectRepository.find(id);
+    }
+
+    @Nullable
+    public ClassModel getClassModel(long id) {
+        return classRepository.find(id);
     }
 
     public Course updateCourse(CourseInfo courseData, HttpSession session) throws PermissionDeniedException, EntityNotFoundException {
@@ -117,6 +128,15 @@ public class AdminService {
         return subjectRepository.update(new Subject(info.getId(), info.getCourseId(), info.getName()));
     }
 
+    public ClassModel updateClass(ClassInfo info, HttpSession session) throws PermissionDeniedException, EntityNotFoundException {
+        if (!isAdmin(session)) {
+            throw new PermissionDeniedException("permission denied");
+        }
+
+        return classRepository.update(new ClassModel(info.getId(), info.getTopic(), info.getSubject(), info.getGroup(),
+                info.getBegin(), info.getEnd()));
+    }
+
     public void deleteCourse(CourseInfo courseData, HttpSession session) throws PermissionDeniedException {
         if (!isAdmin(session)) {
             throw new PermissionDeniedException("permission denied");
@@ -141,6 +161,14 @@ public class AdminService {
         subjectRepository.delete(info.getId());
     }
 
+    public void deleteClass(ClassInfo info, HttpSession session) throws PermissionDeniedException {
+        if (!isAdmin(session)) {
+            throw new PermissionDeniedException("permission denied");
+        }
+
+        classRepository.delete(info.getId());
+    }
+
     public List<Course> selectCourseWithParams(SelectParametersInfo info, HttpSession session) throws PermissionDeniedException {
         if (!isAdmin(session)) {
             throw new PermissionDeniedException("permission denied");
@@ -162,5 +190,13 @@ public class AdminService {
         }
 
         return subjectRepository.selectWithParams(info.getLimit(), info.getOffset(), info.getOrders(), info.getFilters());
+    }
+
+    public List<ClassModel> selectClassesWithParams(SelectParametersInfo info, HttpSession session)throws PermissionDeniedException {
+        if (!isAdmin(session)) {
+            throw new PermissionDeniedException("permission denied");
+        }
+
+        return classRepository.selectWithParams(info.getLimit(), info.getOffset(), info.getOrders(), info.getFilters());
     }
 }
