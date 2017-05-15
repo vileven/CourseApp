@@ -9,6 +9,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,7 +49,7 @@ public class AccountServiceTest {
                 "sergey", "peshkov", "fox");
         final byte[] array = new byte[] {0,2,1,3,5,14,6,36,53,64,56,2};
 
-        final User createdUser = accountService.createUser(userData, array);
+        final User createdUser = accountService.createUser(userData, new MockHttpSession(), array);
 
         assertNotNull(createdUser);
         assertFalse(createdUser.isNew());
@@ -60,7 +61,7 @@ public class AccountServiceTest {
     public void createUserWithExistsEmail() throws Exception {
         final UserCreationInfo userData = new UserCreationInfo(null, 1, "email@mail.ru", "password",
                 "sergey", "peshkov", "fox");
-        final User createdUser = accountService.createUser(userData);
+        final User createdUser = accountService.createUser(userData,new MockHttpSession());
         assertNull(createdUser);
     }
 

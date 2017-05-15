@@ -44,17 +44,23 @@ public class AccountService {
     }
 
     @Nullable
-    public User createUser(UserCreationInfo userData, @Nullable byte[] avatar) {
+    public User createUser(UserCreationInfo userData, HttpSession session, @Nullable byte[] avatar) {
+        final int role;
+        if (isAdmin(session)) {
+            role = userData.getRole();
+        } else {
+            role = 1;
+        }
         final String encodedPassword = encoder.encode(userData.getPassword());
-        final User newUser = new User(userData.getRole(), userData.getEmail(), encodedPassword,
+        final User newUser = new User(role, userData.getEmail(), encodedPassword,
                 userData.getFirstName(), userData.getLastName(), avatar, userData.getAbout());
 
         return userRepository.create(newUser);
     }
 
     @Nullable
-    public User createUser(UserCreationInfo userData) {
-        return createUser(userData, null);
+    public User createUser(UserCreationInfo userData, HttpSession session) {
+        return createUser(userData, session, null);
     }
 
     @Nullable

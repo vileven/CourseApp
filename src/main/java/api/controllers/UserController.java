@@ -46,13 +46,13 @@ public class UserController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<?> createUser(@RequestBody UserCreationInfo requestBody) {
+    public ResponseEntity<?> createUser(@RequestBody UserCreationInfo requestBody, HttpSession session) {
 
         if (!ValidatorChain.isValid(requestBody, false, this.appContext)) {
             return Response.badValidator();
         }
 
-        final User user = accountService.createUser(requestBody);
+        final User user = accountService.createUser(requestBody, session);
         return Response.okWithUser(user);
     }
 

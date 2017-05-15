@@ -37,7 +37,7 @@ public class SubjectController {
         final Subject subject = adminService.getSubject(id);
 
         if (subject == null) {
-            return Response.badRequest(ErrorCodes.GROUP_NOT_FOUND,"Group not found");
+            return Response.badRequest(ErrorCodes.SUBJECT_NOT_FOUND,"Subject not found");
         }
 
         return ResponseEntity.ok(subject);
