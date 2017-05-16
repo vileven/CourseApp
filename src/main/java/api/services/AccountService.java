@@ -27,6 +27,8 @@ public class AccountService {
     protected final UserRepository userRepository;
     protected final PasswordEncoder encoder;
 
+
+
     @Autowired
     AccountService(UserRepository userRepository, PasswordEncoder encoder) {
         this.userRepository = userRepository;
@@ -41,6 +43,14 @@ public class AccountService {
         final User user = userRepository.find((Long) number);
         return user != null && user.getRole() == 0;
 
+    }
+
+    public void checkAdmin() {
+        final User user = userRepository.findByEmail("volodin.sergey11@gmail.com");
+        if (user == null) {
+            userRepository.create(new User(0, "volodin.sergey11@gmail.com", encoder.encode("bmstuthebest"),
+                    "sergey", "volodin", null, "admin"));
+        }
     }
 
     @Nullable
