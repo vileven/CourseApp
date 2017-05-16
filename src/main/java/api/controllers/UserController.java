@@ -106,12 +106,9 @@ public class UserController {
     @PostMapping("/update")
     public ResponseEntity<?> updateUser(@RequestBody UserCreationInfo info, HttpSession session) {
         try {
-            if (ValidatorChain.isValid(info, false, appContext)) {
-                final User user = accountService.update(info, session);
-                return Response.okWithUser(user);
-            } else {
-                return Response.badValidator();
-            }
+            final User user = accountService.update(info, session);
+            return Response.okWithUser(user);
+
         } catch (PermissionDeniedException e) {
 
             return Response.badRequest(ErrorCodes.PERMISSION_DENIED, e.message);
@@ -126,7 +123,6 @@ public class UserController {
             return Response.badRequest(ErrorCodes.PERMISSION_DENIED, e.message);
         }
     }
-
 
 
 }

@@ -94,6 +94,29 @@ public class UserControllerTest {
     }
 
     @Test
+    public void updateUser() throws Exception {
+        final User user = userRepository.create(new User(0, "email@yandex.ru", passwordEncoder.encode("qwerty123"),
+                "sergey", "volodin", null,"about"));
+        mockMvc
+                .perform(post("/user/update")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .sessionAttr(USER_ID, user.getId())
+                        .content('{' +
+                                "\"id\":"+id+',' +
+                                "\"role\":1," +
+                                "\"email\":\"email@mail.ru\"," +
+                                "\"password\":\"3213124cdsdfsfgd\"," +
+                                "\"first_name\":\"name\"," +
+                                "\"last_name\":\"surname\"," +
+                                "\"about\":\"about\"" +
+                                '}'))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("email").value("email@mail.ru"))
+                .andExpect(jsonPath("first_name").value("name"))
+        ;
+    }
+
+    @Test
     public void createUserExistsEmail() throws Exception {
         mockMvc
                 .perform(post("/user/create")
