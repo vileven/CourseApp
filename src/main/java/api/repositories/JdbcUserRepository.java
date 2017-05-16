@@ -2,6 +2,7 @@ package api.repositories;
 
 import api.models.User;
 import api.utils.pair.Pair;
+import api.utils.response.UserResponseBody;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -41,6 +42,12 @@ public class JdbcUserRepository implements UserRepository {
             rs.getString("password"), rs.getString("first_name"),
             rs.getString("last_name"), null,
             rs.getString("about")));
+
+    private final RowMapper<UserResponseBody> userMapperWithotPassword = (((rs, rowNum) -> new UserResponseBody(
+            rs.getLong("id"), rs.getInt("role"), rs.getString("email"),
+            rs.getString("first_name"), rs.getString("last_name"),
+            rs.getString("about"))));
+
 
     @Nullable
     @Override
@@ -162,9 +169,27 @@ public class JdbcUserRepository implements UserRepository {
     }
 
     @Override
-    public List<User> selectWithParams(Integer limit, Integer offset, @Nullable List<Pair<String, String>> orders) {
+    public List<UserResponseBody> selectWithParams(Integer limit, Integer offset, @Nullable List<Pair<String, String>> orders,
+                                                   @Nullable List<Pair<String, String>> filters) {
+
         final StringBuilder sqlConstructor = new StringBuilder();
-        sqlConstructor.append("SELECT u.id, u.role, u.email, u.password, u.first_name, u.last_name, u.about FROM users AS u ");
+        sqlConstructor.append(" SELECT u.id, u.role, u.email, u.first_name, u.last_name, u.about FROM users AS u ");
+
+        if (filters != null) {
+            sqlConstructor.append(" WHERE ");
+            for (int i = 0; i < filters.size(); i++) {
+                sqlConstructor
+                        .append("u.")
+                        .append(filters.get(i).getKey())
+                        .append(" ~* '")
+                        .append(filters.get(i).getValue())
+                        .append('\'')
+                ;
+                if (i != filters.size() - 1) {
+                    sqlConstructor.append(" AND ");
+                }
+            }
+        }
 
         if (orders != null) {
             sqlConstructor.append("ORDER BY ");
@@ -183,7 +208,7 @@ public class JdbcUserRepository implements UserRepository {
         }
         sqlConstructor.append(" LIMIT ? OFFSET ?");
 
-        return template.query(sqlConstructor.toString(), userMapper, limit, offset);
+        return template.query(sqlConstructor.toString(), userMapperWithotPassword, limit, offset);
     }
 
     @Override

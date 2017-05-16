@@ -3,7 +3,9 @@ package api.services;
 import api.models.User;
 import api.repositories.UserRepository;
 import api.utils.error.PermissionDeniedException;
+import api.utils.info.SelectParametersInfo;
 import api.utils.info.UserCreationInfo;
+import api.utils.response.UserResponseBody;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -132,4 +134,12 @@ public class AccountService {
         return userRepository.findByEmail(email) != null;
     }
 
+
+    public List<UserResponseBody> selectUsersWithParams(SelectParametersInfo info, HttpSession session) throws PermissionDeniedException {
+        if (!isAdmin(session)) {
+            throw new PermissionDeniedException("permission denied");
+        }
+
+        return userRepository.selectWithParams(info.getLimit(), info.getOffset(), info.getOrders(), info.getFilters());
+    }
 }

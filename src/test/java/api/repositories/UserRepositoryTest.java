@@ -3,6 +3,7 @@ package api.repositories;
 import api.Application;
 import api.models.User;
 import api.utils.pair.Pair;
+import api.utils.response.UserResponseBody;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -120,28 +121,32 @@ public class UserRepositoryTest {
 
     @Test
     public void selectWithParams() {
-
         for (int i = 0; i < 10; i++) {
-            final User newUser = new User(1,"email@mail.ru" + i,"password","sergey",
-                    "volodin",null,"about");
-            userRepository.create(newUser);
+            userRepository.create(new User(1, Integer.toString(i),"password","sergey",
+                    "volodin",null,"about"));
         }
 
-        List<User> res = userRepository.selectWithParams(10, 0, null);
+        List<UserResponseBody> res = userRepository.selectWithParams(10, 0, null,  null);
         assertNotNull(res);
         assertEquals(10, res.size());
 
-
-        res = userRepository.selectWithParams(5, 6, null);
+        res = userRepository.selectWithParams(5, 6, null, null);
         assertEquals(5, res.size());
-        assertEquals('9',res.get(4).getEmail().charAt(13));
+        assertEquals("9",res.get(4).getEmail());
 
-        final List<Pair<String, String>> params = Collections.singletonList(new Pair<>("id", "DESC"));
+        List<Pair<String, String>> params = Collections.singletonList(new Pair<>("id", "DESC"));
 
-        res = userRepository.selectWithParams(5, 6, params);
+        res = userRepository.selectWithParams(5, 6, params, null);
         assertEquals(5, res.size());
-        assertEquals("0", String.valueOf(res.get(3).getEmail().charAt(13)));
+        assertEquals("0", res.get(3).getEmail());
+
+        params = Collections.singletonList(new Pair<>("email", "1"));
+
+        res = userRepository.selectWithParams(1000, 0, null, params);
+        assertEquals(1, res.size());
+        assertEquals("1", res.get(0).getEmail());
     }
+
 
     private final RowMapper<User> userMapper = ((rs, rowNum) -> new User(rs.getLong("id"),
             rs.getInt("role"), rs.getString("email"),

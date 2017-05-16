@@ -10,6 +10,11 @@ public class UserResponseBody  {
 
     public final Long id;
     public final Integer role;
+
+    public String getEmail() {
+        return email;
+    }
+
     public final String email;
 
     @JsonProperty("first_name")

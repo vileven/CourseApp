@@ -4,6 +4,7 @@ import api.models.User;
 import api.services.AccountService;
 import api.utils.ErrorCodes;
 import api.utils.error.PermissionDeniedException;
+import api.utils.info.SelectParametersInfo;
 import api.utils.info.UserCreationInfo;
 import api.utils.info.UserEmailInfo;
 import api.utils.info.UserPasswordInfo;
@@ -112,6 +113,15 @@ public class UserController {
             }
         } catch (PermissionDeniedException e) {
 
+            return Response.badRequest(ErrorCodes.PERMISSION_DENIED, e.message);
+        }
+    }
+
+    @PostMapping("/select")
+    public ResponseEntity<?> selectSubjects(@RequestBody SelectParametersInfo info, HttpSession session) {
+        try {
+            return ResponseEntity.ok(accountService.selectUsersWithParams(info, session));
+        } catch (PermissionDeniedException e) {
             return Response.badRequest(ErrorCodes.PERMISSION_DENIED, e.message);
         }
     }

@@ -2,6 +2,7 @@ package api.repositories;
 
 import api.models.User;
 import api.utils.pair.Pair;
+import api.utils.response.UserResponseBody;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -39,7 +40,8 @@ public interface UserRepository {
     @Nullable
     User findByEmailWithAvatar(String email);
 
-    List<User> selectWithParams(Integer limit, Integer offset, @Nullable List<Pair<String, String>> orders);
+    List<UserResponseBody> selectWithParams(Integer limit, Integer offset, @Nullable List<Pair<String, String>> orders,
+                                            @Nullable List<Pair<String, String>> filters);
 
     void delete(long id);
 
