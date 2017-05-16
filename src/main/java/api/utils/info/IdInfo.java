@@ -14,7 +14,7 @@ public class IdInfo {
     private final Long id;
 
     @JsonCreator
-    public IdInfo(@JsonProperty Long id) {
+    public IdInfo(@JsonProperty("id") Long id) {
         this.id = id;
     }
 }

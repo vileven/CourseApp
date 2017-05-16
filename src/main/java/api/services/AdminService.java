@@ -42,7 +42,6 @@ public class AdminService {
     private boolean isAdmin(HttpSession session) {
         final User user = userRepository.find((Long) session.getAttribute(USER_ID));
         return user != null && user.getRole() == 0;
-
     }
 
     public Course createCourse(CourseInfo courseData, HttpSession session) throws PermissionDeniedException {

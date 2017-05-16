@@ -8,6 +8,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +28,9 @@ import static org.junit.Assert.*;
 @SpringBootTest(classes = Application.class)
 @Sql(scripts = "../../filling.sql")
 public class StudentServiceTest {
+
+    @Autowired
+    private JdbcTemplate template;
 
     @Autowired
     private StudentService studentService;
@@ -53,5 +58,12 @@ public class StudentServiceTest {
         assertEquals(3, res.size());
         assertEquals("Math", res.get(0).getSubjectName());
         assertEquals("English", res.get(2).getSubjectName());
+    }
+
+    @Test
+    public void createRequest() {
+        studentService.createRequest(-1, -1);
+        assertEquals(1, template.query("SELECT count(*) FROM requests",
+                (rs, rowNum) -> rs.getInt("count")).size());
     }
 }

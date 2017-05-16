@@ -49,7 +49,7 @@ public class SubjectController {
             final Subject subject = adminService.createSubject(info, session);
 
             if (subject == null) {
-                Response.badRequest(ErrorCodes.BAD_VALIDATOR, "course id not valid");
+                return Response.badRequest(ErrorCodes.BAD_VALIDATOR, "course id not valid");
             }
 
             return ResponseEntity.ok(subject);

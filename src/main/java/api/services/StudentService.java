@@ -8,6 +8,7 @@ import api.repositories.SubjectRepository;
 import api.repositories.UserRepository;
 import api.utils.response.UserClass;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Service;
@@ -69,6 +70,14 @@ public class StudentService {
     }
 
     public List<UserClass> getStudentClasses(long id, String from, String to) {
+        if (from == null) {
+            from = LocalDateTime.now().toString();
+        }
+
+        if (to == null) {
+            to = (LocalDateTime.parse(from).plusDays(7)).toString();
+        }
+
         final String query =
                 "SELECT " +
                 "  cl.id, " +
@@ -90,6 +99,8 @@ public class StudentService {
         return template.query(query, userClassMapper, id, from, to);
     }
 
-
+    public void createRequest(long studentId, long courseId) throws DataIntegrityViolationException {
+        template.update("INSERT INTO requests (student_id, course_id) VALUES (?, ?) ", studentId, courseId);
+    }
 
 }
