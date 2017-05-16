@@ -95,7 +95,7 @@ public class JdbcClassRepository implements ClassRepository {
         final StringBuilder queryBuilder = new StringBuilder();
         queryBuilder.append("SELECT * FROM classes AS cl ");
 
-        if (filters != null) {
+        if (filters != null && !filters.isEmpty()) {
             queryBuilder.append(" WHERE ");
             for (int i = 0; i < filters.size(); i++) {
                 queryBuilder
@@ -111,7 +111,7 @@ public class JdbcClassRepository implements ClassRepository {
             }
         }
 
-        if (orders != null) {
+        if (orders != null && !orders.isEmpty()) {
             queryBuilder.append(" ORDER BY ");
 
             for (int i = 1; i <= orders.size(); i++) {

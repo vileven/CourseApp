@@ -252,7 +252,7 @@ public class UserControllerTest {
                 "volodin",null,"about"));
         userRepository.create(new User(1, "mathematics","password","sergey",
                 "volodin",null,"about"));
-        userRepository.create(new User(1, "Math Analisis","password","sergey",
+        userRepository.create(new User(1, "Math  Analisis","password","sergey",
                 "volodin",null,"about"));
 
 
@@ -268,6 +268,37 @@ public class UserControllerTest {
                                 "\"offset\":1," +
                                 "\"orders\": [" +
                                 "[\"id\", \"ASC\"]" +
+                                "]," +
+                                "\"filters\": [" +
+                                "[\"email\", \"math\"]" +
+                                ']' +
+                                '}'))
+                .andExpect(jsonPath("length()").value(1));
+    }
+
+    @Test
+    public void selectWithotArrays() throws Exception {
+        userRepository.deleteAll();
+
+        userRepository.create(new User(1, "physidcs","password","sergey",
+                "volodin",null,"about"));
+        userRepository.create(new User(1, "mathematics","password","sergey",
+                "volodin",null,"about"));
+        userRepository.create(new User(1, "Math Analisis","password","sergey",
+                "volodin",null,"about"));
+
+
+        Long id = userRepository.create(new User(0, "math","password","sergey",
+                "volodin",null,"about")).getId();
+
+        mockMvc
+                .perform(post("/user/select")
+                        .sessionAttr(USER_ID, id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content('{' +
+                                "\"limit\":1," +
+                                "\"offset\":1," +
+                                "\"orders\": [" +
                                 "]," +
                                 "\"filters\": [" +
                                 "[\"email\", \"math\"]" +

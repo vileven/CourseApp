@@ -175,7 +175,7 @@ public class JdbcUserRepository implements UserRepository {
         final StringBuilder sqlConstructor = new StringBuilder();
         sqlConstructor.append(" SELECT u.id, u.role, u.email, u.first_name, u.last_name, u.about FROM users AS u ");
 
-        if (filters != null) {
+        if (filters != null && !filters.isEmpty()) {
             sqlConstructor.append(" WHERE ");
             for (int i = 0; i < filters.size(); i++) {
                 sqlConstructor
@@ -191,7 +191,7 @@ public class JdbcUserRepository implements UserRepository {
             }
         }
 
-        if (orders != null) {
+        if (orders != null && !orders.isEmpty()) {
             sqlConstructor.append("ORDER BY ");
 
             for (int i = 0; i < orders.size(); i++) {

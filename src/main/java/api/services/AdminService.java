@@ -40,7 +40,11 @@ public class AdminService {
     }
 
     private boolean isAdmin(HttpSession session) {
-        final User user = userRepository.find((Long) session.getAttribute(USER_ID));
+        Object id = session.getAttribute(USER_ID);
+        User user = null;
+        if (id != null) {
+            user = userRepository.find((Long) id);
+        }
         return user != null && user.getRole() == 0;
     }
 

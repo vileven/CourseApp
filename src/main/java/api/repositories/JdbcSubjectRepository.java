@@ -97,7 +97,7 @@ public class JdbcSubjectRepository implements SubjectRepository {
         final StringBuilder queryBuilder = new StringBuilder();
         queryBuilder.append("SELECT * FROM subjects AS s ");
 
-        if (filters != null) {
+        if (filters != null && !filters.isEmpty()) {
             queryBuilder.append(" WHERE ");
             for (int i = 0; i < filters.size(); i++) {
                 queryBuilder
@@ -113,7 +113,7 @@ public class JdbcSubjectRepository implements SubjectRepository {
             }
         }
 
-        if (orders != null) {
+        if (orders != null && !orders.isEmpty()) {
             queryBuilder.append("ORDER BY ");
 
             for (int i = 1; i <= orders.size(); i++) {

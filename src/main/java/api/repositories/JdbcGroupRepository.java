@@ -96,7 +96,7 @@ public class JdbcGroupRepository implements GroupRepository {
         final StringBuilder queryBuilder = new StringBuilder();
         queryBuilder.append("SELECT * FROM groups AS g ");
 
-        if (filters != null) {
+        if (filters != null && !filters.isEmpty()) {
             queryBuilder.append(" WHERE ");
             for (int i = 0; i < filters.size(); i++) {
                 queryBuilder
@@ -112,7 +112,7 @@ public class JdbcGroupRepository implements GroupRepository {
             }
         }
 
-        if (orders != null) {
+        if (orders != null && !orders.isEmpty()) {
             queryBuilder.append("ORDER BY ");
 
             for (int i = 0; i <= orders.size() - 1; i++) {
