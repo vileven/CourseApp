@@ -222,5 +222,10 @@ public class JdbcUserRepository implements UserRepository {
         this.template.update("DELETE FROM users");
     }
 
+    @Override
+    public int getCount() {
+        return template.queryForObject("SELECT count(*) FROM users ", Integer.class);
+    }
+
 
 }

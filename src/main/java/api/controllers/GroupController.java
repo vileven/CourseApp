@@ -8,6 +8,7 @@ import api.utils.error.PermissionDeniedException;
 import api.utils.info.GroupInfo;
 import api.utils.info.SelectParametersInfo;
 import api.utils.response.Response;
+import api.utils.response.SelectBody;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -85,7 +86,7 @@ public class GroupController {
     @PostMapping("/select")
     public ResponseEntity<?> selectGroups(@RequestBody SelectParametersInfo info, HttpSession session) {
         try {
-            return ResponseEntity.ok(adminService.selectGroupWithParams(info, session));
+            return ResponseEntity.ok(new SelectBody(adminService.selectGroupWithParams(info, session), adminService.getCount("groups")));
         } catch (PermissionDeniedException e) {
             return Response.badRequest(ErrorCodes.PERMISSION_DENIED, e.message);
         }

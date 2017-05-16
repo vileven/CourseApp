@@ -183,7 +183,7 @@ public class GroupControllerTest {
                                 "[\"name\", \"ИУ6\"]" +
                                 ']' +
                                 '}'))
-                .andExpect(jsonPath("length()").value(1));
+                .andExpect(jsonPath("$..entries.length()").value(1));
     }
 
 }

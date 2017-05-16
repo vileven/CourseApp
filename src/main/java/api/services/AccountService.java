@@ -142,4 +142,9 @@ public class AccountService {
 
         return userRepository.selectWithParams(info.getLimit(), info.getOffset(), info.getOrders(), info.getFilters());
     }
+
+    public Integer getCount() {
+
+        return userRepository.getCount();
+    }
 }

@@ -10,6 +10,7 @@ import api.utils.info.GroupInfo;
 import api.utils.info.SelectParametersInfo;
 import api.utils.info.SubjectInfo;
 import api.utils.response.Response;
+import api.utils.response.SelectBody;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
@@ -91,7 +92,7 @@ public class SubjectController {
     @PostMapping("/select")
     public ResponseEntity<?> selectSubjects(@RequestBody SelectParametersInfo info, HttpSession session) {
         try {
-            return ResponseEntity.ok(adminService.selectSubjectsWithParams(info, session));
+            return ResponseEntity.ok(new SelectBody(adminService.selectSubjectsWithParams(info, session), adminService.getCount("subjects")));
         } catch (PermissionDeniedException e) {
             return Response.badRequest(ErrorCodes.PERMISSION_DENIED, e.message);
         }

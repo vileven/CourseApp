@@ -202,4 +202,9 @@ public class AdminService {
 
         return classRepository.selectWithParams(info.getLimit(), info.getOffset(), info.getOrders(), info.getFilters());
     }
+
+    public Integer getCount(String tableName) {
+
+        return template.queryForObject("SELECT count(*) FROM " + tableName, Integer.class);
+    }
 }

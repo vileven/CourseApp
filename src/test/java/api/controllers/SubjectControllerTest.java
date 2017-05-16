@@ -168,7 +168,7 @@ public class SubjectControllerTest {
                                 "[\"name\", \"math\"]" +
                                 ']' +
                                 '}'))
-                .andExpect(jsonPath("length()").value(1));
+                .andExpect(jsonPath("$..entries.length()").value(1));
     }
 
 }

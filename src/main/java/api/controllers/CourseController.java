@@ -10,6 +10,7 @@ import api.utils.info.IdInfo;
 import api.utils.info.SelectParametersInfo;
 import api.utils.response.CourseBody;
 import api.utils.response.Response;
+import api.utils.response.SelectBody;
 import api.utils.response.generic.ResponseBody;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -87,7 +88,7 @@ public class CourseController {
     @PostMapping("/select")
     public ResponseEntity<?> selectCourses(@RequestBody SelectParametersInfo info, HttpSession session) {
         try {
-            return ResponseEntity.ok(adminService.selectCourseWithParams(info, session));
+            return ResponseEntity.ok(new SelectBody(adminService.selectCourseWithParams(info, session), adminService.getCount("courses")));
         } catch (PermissionDeniedException e) {
             return Response.badRequest(ErrorCodes.PERMISSION_DENIED, e.message);
         }

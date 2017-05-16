@@ -273,7 +273,7 @@ public class UserControllerTest {
                                 "[\"email\", \"math\"]" +
                                 ']' +
                                 '}'))
-                .andExpect(jsonPath("length()").value(1));
+                .andExpect(jsonPath("$..entries.length()").value(1));
     }
 
     @Test
@@ -304,6 +304,8 @@ public class UserControllerTest {
                                 "[\"email\", \"math\"]" +
                                 ']' +
                                 '}'))
-                .andExpect(jsonPath("length()").value(1));
+                .andExpect(jsonPath("$..entries.length()").value(1))
+                .andExpect(jsonPath("total").isNumber())
+        ;
     }
 }

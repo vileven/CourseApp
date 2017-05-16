@@ -46,4 +46,6 @@ public interface UserRepository {
     void delete(long id);
 
     void deleteAll();
+
+    int getCount();
 }

@@ -8,6 +8,7 @@ import api.utils.error.PermissionDeniedException;
 import api.utils.info.ClassInfo;
 import api.utils.info.SelectParametersInfo;
 import api.utils.response.Response;
+import api.utils.response.SelectBody;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
@@ -91,7 +92,7 @@ public class ClassController {
     @PostMapping("/select")
     public ResponseEntity<?> selectClasses(@RequestBody SelectParametersInfo info, HttpSession session) {
         try {
-            return ResponseEntity.ok(adminService.selectClassesWithParams(info, session));
+            return ResponseEntity.ok(new SelectBody(adminService.selectClassesWithParams(info, session), adminService.getCount("classes")));
         } catch (PermissionDeniedException e) {
             return Response.badRequest(ErrorCodes.PERMISSION_DENIED, e.message);
         }

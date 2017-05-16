@@ -9,6 +9,7 @@ import api.utils.info.UserCreationInfo;
 import api.utils.info.UserEmailInfo;
 import api.utils.info.UserPasswordInfo;
 import api.utils.response.Response;
+import api.utils.response.SelectBody;
 import api.utils.response.generic.ResponseBody;
 import api.utils.validator.ValidatorChain;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -120,7 +121,7 @@ public class UserController {
     @PostMapping("/select")
     public ResponseEntity<?> selectSubjects(@RequestBody SelectParametersInfo info, HttpSession session) {
         try {
-            return ResponseEntity.ok(accountService.selectUsersWithParams(info, session));
+            return ResponseEntity.ok(new SelectBody(accountService.selectUsersWithParams(info, session), accountService.getCount()));
         } catch (PermissionDeniedException e) {
             return Response.badRequest(ErrorCodes.PERMISSION_DENIED, e.message);
         }
