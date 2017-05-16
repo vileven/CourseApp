@@ -42,7 +42,7 @@ public class Response {
     }
 
     public static ResponseEntity<? extends ResponseBody> badLoginOrPassword() {
-        return Response.badRequest(ErrorCodes.BAD_LOGIN_OR_PASSWORD, "Bad login or password");
+        return ResponseEntity.ok(new ResponseBody(ErrorCodes.BAD_LOGIN_OR_PASSWORD, "Bad login or password"));
     }
 
     public static ResponseEntity<? extends ResponseBody> badValidator() {

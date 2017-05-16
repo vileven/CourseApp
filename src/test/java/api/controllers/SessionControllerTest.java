@@ -67,9 +67,9 @@ public class SessionControllerTest {
                                 "\"password\":\"qwerty123\"" +
                                 '}'))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("status").value(ErrorCodes.SUCCESS))
+                .andExpect(jsonPath("email").value("email@mail.ru"))
                 .andReturn()
-                ;
+        ;
 
         assertEquals(this.id, result.getRequest().getSession().getAttribute(USER_ID));
     }
@@ -83,7 +83,7 @@ public class SessionControllerTest {
                                 "\"email\":\"email@mail.ru\"," +
                                 "\"password\":\"wrong password\"" +
                                 '}'))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("status").value(ErrorCodes.BAD_LOGIN_OR_PASSWORD))
         ;
     }

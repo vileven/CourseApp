@@ -34,7 +34,7 @@ public class SessionController {
      * @return json <code>User</code> ответ если OK, иначе <code>HTTP</code> код соответсвующей ошибки
      */
     @PostMapping("/login")
-    public ResponseEntity<? extends ResponseBody> loginUser(@RequestBody UserAuthInfo requestBody, HttpSession session) {
+    public ResponseEntity<?> loginUser(@RequestBody UserAuthInfo requestBody, HttpSession session) {
 
         final User user = accountService.authenticateUser(requestBody.getEmail(), requestBody.getPassword());
         if (user == null) {
@@ -43,7 +43,7 @@ public class SessionController {
 
         session.setAttribute(USER_ID, user.getId());
 
-        return Response.ok("Logged in");
+        return Response.okWithUser(user);
     }
 
 

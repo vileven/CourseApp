@@ -69,7 +69,6 @@ public class CourseControllerTest {
                                 "\"password\":\"qwerty123\"" +
                                 '}'))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("status").value(ErrorCodes.SUCCESS))
                 .andReturn();
 
         assertEquals(admin.getId(), result.getRequest().getSession().getAttribute(USER_ID));
