@@ -75,10 +75,10 @@ public class JdbcUserRepository implements UserRepository {
     @Override
     public User update(User user) {
         final String sql =  "UPDATE users " +
-                "SET role = ?, email = ?, password = ?, first_name = ?, " +
+                "SET role = ?, email = ?, first_name = ?, " +
                 "last_name = ?, avatar = ?, about = ? WHERE id = ? ";
 
-        final int count = template.update(sql, user.getRole(), user.getEmail(), user.getPassword(), user.getFirstName(),
+        final int count = template.update(sql, user.getRole(), user.getEmail(), user.getFirstName(),
                 user.getLastName(), user.getAvatar(), user.getAbout(), user.getId());
 
         return user;

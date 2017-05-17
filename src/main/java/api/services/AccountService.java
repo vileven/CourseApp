@@ -5,6 +5,7 @@ import api.repositories.UserRepository;
 import api.utils.error.PermissionDeniedException;
 import api.utils.info.SelectParametersInfo;
 import api.utils.info.UserCreationInfo;
+import api.utils.info.UserUpdateInfo;
 import api.utils.response.UserResponseBody;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -116,13 +117,13 @@ public class AccountService {
         userRepository.updatePassword(id, encoder.encode(password));
     }
 
-    public User update(UserCreationInfo info, HttpSession session) throws PermissionDeniedException {
+    public User update(UserUpdateInfo info, HttpSession session) throws PermissionDeniedException {
 
         if (info.getRole() != null && !isAdmin(session)) {
             throw new PermissionDeniedException("permission denied");
         }
 
-        return userRepository.update(new User(info.getId(), info.getRole(), info.getEmail(), info.getPassword(),
+        return userRepository.update(new User(info.getId(), info.getRole(), info.getEmail(), "",
                 info.getFirstName(), info.getLastName(), null, info.getAbout()));
     }
 

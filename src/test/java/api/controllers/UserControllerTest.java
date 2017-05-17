@@ -105,7 +105,6 @@ public class UserControllerTest {
                                 "\"id\":"+id+',' +
                                 "\"role\":1," +
                                 "\"email\":\"email@mail.ru\"," +
-                                "\"password\":\"3213124cdsdfsfgd\"," +
                                 "\"first_name\":\"name\"," +
                                 "\"last_name\":\"surname\"," +
                                 "\"about\":\"about\"" +

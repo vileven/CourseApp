@@ -4,10 +4,7 @@ import api.models.User;
 import api.services.AccountService;
 import api.utils.ErrorCodes;
 import api.utils.error.PermissionDeniedException;
-import api.utils.info.SelectParametersInfo;
-import api.utils.info.UserCreationInfo;
-import api.utils.info.UserEmailInfo;
-import api.utils.info.UserPasswordInfo;
+import api.utils.info.*;
 import api.utils.response.Response;
 import api.utils.response.SelectBody;
 import api.utils.response.generic.ResponseBody;
@@ -104,7 +101,7 @@ public class UserController {
     }
 
     @PostMapping("/update")
-    public ResponseEntity<?> updateUser(@RequestBody UserCreationInfo info, HttpSession session) {
+    public ResponseEntity<?> updateUser(@RequestBody UserUpdateInfo info, HttpSession session) {
         try {
             final User user = accountService.update(info, session);
             return Response.okWithUser(user);

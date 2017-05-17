@@ -13,6 +13,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -71,7 +72,7 @@ public class StudentService {
 
     public List<UserClass> getStudentClasses(long id, String from, String to) {
         if (from == null) {
-            from = LocalDateTime.now().toString();
+            from = LocalDate.now().atStartOfDay().toString();
         }
 
         if (to == null) {
