@@ -10,16 +10,22 @@ public class Group extends Model<Long> {
 
     @JsonProperty("course_id")
     private Long courseId;
+
+    @JsonProperty("course_name")
+    private String courseName;
+
     private String name;
 
-    public Group(Long id, Long courseId, String name) {
+    public Group(Long id, Long courseId, String courseName, String name) {
         this.id = id;
         this.courseId = courseId;
+        this.courseName = courseName;
         this.name = name;
     }
 
-    public Group(Long courseId, String name) {
+    public Group(Long courseId, String courseName, String name) {
         this.courseId = courseId;
+        this.courseName = courseName;
         this.name = name;
     }
 
@@ -46,5 +52,9 @@ public class Group extends Model<Long> {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getCourseName() {
+        return courseName;
     }
 }

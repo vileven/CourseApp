@@ -4,7 +4,6 @@ import api.Application;
 import api.models.ClassModel;
 import api.models.Course;
 import api.models.Group;
-import api.models.Subject;
 import api.utils.error.EntityNotFoundException;
 import api.utils.pair.Pair;
 import api.utils.response.SubjectResponse;
@@ -65,7 +64,7 @@ public class ClassRepositoryTest {
         final Course course = courseRepository.create(new Course("name"));
         assertNotNull(course);
 
-        group = groupRepository.create(new Group(course.getId(), "ИУ6-43"));
+        group = groupRepository.create(new Group(course.getId(), course.getName(), "ИУ6-43"));
         assertNotNull(group);
 
         subject = subjectRepository.create(new SubjectResponse(course.getId(), course.getName(), "math"));

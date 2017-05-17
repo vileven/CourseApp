@@ -64,7 +64,7 @@ public class AdminService {
             throw new PermissionDeniedException("permission denied");
         }
 
-        return groupRepository.create(new Group(groupData.getCourseId(), groupData.getName()));
+        return groupRepository.create(new Group(groupData.getCourseId(), groupData.getCourseName(), groupData.getName()));
     }
 
     @Nullable
@@ -120,7 +120,7 @@ public class AdminService {
             throw new PermissionDeniedException("permission denied");
         }
 
-        return groupRepository.update(new Group(info.getId(), info.getCourseId(), info.getName()));
+        return groupRepository.update(new Group(info.getId(), info.getCourseId(), info.getCourseName(), info.getName()));
     }
 
     @Nullable

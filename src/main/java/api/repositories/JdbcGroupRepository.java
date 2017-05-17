@@ -31,7 +31,7 @@ public class JdbcGroupRepository implements GroupRepository {
     }
 
     private final RowMapper<Group> groupMapper = (((rs, rowNum) -> new Group(rs.getLong("id"),
-            rs.getLong("course_id"), rs.getString("name"))));
+            rs.getLong("course_id"), rs.getString("course_name"), rs.getString("name"))));
 
     @Nullable
     @Override
@@ -53,7 +53,8 @@ public class JdbcGroupRepository implements GroupRepository {
     @Override
     public Group find(long id) {
         try {
-            return template.queryForObject("SELECT * FROM groups WHERE id = ?", groupMapper, id);
+            return template.queryForObject("SELECT g.id, g.course_id, c.name AS course_name, g.name " +
+                    "FROM groups AS g JOIN courses AS c ON g.course_id = c.id WHERE g.id = ?", groupMapper, id);
         } catch (EmptyResultDataAccessException e) {
             return null;
         }
@@ -61,7 +62,8 @@ public class JdbcGroupRepository implements GroupRepository {
 
     @Override
     public List<Group> findByName(String name) {
-        return template.query("SELECT * FROM groups WHERE name = ?",groupMapper, name);
+        return template.query("SELECT g.id, g.course_id, c.name AS course_name, g.name " +
+                "FROM groups AS g JOIN courses AS c ON g.course_id = c.id WHERE g.name = ?",groupMapper, name);
     }
 
     @Override
@@ -94,7 +96,8 @@ public class JdbcGroupRepository implements GroupRepository {
     public List<Group> selectWithParams(Integer limit, Integer offset, @Nullable List<Pair<String, String>> orders,
                                         @Nullable List<Pair<String, String>> filters) {
         final StringBuilder queryBuilder = new StringBuilder();
-        queryBuilder.append("SELECT * FROM groups AS g ");
+        queryBuilder.append("SELECT g.id, g.course_id, c.name AS course_name, g.name ")
+                .append("FROM groups AS g JOIN courses AS c ON g.course_id = c.id ");
 
         if (filters != null && !filters.isEmpty()) {
             queryBuilder.append(" WHERE ");
@@ -117,6 +120,7 @@ public class JdbcGroupRepository implements GroupRepository {
 
             for (int i = 0; i <= orders.size() - 1; i++) {
                 queryBuilder
+                        .append("g.")
                         .append(orders.get(i).getKey())
                         .append(' ')
                         .append(orders.get(i).getValue())

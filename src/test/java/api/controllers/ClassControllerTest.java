@@ -74,7 +74,7 @@ public class ClassControllerTest {
         assertNotNull(subject);
 
         groupRepository.deleteAll();
-        group = groupRepository.create(new Group(course.getId(),"ИУ6-43"));
+        group = groupRepository.create(new Group(course.getId(), course.getName(), "ИУ6-43"));
         assertNotNull(group);
 
         classRepository.deleteAll();

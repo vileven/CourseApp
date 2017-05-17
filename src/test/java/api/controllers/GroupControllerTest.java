@@ -65,7 +65,7 @@ public class GroupControllerTest {
         assertNotNull(course);
 
         groupRepository.deleteAll();
-        group = groupRepository.create(new Group(course.getId(),"ИУ6-43"));
+        group = groupRepository.create(new Group(course.getId(), course.getName(), "ИУ6-43"));
         assertNotNull(group);
 
         userRepository.deleteAll();
@@ -167,8 +167,8 @@ public class GroupControllerTest {
 
     @Test
     public void select() throws Exception {
-        groupRepository.create(new Group(course.getId(),"second"));
-        groupRepository.create(new Group(course.getId(),"ИУ6-42"));
+        groupRepository.create(new Group(course.getId(), course.getName(), "second"));
+        groupRepository.create(new Group(course.getId(), course.getName(), "ИУ6-42"));
         mockMvc
                 .perform(post("/group/select")
                         .sessionAttr(USER_ID, admin.getId())

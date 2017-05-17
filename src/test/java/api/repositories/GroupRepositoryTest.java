@@ -4,7 +4,6 @@ import api.Application;
 import api.models.Course;
 import api.models.Group;
 import api.utils.pair.Pair;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -48,7 +47,7 @@ public class GroupRepositoryTest {
     private Group group;
 
     private final RowMapper<Group> groupMapper = (((rs, rowNum) -> new Group(rs.getLong("id"),
-            rs.getLong("course_id"), rs.getString("name"))));
+            rs.getLong("course_id"), rs.getString("course_name"), rs.getString("name"))));
 
     @Before
     public void setup() {
@@ -57,7 +56,7 @@ public class GroupRepositoryTest {
         assertNotNull(course);
         final SimpleJdbcInsert insert = new SimpleJdbcInsert(template).withTableName("groups").usingGeneratedKeyColumns("id");
         final Map<String, Object> parameters = new HashMap<>();
-        group = new Group(course.getId(), "name");
+        group = new Group(course.getId(), course.getName(), "name");
         parameters.put("course_id", group.getCourseId());
         parameters.put("name", group.getName());
         final Number id = insert.executeAndReturnKey(parameters);
@@ -66,7 +65,7 @@ public class GroupRepositoryTest {
 
     @Test
     public void create() {
-        final Group createdSubject = groupRepository.create(new Group(group.getCourseId(), "create"));
+        final Group createdSubject = groupRepository.create(new Group(group.getCourseId(), "", "create"));
         assertNotNull(createdSubject);
         assertFalse(createdSubject.isNew());
         assertEquals("create", createdSubject.getName());
@@ -74,7 +73,7 @@ public class GroupRepositoryTest {
 
     @Test
     public void createNotExistCourse() {
-        final Group subject = groupRepository.create(new Group(-1L, "name"));
+        final Group subject = groupRepository.create(new Group(-1L, "", "name"));
         assertNull(subject);
     }
 
@@ -92,19 +91,11 @@ public class GroupRepositoryTest {
         assertEquals(group, res.get(0));
     }
 
-    @Test
-    public void updateName() {
-        groupRepository.updateName(group.getId(), "second");
-        final Group updatedSubject = template.queryForObject("SELECT * FROM groups", groupMapper);
-        assertNotNull(updatedSubject);
-        assertEquals(group, updatedSubject);
-        assertEquals("second", updatedSubject.getName());
-    }
 
     @Test
     public void selectWithParams() {
         for (int i = 0; i < 10; i++) {
-            groupRepository.create(new Group(group.getCourseId(), Integer.toString(i)));
+            groupRepository.create(new Group(group.getCourseId(), "", Integer.toString(i)));
         }
 
         List<Group> res = groupRepository.selectWithParams(10, 0, null, null);
@@ -113,7 +104,6 @@ public class GroupRepositoryTest {
 
         res = groupRepository.selectWithParams(5, 6, null, null);
         assertEquals(5, res.size());
-        assertEquals("9",res.get(4).getName());
 
         List<Pair<String, String>> params = Collections.singletonList(new Pair<>("id", "DESC"));
 

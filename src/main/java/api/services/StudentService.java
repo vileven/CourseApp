@@ -44,12 +44,14 @@ public class StudentService {
         final String query =
                 "SELECT " +
                 "  g.id, " +
-                "  g.name, " +
-                "  g.course_id " +
+                "  g.course_id, " +
+                "  c.name AS course_name, " +
+                "  g.name " +
                 "FROM " +
                 "  users AS u " +
                 "  JOIN applications AS a ON u.id = a.student_id " +
                 "  JOIN groups AS g ON a.group_id = g.id " +
+                "  JOIN courses AS c ON c.id = g.course_id " +
                 "WHERE u.id = ? ";
 
         return this.template.query(query, groupRepository.getMapper(), id);
