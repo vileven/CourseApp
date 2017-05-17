@@ -113,7 +113,7 @@ public class UserController {
     }
 
     @PostMapping("/select")
-    public ResponseEntity<?> selectSubjects(@RequestBody SelectParametersInfo info, HttpSession session) {
+    public ResponseEntity<?> selectUsers(@RequestBody SelectParametersInfo info, HttpSession session) {
         try {
             return ResponseEntity.ok(new SelectBody(accountService.selectUsersWithParams(info, session), accountService.getCount()));
         } catch (PermissionDeniedException e) {

@@ -4,6 +4,7 @@ import api.Application;
 import api.models.*;
 import api.repositories.*;
 import api.utils.ErrorCodes;
+import api.utils.response.SubjectResponse;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -58,7 +59,7 @@ public class ClassControllerTest {
 
     private User admin;
 
-    private Subject subject;
+    private SubjectResponse subject;
 
     private Group group;
 
@@ -69,7 +70,7 @@ public class ClassControllerTest {
         assertNotNull(course);
 
         subjectRepository.deleteAll();
-        subject = subjectRepository.create(new Subject(course.getId(),"Math"));
+        subject = subjectRepository.create(new SubjectResponse(course.getId(),course.getName(),"Math"));
         assertNotNull(subject);
 
         groupRepository.deleteAll();

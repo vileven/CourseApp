@@ -8,6 +8,7 @@ import api.repositories.CourseRepository;
 import api.repositories.SubjectRepository;
 import api.repositories.UserRepository;
 import api.utils.ErrorCodes;
+import api.utils.response.SubjectResponse;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -56,7 +57,7 @@ public class SubjectControllerTest {
 
     private User admin;
 
-    private Subject subject;
+    private SubjectResponse subject;
 
     @Before
     public void setup() throws Exception {
@@ -65,7 +66,7 @@ public class SubjectControllerTest {
         assertNotNull(course);
 
         subjectRepository.deleteAll();
-        subject = subjectRepository.create(new Subject(course.getId(),"Math"));
+        subject = subjectRepository.create(new SubjectResponse(course.getId(),null,"Math"));
         assertNotNull(subject);
 
         userRepository.deleteAll();
@@ -124,6 +125,7 @@ public class SubjectControllerTest {
                         .content('{' +
                                 "\"id\":\""+subject.getId()+"\"," +
                                 "\"course_id\":\""+course.getId()+"\"," +
+                                "\"course_name\":\""+course.getId()+"\"," +
                                 "\"name\":\"updated_name\"" +
                                 '}'))
                 .andExpect(status().isOk())
@@ -151,9 +153,9 @@ public class SubjectControllerTest {
 
     @Test
     public void selectSubjects() throws Exception {
-        subjectRepository.create(new Subject(course.getId(),"physics"));
-        subjectRepository.create(new Subject(course.getId(),"mathematics"));
-        subjectRepository.create(new Subject(course.getId(), "Math Analisis"));
+        subjectRepository.create(new SubjectResponse(course.getId(), null,"physics"));
+        subjectRepository.create(new SubjectResponse(course.getId(), null,"mathematics"));
+        subjectRepository.create(new SubjectResponse(course.getId(),null, "Math Analisis"));
         mockMvc
                 .perform(post("/subject/select")
                         .sessionAttr(USER_ID, admin.getId())

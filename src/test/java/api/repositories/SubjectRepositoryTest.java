@@ -4,6 +4,7 @@ import api.Application;
 import api.models.Course;
 import api.models.Subject;
 import api.utils.pair.Pair;
+import api.utils.response.SubjectResponse;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -46,7 +47,7 @@ public class SubjectRepositoryTest {
     @Autowired
     private CourseRepository courseRepository;
 
-    private Subject subject;
+    private SubjectResponse subject;
 
     private final RowMapper<Subject> subjectMapper = (((rs, rowNum) -> new Subject(rs.getLong("id"),
             rs.getLong("course_id"), rs.getString("name"))));
@@ -58,7 +59,7 @@ public class SubjectRepositoryTest {
         assertNotNull(course);
         final SimpleJdbcInsert insert = new SimpleJdbcInsert(template).withTableName("subjects").usingGeneratedKeyColumns("id");
         final Map<String, Object> parameters = new HashMap<>();
-        subject = new Subject(course.getId(), "name");
+        subject = new SubjectResponse(course.getId(), course.getName(),"name");
         parameters.put("course_id", subject.getCourseId());
         parameters.put("name", subject.getName());
         final Number id = insert.executeAndReturnKey(parameters);
@@ -67,7 +68,7 @@ public class SubjectRepositoryTest {
 
     @Test
     public void create() {
-        final Subject createdSubject = subjectRepository.create(new Subject(subject.getCourseId(), "create"));
+        final SubjectResponse createdSubject = subjectRepository.create(new SubjectResponse(subject.getCourseId(),null, "create"));
         assertNotNull(createdSubject);
         assertFalse(createdSubject.isNew());
         assertEquals("create", createdSubject.getName());
@@ -75,7 +76,7 @@ public class SubjectRepositoryTest {
 
     @Test
     public void createNotExistSubject() {
-        final Subject subject = subjectRepository.create(new Subject(-1L, "name"));
+        final SubjectResponse subject = subjectRepository.create(new SubjectResponse(-1L,null, "name"));
         assertNull(subject);
     }
 
@@ -88,14 +89,14 @@ public class SubjectRepositoryTest {
 
     @Test
     public void find() {
-        final Subject findedSubject = subjectRepository.find(subject.getId());
+        final SubjectResponse findedSubject = subjectRepository.find(subject.getId());
         assertNotNull(findedSubject);
         assertEquals(subject, findedSubject);
     }
 
     @Test
     public void findByName() {
-        final List<Subject> res = subjectRepository.findByName("name");
+        final List<SubjectResponse> res = subjectRepository.findByName("name");
         assertEquals(1, res.size());
         assertEquals(subject, res.get(0));
     }
@@ -112,16 +113,15 @@ public class SubjectRepositoryTest {
     @Test
     public void selectWithParams() {
         for (int i = 0; i < 10; i++) {
-            subjectRepository.create(new Subject(subject.getCourseId(), Integer.toString(i)));
+            subjectRepository.create(new SubjectResponse(subject.getCourseId(), null, Integer.toString(i)));
         }
 
-        List<Subject> res = subjectRepository.selectWithParams(10, 0, null,  null);
+        List<SubjectResponse> res = subjectRepository.selectWithParams(10, 0, null,  null);
         assertNotNull(res);
         assertEquals(10, res.size());
 
         res = subjectRepository.selectWithParams(5, 6, null, null);
         assertEquals(5, res.size());
-        assertEquals("9",res.get(4).getName());
 
         List<Pair<String, String>> params = Collections.singletonList(new Pair<>("id", "DESC"));
 

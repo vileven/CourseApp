@@ -3,6 +3,7 @@ package api.repositories;
 import api.models.Subject;
 import api.utils.error.EntityNotFoundException;
 import api.utils.pair.Pair;
+import api.utils.response.SubjectResponse;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.dao.DataIntegrityViolationException;
 
@@ -13,12 +14,12 @@ import java.util.List;
  */
 public interface SubjectRepository {
     @Nullable
-    Subject create(Subject subject);
+    SubjectResponse create(SubjectResponse subject);
 
     @Nullable
-    Subject find(long id);
+    SubjectResponse find(long id);
 
-    List<Subject> findByName(String name);
+    List<SubjectResponse> findByName(String name);
 
     void delete(long id);
 
@@ -27,10 +28,10 @@ public interface SubjectRepository {
     void updateCourseId(long id, long courseId);
 
     @Nullable
-    Subject update(Subject subject) throws DataIntegrityViolationException, EntityNotFoundException;
+    SubjectResponse update(SubjectResponse subject) throws DataIntegrityViolationException, EntityNotFoundException;
 
-    List<Subject> selectWithParams(Integer limit, Integer offset,@Nullable List<Pair<String, String>> orders,
-                                   @Nullable List<Pair<String, String>> filters);
+    List<SubjectResponse> selectWithParams(Integer limit, Integer offset, @Nullable List<Pair<String, String>> orders,
+                                           @Nullable List<Pair<String, String>> filters);
 
     void deleteAll();
 }

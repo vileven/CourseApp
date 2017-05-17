@@ -5,6 +5,7 @@ import api.repositories.*;
 import api.utils.error.EntityNotFoundException;
 import api.utils.error.PermissionDeniedException;
 import api.utils.info.*;
+import api.utils.response.SubjectResponse;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -67,12 +68,12 @@ public class AdminService {
     }
 
     @Nullable
-    public Subject createSubject(SubjectInfo subjectData, HttpSession session) throws PermissionDeniedException {
+    public SubjectResponse createSubject(SubjectInfo subjectData, HttpSession session) throws PermissionDeniedException {
         if (!isAdmin(session)) {
             throw new PermissionDeniedException("permission denied");
         }
 
-        return subjectRepository.create(new Subject(subjectData.getCourseId(), subjectData.getName()));
+        return subjectRepository.create(new SubjectResponse(subjectData.getCourseId(),null, subjectData.getName()));
     }
 
     @Nullable
@@ -96,7 +97,7 @@ public class AdminService {
     }
 
     @Nullable
-    public Subject getSubject(long id) {
+    public SubjectResponse getSubject(long id) {
         return subjectRepository.find(id);
     }
 
@@ -123,12 +124,12 @@ public class AdminService {
     }
 
     @Nullable
-    public Subject updateSubject(SubjectInfo info, HttpSession session) throws PermissionDeniedException, EntityNotFoundException {
+    public SubjectResponse updateSubject(SubjectInfo info, HttpSession session) throws PermissionDeniedException, EntityNotFoundException {
         if (!isAdmin(session)) {
             throw new PermissionDeniedException("permission denied");
         }
 
-        return subjectRepository.update(new Subject(info.getId(), info.getCourseId(), info.getName()));
+        return subjectRepository.update(new SubjectResponse(info.getId(), info.getCourseId(), info.getCourseName(), info.getName()));
     }
 
     public ClassModel updateClass(ClassInfo info, HttpSession session) throws PermissionDeniedException, EntityNotFoundException {
@@ -187,7 +188,7 @@ public class AdminService {
         return groupRepository.selectWithParams(info.getLimit(), info.getOffset(), info.getOrders(), info.getFilters());
     }
 
-    public List<Subject> selectSubjectsWithParams(SelectParametersInfo info, HttpSession session)throws PermissionDeniedException {
+    public List<SubjectResponse> selectSubjectsWithParams(SelectParametersInfo info, HttpSession session)throws PermissionDeniedException {
         if (!isAdmin(session)) {
             throw new PermissionDeniedException("permission denied");
         }

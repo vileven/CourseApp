@@ -11,6 +11,7 @@ import api.utils.info.SelectParametersInfo;
 import api.utils.info.SubjectInfo;
 import api.utils.response.Response;
 import api.utils.response.SelectBody;
+import api.utils.response.SubjectResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
@@ -35,7 +36,7 @@ public class SubjectController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getById(@PathVariable Long id) {
-        final Subject subject = adminService.getSubject(id);
+        final SubjectResponse subject = adminService.getSubject(id);
 
         if (subject == null) {
             return Response.badRequest(ErrorCodes.SUBJECT_NOT_FOUND,"Subject not found");
@@ -47,7 +48,7 @@ public class SubjectController {
     @PostMapping("/create")
     public ResponseEntity<?> createSubject(@RequestBody SubjectInfo info, HttpSession session) {
         try {
-            final Subject subject = adminService.createSubject(info, session);
+            final SubjectResponse subject = adminService.createSubject(info, session);
 
             if (subject == null) {
                 return Response.badRequest(ErrorCodes.BAD_VALIDATOR, "course id not valid");
@@ -63,7 +64,7 @@ public class SubjectController {
     @PostMapping("/update")
     public ResponseEntity<?> updateSubject(@RequestBody SubjectInfo info, HttpSession session) {
         try {
-            final Subject subject = adminService.updateSubject(info, session);
+            final SubjectResponse subject = adminService.updateSubject(info, session);
             return ResponseEntity.ok(subject);
         } catch (PermissionDeniedException e) {
 
@@ -92,7 +93,8 @@ public class SubjectController {
     @PostMapping("/select")
     public ResponseEntity<?> selectSubjects(@RequestBody SelectParametersInfo info, HttpSession session) {
         try {
-            return ResponseEntity.ok(new SelectBody(adminService.selectSubjectsWithParams(info, session), adminService.getCount("subjects")));
+            return ResponseEntity.ok(new SelectBody(adminService.selectSubjectsWithParams(info, session),
+                    adminService.getCount("subjects")));
         } catch (PermissionDeniedException e) {
             return Response.badRequest(ErrorCodes.PERMISSION_DENIED, e.message);
         }

@@ -3,6 +3,7 @@ package api.repositories;
 import api.models.Subject;
 import api.utils.error.EntityNotFoundException;
 import api.utils.pair.Pair;
+import api.utils.response.SubjectResponse;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -31,38 +32,45 @@ public class JdbcSubjectRepository implements SubjectRepository {
         this.subjectInsert = new SimpleJdbcInsert(template).withTableName("subjects").usingGeneratedKeyColumns("id");
     }
 
-    private final RowMapper<Subject> subjectMapper = (((rs, rowNum) -> new Subject(rs.getLong("id"),
-            rs.getLong("course_id"), rs.getString("name"))));
+    private final RowMapper<SubjectResponse> subjectMapper = (((rs, rowNum) -> new SubjectResponse(rs.getLong("id"),
+            rs.getLong("course_id"), rs.getString("course_name"), rs.getString("name"))));
+
 
     @Nullable
     @Override
-    public Subject create(Subject subject) {
+    public SubjectResponse create(SubjectResponse subject) {
         final Map<String, Object> parameters = new HashMap<>();
         parameters.put("course_id", subject.getCourseId());
         parameters.put("name", subject.getName());
 
         try {
             final Number id = subjectInsert.executeAndReturnKey(parameters);
-            subject.setId((Long) id);
+            return this.find((Long) id);
         } catch (DataIntegrityViolationException e) {
-            subject = null;
+            return null;
         }
-        return subject;
     }
 
     @Nullable
     @Override
-    public Subject find(long id) {
+    public SubjectResponse find(long id) {
         try {
-            return template.queryForObject("SELECT * FROM subjects WHERE id = ?", subjectMapper, id);
+            return template.queryForObject("SELECT s.id, s.course_id, c.name AS course_name, s.name FROM " +
+                                                    "subjects AS s " +
+                                                "JOIN courses AS c ON s.course_id = c.id" +
+                                                " WHERE s.id = ? ", subjectMapper, id);
         } catch (EmptyResultDataAccessException e) {
             return null;
         }
     }
 
     @Override
-    public List<Subject> findByName(String name) {
-        return template.query("SELECT * FROM subjects WHERE name = ?",subjectMapper, name);
+    public List<SubjectResponse> findByName(String name) {
+        return template.query(
+                "SELECT s.id, s.course_id, c.name AS course_name, s.name " +
+                "FROM subjects AS s " +
+                "JOIN courses AS c ON s.course_id = c.id " +
+                "WHERE s.name = ?", subjectMapper, name);
     }
 
     @Override
@@ -82,7 +90,7 @@ public class JdbcSubjectRepository implements SubjectRepository {
 
     @Nullable
     @Override
-    public Subject update(Subject subject) throws DataIntegrityViolationException, EntityNotFoundException {
+    public SubjectResponse update(SubjectResponse subject) throws DataIntegrityViolationException, EntityNotFoundException {
         final String query = "UPDATE subjects SET course_id = ?, name = ? WHERE id = ? ";
         final int count = template.update(query, subject.getCourseId(), subject.getName(), subject.getId());
         if (count == 0) {
@@ -92,10 +100,11 @@ public class JdbcSubjectRepository implements SubjectRepository {
     }
 
     @Override
-    public List<Subject> selectWithParams(Integer limit, Integer offset, @Nullable List<Pair<String, String>> orders,
-                                          @Nullable List<Pair<String, String>> filters) {
+    public List<SubjectResponse> selectWithParams(Integer limit, Integer offset, @Nullable List<Pair<String, String>> orders,
+                                                  @Nullable List<Pair<String, String>> filters) {
         final StringBuilder queryBuilder = new StringBuilder();
-        queryBuilder.append("SELECT * FROM subjects AS s ");
+        queryBuilder.append("SELECT s.id, s.course_id, c.name AS course_name, s.name ")
+            .append("FROM subjects AS s JOIN courses AS c ON c.id = s.course_id ");
 
         if (filters != null && !filters.isEmpty()) {
             queryBuilder.append(" WHERE ");
@@ -118,6 +127,7 @@ public class JdbcSubjectRepository implements SubjectRepository {
 
             for (int i = 1; i <= orders.size(); i++) {
                 queryBuilder
+                        .append("s.")
                         .append(orders.get(i-1).getKey())
                         .append(' ')
                         .append(orders.get(i-1).getValue())

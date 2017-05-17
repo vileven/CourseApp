@@ -7,6 +7,7 @@ import api.models.Group;
 import api.models.Subject;
 import api.utils.error.EntityNotFoundException;
 import api.utils.pair.Pair;
+import api.utils.response.SubjectResponse;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -51,7 +52,7 @@ public class ClassRepositoryTest {
     @Autowired
     private SubjectRepository subjectRepository;
 
-    private Subject subject;
+    private SubjectResponse subject;
 
     @Autowired
     private ClassRepository classRepository;
@@ -67,7 +68,7 @@ public class ClassRepositoryTest {
         group = groupRepository.create(new Group(course.getId(), "ИУ6-43"));
         assertNotNull(group);
 
-        subject = subjectRepository.create(new Subject(course.getId(), "math"));
+        subject = subjectRepository.create(new SubjectResponse(course.getId(), course.getName(), "math"));
         assertNotNull(subject);
 
         final SimpleJdbcInsert insert = new SimpleJdbcInsert(template).withTableName("classes").usingGeneratedKeyColumns("id");
