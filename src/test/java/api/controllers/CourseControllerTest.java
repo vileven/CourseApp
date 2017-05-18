@@ -164,7 +164,9 @@ public class CourseControllerTest {
                                 "[\"name\", \"some\"]" +
                                 ']' +
                                 '}'))
-                .andExpect(jsonPath("$..entries.length()").value(1));
+                .andExpect(jsonPath("$..entries.length()").value(1))
+                .andExpect(jsonPath("total").value(1))
+        ;
     }
 
 

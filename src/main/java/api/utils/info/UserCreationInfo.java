@@ -3,25 +3,25 @@ package api.utils.info;
 import api.utils.validator.FieldValidates;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 /**
  * Created by Vileven on 13.05.17.
  */
 public final class UserCreationInfo {
-    private final Long id;
-    private final Integer role;
     private final String email;
     private final String password;
     private final String firstName;
     private final String lastName;
+
+    @ApiModelProperty(required = false)
     private final String about;
 
     @JsonCreator
-    public UserCreationInfo(@JsonProperty("id") Long id, @JsonProperty("role") Integer role, @JsonProperty("email") String email,
+    public UserCreationInfo( @JsonProperty("email") String email,
                             @JsonProperty("password") String password, @JsonProperty("first_name") String firstName,
                             @JsonProperty("last_name") String lastName, @JsonProperty("about") String about) {
-        this.id = id;
-        this.role = role;
         this.email = email;
         this.password = password;
         this.firstName = firstName;
@@ -29,9 +29,6 @@ public final class UserCreationInfo {
         this.about = about;
     }
 
-    public Integer getRole() {
-        return role;
-    }
 
     @FieldValidates(validators = {"email"})
     public String getEmail() {
@@ -55,7 +52,4 @@ public final class UserCreationInfo {
         return about;
     }
 
-    public Long getId() {
-        return id;
-    }
 }

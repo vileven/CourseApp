@@ -45,7 +45,7 @@ public class AccountServiceTest {
 
     @Test
     public void createUser() throws Exception {
-        final UserCreationInfo userData = new UserCreationInfo(null, 1, "mail@mail.ru", "password",
+        final UserCreationInfo userData = new UserCreationInfo( "mail@mail.ru", "password",
                 "sergey", "peshkov", "fox");
         final byte[] array = new byte[] {0,2,1,3,5,14,6,36,53,64,56,2};
 
@@ -59,7 +59,7 @@ public class AccountServiceTest {
 
     @Test
     public void createUserWithExistsEmail() throws Exception {
-        final UserCreationInfo userData = new UserCreationInfo(null, 1, "email@mail.ru", "password",
+        final UserCreationInfo userData = new UserCreationInfo( "email@mail.ru", "password",
                 "sergey", "peshkov", "fox");
         final User createdUser = accountService.createUser(userData,new MockHttpSession());
         assertNull(createdUser);

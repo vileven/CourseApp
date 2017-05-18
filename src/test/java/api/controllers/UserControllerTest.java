@@ -327,7 +327,7 @@ public class UserControllerTest {
                                 ']' +
                                 '}'))
                 .andExpect(jsonPath("$..entries.length()").value(1))
-                .andExpect(jsonPath("total").isNumber())
+                .andExpect(jsonPath("total").value(3))
         ;
     }
 }

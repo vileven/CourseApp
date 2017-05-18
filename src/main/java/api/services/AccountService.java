@@ -3,14 +3,17 @@ package api.services;
 import api.models.User;
 import api.repositories.UserRepository;
 import api.utils.error.PermissionDeniedException;
+import api.utils.info.IdInfo;
 import api.utils.info.SelectParametersInfo;
 import api.utils.info.UserCreationInfo;
 import api.utils.info.UserUpdateInfo;
+import api.utils.pair.Pair;
 import api.utils.response.UserResponseBody;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -29,13 +32,14 @@ public class AccountService {
 
     protected final UserRepository userRepository;
     protected final PasswordEncoder encoder;
-
+    private final JdbcTemplate template;
 
 
     @Autowired
-    AccountService(UserRepository userRepository, PasswordEncoder encoder) {
+    AccountService(UserRepository userRepository, PasswordEncoder encoder, JdbcTemplate template) {
         this.userRepository = userRepository;
         this.encoder = encoder;
+        this.template = template;
     }
 
     private boolean isAdmin(HttpSession session) {
@@ -58,12 +62,7 @@ public class AccountService {
 
     @Nullable
     public User createUser(UserCreationInfo userData, HttpSession session, @Nullable byte[] avatar) {
-        final int role;
-        if (isAdmin(session)) {
-            role = userData.getRole();
-        } else {
-            role = 1;
-        }
+        final int role = 1;
         final String encodedPassword = encoder.encode(userData.getPassword());
         final User newUser = new User(role, userData.getEmail(), encodedPassword,
                 userData.getFirstName(), userData.getLastName(), avatar, userData.getAbout());
@@ -91,7 +90,7 @@ public class AccountService {
         return null;
     }
 
-    public void deleteUser(UserCreationInfo info, HttpSession session) throws PermissionDeniedException {
+    public void deleteUser(IdInfo info, HttpSession session) throws PermissionDeniedException {
         if (!isAdmin(session)) {
             throw new PermissionDeniedException("permission denied");
         }
@@ -144,8 +143,25 @@ public class AccountService {
         return userRepository.selectWithParams(info.getLimit(), info.getOffset(), info.getOrders(), info.getFilters());
     }
 
-    public Integer getCount() {
+    public Integer getCount(List<Pair<String, String>> filters) {
 
-        return userRepository.getCount();
+        final StringBuilder sqlBuilder = new StringBuilder().append("SELECT count(*) FROM users ");
+
+        if (filters != null && !filters.isEmpty()) {
+            sqlBuilder.append(" WHERE ");
+            for (int i = 0; i < filters.size(); i++) {
+                sqlBuilder
+                        .append(filters.get(i).getKey())
+                        .append(" ~* '")
+                        .append(filters.get(i).getValue())
+                        .append('\'')
+                ;
+                if (i != filters.size() - 1) {
+                    sqlBuilder.append(" AND ");
+                }
+            }
+        }
+
+        return template.queryForObject(sqlBuilder.toString(), Integer.class);
     }
 }

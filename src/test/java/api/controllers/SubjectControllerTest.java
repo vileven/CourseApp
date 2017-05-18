@@ -125,7 +125,6 @@ public class SubjectControllerTest {
                         .content('{' +
                                 "\"id\":\""+subject.getId()+"\"," +
                                 "\"course_id\":\""+course.getId()+"\"," +
-                                "\"course_name\":\""+course.getId()+"\"," +
                                 "\"name\":\"updated_name\"" +
                                 '}'))
                 .andExpect(status().isOk())
@@ -170,7 +169,8 @@ public class SubjectControllerTest {
                                 "[\"name\", \"math\"]" +
                                 ']' +
                                 '}'))
-                .andExpect(jsonPath("$..entries.length()").value(1));
+                .andExpect(jsonPath("$..entries.length()").value(1))
+                .andExpect(jsonPath("total").value(3));
     }
 
 }

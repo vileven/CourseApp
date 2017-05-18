@@ -7,8 +7,11 @@ import api.utils.error.PermissionDeniedException;
 import api.utils.info.*;
 import api.utils.response.Response;
 import api.utils.response.SelectBody;
+import api.utils.response.UserResponseBody;
 import api.utils.response.generic.ResponseBody;
 import api.utils.validator.ValidatorChain;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.dao.DuplicateKeyException;
@@ -34,6 +37,10 @@ public class UserController {
     }
 
 
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success", response = UserResponseBody.class),
+            @ApiResponse(code = 404, message = "Not Found", response = ResponseBody.class)
+    })
     @GetMapping("/{id}")
     public ResponseEntity<?> getUserById(@PathVariable Long id) {
         final User user = accountService.getUserById(id);
@@ -44,6 +51,10 @@ public class UserController {
         return Response.okWithUser(user);
     }
 
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success", response = UserResponseBody.class),
+            @ApiResponse(code = 400, message = "Bad request", response = ResponseBody.class)
+    })
     @PostMapping("/create")
     public ResponseEntity<?> createUser(@RequestBody UserCreationInfo requestBody, HttpSession session) {
 
@@ -88,7 +99,7 @@ public class UserController {
     }
 
     @PostMapping("/delete")
-    public ResponseEntity<?> deleteUser(@RequestBody UserCreationInfo info, HttpSession session) {
+    public ResponseEntity<?> deleteUser(@RequestBody IdInfo info, HttpSession session) {
 
         try {
             accountService.deleteUser(info, session);
@@ -100,6 +111,10 @@ public class UserController {
         }
     }
 
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success", response = UserResponseBody.class),
+            @ApiResponse(code = 400, message = "Bad request", response = ResponseBody.class)
+    })
     @PostMapping("/update")
     public ResponseEntity<?> updateUser(@RequestBody UserUpdateInfo info, HttpSession session) {
         try {
@@ -111,11 +126,14 @@ public class UserController {
             return Response.badRequest(ErrorCodes.PERMISSION_DENIED, e.message);
         }
     }
-
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success", response = SelectBody.class),
+            @ApiResponse(code = 400, message = "Bad request", response = ResponseBody.class)
+    })
     @PostMapping("/select")
     public ResponseEntity<?> selectUsers(@RequestBody SelectParametersInfo info, HttpSession session) {
         try {
-            return ResponseEntity.ok(new SelectBody(accountService.selectUsersWithParams(info, session), accountService.getCount()));
+            return ResponseEntity.ok(new SelectBody(accountService.selectUsersWithParams(info, session), accountService.getCount(info.getFilters())));
         } catch (PermissionDeniedException e) {
             return Response.badRequest(ErrorCodes.PERMISSION_DENIED, e.message);
         }

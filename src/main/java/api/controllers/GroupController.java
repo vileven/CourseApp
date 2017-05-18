@@ -86,7 +86,7 @@ public class GroupController {
     @PostMapping("/select")
     public ResponseEntity<?> selectGroups(@RequestBody SelectParametersInfo info, HttpSession session) {
         try {
-            return ResponseEntity.ok(new SelectBody(adminService.selectGroupWithParams(info, session), adminService.getCount("groups")));
+            return ResponseEntity.ok(new SelectBody(adminService.selectGroupWithParams(info, session), adminService.getCount("groups", info.getFilters())));
         } catch (PermissionDeniedException e) {
             return Response.badRequest(ErrorCodes.PERMISSION_DENIED, e.message);
         }

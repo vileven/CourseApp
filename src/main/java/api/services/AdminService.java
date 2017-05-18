@@ -5,6 +5,7 @@ import api.repositories.*;
 import api.utils.error.EntityNotFoundException;
 import api.utils.error.PermissionDeniedException;
 import api.utils.info.*;
+import api.utils.pair.Pair;
 import api.utils.response.SubjectResponse;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -157,7 +158,7 @@ public class AdminService {
         groupRepository.delete(info.getId());
     }
 
-    public void deleteSubject(SubjectInfo info, HttpSession session) throws PermissionDeniedException {
+    public void deleteSubject(IdInfo info, HttpSession session) throws PermissionDeniedException {
         if (!isAdmin(session)) {
             throw new PermissionDeniedException("permission denied");
         }
@@ -204,8 +205,24 @@ public class AdminService {
         return classRepository.selectWithParams(info.getLimit(), info.getOffset(), info.getOrders(), info.getFilters());
     }
 
-    public Integer getCount(String tableName) {
+    public Integer getCount(String tableName, List<Pair<String, String>> filters) {
+        final StringBuilder sqlBuilder = new StringBuilder().append("SELECT count(*) FROM ").append(tableName);
 
-        return template.queryForObject("SELECT count(*) FROM " + tableName, Integer.class);
+        if (filters != null && !filters.isEmpty()) {
+            sqlBuilder.append(" WHERE  ");
+            for (int i = 0; i < filters.size(); i++) {
+                sqlBuilder
+                        .append(filters.get(i).getKey())
+                        .append(" ~* '")
+                        .append(filters.get(i).getValue())
+                        .append('\'')
+                ;
+                if (i != filters.size() - 1) {
+                    sqlBuilder.append(" AND ");
+                }
+            }
+        }
+
+        return template.queryForObject(sqlBuilder.toString(), Integer.class);
     }
 }

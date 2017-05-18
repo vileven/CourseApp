@@ -88,7 +88,7 @@ public class CourseController {
     @PostMapping("/select")
     public ResponseEntity<?> selectCourses(@RequestBody SelectParametersInfo info, HttpSession session) {
         try {
-            return ResponseEntity.ok(new SelectBody(adminService.selectCourseWithParams(info, session), adminService.getCount("courses")));
+            return ResponseEntity.ok(new SelectBody(adminService.selectCourseWithParams(info, session), adminService.getCount("courses", info.getFilters())));
         } catch (PermissionDeniedException e) {
             return Response.badRequest(ErrorCodes.PERMISSION_DENIED, e.message);
         }

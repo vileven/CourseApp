@@ -7,11 +7,16 @@ import api.utils.ErrorCodes;
 import api.utils.error.EntityNotFoundException;
 import api.utils.error.PermissionDeniedException;
 import api.utils.info.GroupInfo;
+import api.utils.info.IdInfo;
 import api.utils.info.SelectParametersInfo;
 import api.utils.info.SubjectInfo;
 import api.utils.response.Response;
 import api.utils.response.SelectBody;
 import api.utils.response.SubjectResponse;
+import api.utils.response.generic.*;
+import api.utils.response.generic.ResponseBody;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +39,10 @@ public class SubjectController {
         this.adminService = adminService;
     }
 
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success", response = SubjectResponse.class),
+            @ApiResponse(code = 400, message = "Bad request", response = ResponseBody.class)
+    })
     @GetMapping("/{id}")
     public ResponseEntity<?> getById(@PathVariable Long id) {
         final SubjectResponse subject = adminService.getSubject(id);
@@ -45,6 +54,10 @@ public class SubjectController {
         return ResponseEntity.ok(subject);
     }
 
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success", response = SubjectResponse.class),
+            @ApiResponse(code = 400, message = "Bad request", response = ResponseBody.class)
+    })
     @PostMapping("/create")
     public ResponseEntity<?> createSubject(@RequestBody SubjectInfo info, HttpSession session) {
         try {
@@ -61,6 +74,10 @@ public class SubjectController {
         }
     }
 
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success", response = SubjectResponse.class),
+            @ApiResponse(code = 400, message = "Bad request", response = ResponseBody.class)
+    })
     @PostMapping("/update")
     public ResponseEntity<?> updateSubject(@RequestBody SubjectInfo info, HttpSession session) {
         try {
@@ -79,7 +96,7 @@ public class SubjectController {
     }
 
     @PostMapping("/delete")
-    public ResponseEntity<?> deleteSubject(@RequestBody SubjectInfo info, HttpSession session) {
+    public ResponseEntity<?> deleteSubject(@RequestBody IdInfo info, HttpSession session) {
         try {
             adminService.deleteSubject(info, session);
 
@@ -90,11 +107,15 @@ public class SubjectController {
         }
     }
 
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success", response = SelectBody.class),
+            @ApiResponse(code = 400, message = "Bad request", response = ResponseBody.class)
+    })
     @PostMapping("/select")
     public ResponseEntity<?> selectSubjects(@RequestBody SelectParametersInfo info, HttpSession session) {
         try {
             return ResponseEntity.ok(new SelectBody(adminService.selectSubjectsWithParams(info, session),
-                    adminService.getCount("subjects")));
+                    adminService.getCount("subjects", info.getFilters())));
         } catch (PermissionDeniedException e) {
             return Response.badRequest(ErrorCodes.PERMISSION_DENIED, e.message);
         }

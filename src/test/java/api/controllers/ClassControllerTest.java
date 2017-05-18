@@ -212,7 +212,9 @@ public class ClassControllerTest {
                                 "[\"topic\", \"mach\"]" +
                                 ']' +
                                 '}'))
-                .andExpect(jsonPath("$..entries.length()").value(1));
+                .andExpect(jsonPath("$..entries.length()").value(1))
+                .andExpect(jsonPath("total").value(3))
+        ;
     }
 
 
