@@ -9,6 +9,9 @@ import api.utils.info.GroupInfo;
 import api.utils.info.SelectParametersInfo;
 import api.utils.response.Response;
 import api.utils.response.SelectBody;
+import api.utils.response.SubjectResponse;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +30,10 @@ public class GroupController {
         this.adminService = adminService;
     }
 
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success", response = Group.class),
+            @ApiResponse(code = 400, message = "Bad request", response = ResponseBody.class)
+    })
     @GetMapping("/{id}")
     public ResponseEntity<?> getById(@PathVariable Long id) {
         final Group group = adminService.getGroup(id);
@@ -38,6 +45,10 @@ public class GroupController {
         return ResponseEntity.ok(group);
     }
 
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success", response = Group.class),
+            @ApiResponse(code = 400, message = "Bad request", response = ResponseBody.class)
+    })
     @PostMapping("/create")
     public ResponseEntity<?> createGroup(@RequestBody GroupInfo groupData, HttpSession session) {
         try {
@@ -54,6 +65,10 @@ public class GroupController {
         }
     }
 
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success", response = Group.class),
+            @ApiResponse(code = 400, message = "Bad request", response = ResponseBody.class)
+    })
     @PostMapping("/update")
     public ResponseEntity<?> updateGroup(@RequestBody GroupInfo groupData, HttpSession session) {
         try {
@@ -83,6 +98,10 @@ public class GroupController {
         }
     }
 
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success", response = SelectBody.class),
+            @ApiResponse(code = 400, message = "Bad request", response = ResponseBody.class)
+    })
     @PostMapping("/select")
     public ResponseEntity<?> selectGroups(@RequestBody SelectParametersInfo info, HttpSession session) {
         try {

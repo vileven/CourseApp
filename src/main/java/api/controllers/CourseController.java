@@ -12,6 +12,8 @@ import api.utils.response.CourseBody;
 import api.utils.response.Response;
 import api.utils.response.SelectBody;
 import api.utils.response.generic.ResponseBody;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
@@ -33,6 +35,10 @@ public class CourseController {
         this.applicationContext = applicationContext;
     }
 
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success", response = Course.class),
+            @ApiResponse(code = 400, message = "Bad request", response = org.springframework.web.bind.annotation.ResponseBody.class)
+    })
     @GetMapping("/{id}")
     public ResponseEntity<?> getById(@PathVariable Long id) {
         final Course course = adminService.getCourse(id);
@@ -44,6 +50,10 @@ public class CourseController {
         return Response.okWithCourse(course);
     }
 
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success", response = Course.class),
+            @ApiResponse(code = 400, message = "Bad request", response = org.springframework.web.bind.annotation.ResponseBody.class)
+    })
     @PostMapping("/create")
     public ResponseEntity<?> createCourse(@RequestBody CourseInfo courseData, HttpSession session) {
         try {
@@ -56,6 +66,10 @@ public class CourseController {
         }
     }
 
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success", response = Course.class),
+            @ApiResponse(code = 400, message = "Bad request", response = org.springframework.web.bind.annotation.ResponseBody.class)
+    })
     @PostMapping("/update")
     public ResponseEntity<?> updateCourse(@RequestBody CourseInfo courseData, HttpSession session) {
         try {
@@ -85,10 +99,15 @@ public class CourseController {
 
     }
 
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success", response = SelectBody.class),
+            @ApiResponse(code = 400, message = "Bad request", response = org.springframework.web.bind.annotation.ResponseBody.class)
+    })
     @PostMapping("/select")
     public ResponseEntity<?> selectCourses(@RequestBody SelectParametersInfo info, HttpSession session) {
         try {
-            return ResponseEntity.ok(new SelectBody(adminService.selectCourseWithParams(info, session), adminService.getCount("courses", info.getFilters())));
+            return ResponseEntity.ok(new SelectBody(adminService.selectCourseWithParams(info, session),
+                    adminService.getCount("courses", info.getFilters())));
         } catch (PermissionDeniedException e) {
             return Response.badRequest(ErrorCodes.PERMISSION_DENIED, e.message);
         }
