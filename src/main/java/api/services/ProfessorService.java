@@ -1,6 +1,5 @@
 package api.services;
 
-import api.models.User;
 import api.repositories.CourseRepository;
 import api.repositories.GroupRepository;
 import api.repositories.SubjectRepository;
@@ -13,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpSession;
@@ -45,7 +43,8 @@ public class ProfessorService {
 
     private final RowMapper<UserClass> userClassMapper = (((rs, rowNum) -> new UserClass(rs.getLong("id"),
             rs.getLong("subject_id"), rs.getString("subject_name"),
-            rs.getLong("group_id"), rs.getString("group_name"), rs.getString("begin_time"),
+            rs.getLong("group_id"), rs.getString("group_name"),
+            rs.getString("professors"), rs.getString("topic"), rs.getString("begin_time"),
             rs.getString("end_time"))));
 
     private final RowMapper<GroupAndSubjectResponse> groupAndSubjectMapper = (((rs, rowNum) ->

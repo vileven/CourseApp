@@ -42,14 +42,14 @@ public class ProfessorControllerTest {
         ;
     }
 
-    @Test
-    public void getClasses() throws Exception {
-        mockMvc
-                .perform(get("/professor/"+ -21 +"/classes?from=2017-05-09&to=2017-05-11"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("length()").value(3))
-        ;
-    }
+//    @Test
+//    public void getClasses() throws Exception {
+//        mockMvc
+//                .perform(get("/professor/"+ -21 +"/classes?from=2017-05-09&to=2017-05-11"))
+//                .andExpect(status().isOk())
+//                .andExpect(jsonPath("length()").value(3))
+//        ;
+//    }
 
     @Test
     public void createRequest() throws Exception {

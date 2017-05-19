@@ -2,8 +2,6 @@ package api.utils.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.time.LocalDateTime;
-
 public class UserClass {
 
     public final Long id;
@@ -19,6 +17,12 @@ public class UserClass {
 
     @JsonProperty("group_name")
     public final String groupName;
+
+    @JsonProperty("professors")
+    public final String professors;
+
+    @JsonProperty("topic")
+    public final String topic;
 
     @JsonProperty("begin_time")
     public final String begin;
@@ -54,13 +58,15 @@ public class UserClass {
         return end;
     }
 
-    public UserClass(Long id, Long subjectId, String subjectName, Long groupId, String groupName, String begin,
+    public UserClass(Long id, Long subjectId, String subjectName, Long groupId, String groupName, String professors, String topic, String begin,
                      String end) {
         this.id = id;
         this.subjectId = subjectId;
         this.subjectName = subjectName;
         this.groupId = groupId;
         this.groupName = groupName;
+        this.professors = professors;
+        this.topic = topic;
         this.begin = begin;
         this.end = end;
 

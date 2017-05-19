@@ -3,6 +3,7 @@ package api.repositories;
 import api.models.ClassModel;
 import api.utils.error.EntityNotFoundException;
 import api.utils.pair.Pair;
+import api.utils.response.UserClass;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.RowMapper;
@@ -27,7 +28,7 @@ public interface ClassRepository {
     RowMapper<ClassModel> getMapper();
 
     List<ClassModel> selectWithParams(Integer limit, Integer offset, @Nullable List<Pair<String, String>> orders,
-                                      @Nullable List<Pair<String, String>> filters);
+                                     @Nullable List<Pair<String, String>> filters);
 
     void deleteAll();
 }

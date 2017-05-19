@@ -27,7 +27,8 @@ public class StudentService {
 
     private final RowMapper<UserClass> userClassMapper = (((rs, rowNum) -> new UserClass(rs.getLong("id"),
             rs.getLong("subject_id"), rs.getString("subject_name"),
-            rs.getLong("group_id"), rs.getString("group_name"), rs.getString("begin_time"),
+            rs.getLong("group_id"), rs.getString("group_name"),
+            rs.getString("professors"), rs.getString("topic"), rs.getString("begin_time"),
             rs.getString("end_time"))));
 
     @Autowired

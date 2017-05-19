@@ -3,6 +3,7 @@ package api.repositories;
 import api.models.ClassModel;
 import api.utils.error.EntityNotFoundException;
 import api.utils.pair.Pair;
+import api.utils.response.UserClass;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -30,29 +31,40 @@ public class JdbcClassRepository implements ClassRepository {
         this.classInsert = new SimpleJdbcInsert(template).withTableName("classes").usingGeneratedKeyColumns("id");
     }
 
-    private final RowMapper<ClassModel> classMapper = (((rs, rowNum) -> new ClassModel(rs.getLong("id"),
-            rs.getString("topic"), rs.getLong("subject_id"), rs.getLong("group_id"),
-            rs.getString("begin_time"), rs.getString("end_time"), rs.getString("location"))));
+    private final RowMapper<ClassModel> classMapper = (((rs, rowNum) ->
+            new ClassModel(rs.getLong("id"),
+            rs.getString("topic"), rs.getLong("subject_id"),
+            rs.getString("subject_name"), rs.getLong("group_id"),
+            rs.getString("group_name"), rs.getLong("prof_id"),
+            rs.getString("prof_first_name"), rs.getString("prof_last_name"),
+            rs.getString("begin_time"), rs.getString("end_time"),
+            rs.getString("location"))
+    ));
+
+    private final RowMapper<UserClass> userClassMapper = (((rs, rowNum) -> new UserClass(rs.getLong("id"),
+            rs.getLong("subject_id"), rs.getString("subject_name"),
+            rs.getLong("group_id"), rs.getString("group_name"),
+            rs.getString("professors"), rs.getString("topic"), rs.getString("begin_time"),
+            rs.getString("end_time"))));
 
     @Nullable
     @Override
     public ClassModel create(ClassModel classModel) {
         final Map<String, Object> parameters = new HashMap<>();
         parameters.put("topic", classModel.getTopic());
-        parameters.put("subject_id", classModel.getSubject());
-        parameters.put("group_id", classModel.getGroup());
+        parameters.put("subject_id", classModel.getSubjectId());
+        parameters.put("group_id", classModel.getGroupId());
         parameters.put("begin_time", classModel.getBegin());
         parameters.put("end_time", classModel.getEnd());
+        parameters.put("prof_id", classModel.getProfId());
         parameters.put("location", classModel.getLocation());
 
         try {
             final Number id = classInsert.executeAndReturnKey(parameters);
-            classModel.setId((Long) id);
+            return find((Long) id);
         } catch (DataIntegrityViolationException e) {
             return null;
         }
-
-        return classModel;
     }
 
     @Nullable
@@ -60,7 +72,20 @@ public class JdbcClassRepository implements ClassRepository {
     public ClassModel find(long id) {
         final ClassModel findedClass;
         try {
-            findedClass = template.queryForObject("SELECT * FROM classes WHERE id = ? ",classMapper, id);
+            final String sql =
+                    "SELECT " +
+                    "cl.id," +
+                            "cl.topic, cl.location, cl.prof_id, pr.first_name as prof_first_name, " +
+                            " pr.last_name as prof_last_name, cl.subject_id, s.name as  subject_name, " +
+                            " cl.group_id, g.name as group_name, cl.begin_time, cl.end_time " +
+                            "FROM " +
+                            "classes cl " +
+                            "JOIN subjects s ON cl.subject_id = s.id " +
+                            "JOIN users pr ON cl.prof_id = pr.id " +
+                            "JOIN groups g ON cl.group_id = g.id " +
+                            "WHERE cl.id = ? ";
+
+            findedClass = template.queryForObject(sql,classMapper, id);
         } catch (EmptyResultDataAccessException e) {
             return null;
         }
@@ -70,15 +95,15 @@ public class JdbcClassRepository implements ClassRepository {
 
     @Override
     public ClassModel update(ClassModel classModel) throws DataIntegrityViolationException, EntityNotFoundException {
-        final String query = "UPDATE classes SET topic = ?, subject_id = ?, group_id = ? , location = ?, " +
+        final String query = "UPDATE classes SET topic = ?, subject_id = ?, group_id = ? , prof_id = ?, location = ?, " +
                                                 "begin_time = ?::TIMESTAMPTZ, end_time = ?::TIMESTAMPTZ " +
                             " WHERE id = ?";
-        final int count = template.update(query, classModel.getTopic(), classModel.getSubject(), classModel.getGroup(),
-                classModel.getLocation(), classModel.getBegin(),classModel.getEnd(), classModel.getId());
+        final int count = template.update(query, classModel.getTopic(), classModel.getSubjectId(), classModel.getGroupId(),
+                classModel.getProfId(), classModel.getLocation(), classModel.getBegin(),classModel.getEnd(), classModel.getId());
         if (count == 0) {
             throw new EntityNotFoundException("class not found");
         }
-        return classModel;
+        return find(classModel.getId());
     }
 
     @Override
@@ -93,8 +118,14 @@ public class JdbcClassRepository implements ClassRepository {
 
     @Override
     public List<ClassModel> selectWithParams(Integer limit, Integer offset, @Nullable List<Pair<String, String>> orders, @Nullable List<Pair<String, String>> filters) {
-        final StringBuilder queryBuilder = new StringBuilder();
-        queryBuilder.append("SELECT * FROM classes AS cl ");
+        final StringBuilder queryBuilder = new StringBuilder().append("SELECT ")
+                .append("cl.id,")
+                .append("cl.topic, cl.location, cl.prof_id, pr.first_name as prof_first_name, ")
+                .append(" pr.last_name as prof_last_name, cl.subject_id, s.name as  subject_name, ")
+                .append(" cl.group_id, g.name as group_name, cl.begin_time, cl.end_time ")
+                .append("FROM ").append("classes cl ").append("JOIN subjects s ON cl.subject_id = s.id ")
+                .append("JOIN users pr ON cl.prof_id = pr.id ").append("JOIN groups g ON cl.group_id = g.id ")
+                ;
 
         if (filters != null && !filters.isEmpty()) {
             queryBuilder.append(" WHERE ");
@@ -111,6 +142,8 @@ public class JdbcClassRepository implements ClassRepository {
                 }
             }
         }
+
+//        queryBuilder.append(" GROUP BY cl.id, s.name, g.name ");
 
         if (orders != null && !orders.isEmpty()) {
             queryBuilder.append(" ORDER BY ");
@@ -129,7 +162,7 @@ public class JdbcClassRepository implements ClassRepository {
 
         }
         queryBuilder.append(" LIMIT ? OFFSET ? ");
-        return template.query(queryBuilder.toString(),classMapper, limit, offset);
+        return template.query(queryBuilder.toString(), classMapper, limit, offset);
     }
 
     @Override

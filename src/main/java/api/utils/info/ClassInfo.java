@@ -35,6 +35,7 @@ public class ClassInfo {
     private final String topic;
     private final Long subject;
     private final Long group;
+    private final Long prof;
     private final String begin;
     private final String end;
     private final String location;
@@ -42,12 +43,13 @@ public class ClassInfo {
     @JsonCreator
     public ClassInfo(@JsonProperty("id") Long id, @JsonProperty("topic") String topic,
                      @JsonProperty("subject_id") Long subject, @JsonProperty("group_id") Long group,
-                     @JsonProperty("begin_time") String begin, @JsonProperty("end_time") String end,
+                     @JsonProperty("prof_id") Long prof, @JsonProperty("begin_time") String begin, @JsonProperty("end_time") String end,
                      @JsonProperty("location") String location) {
         this.id = id;
         this.topic = topic;
         this.subject = subject;
         this.group = group;
+        this.prof = prof;
         this.begin = begin;
         this.end = end;
         this.location = location;
@@ -55,5 +57,9 @@ public class ClassInfo {
 
     public String getLocation() {
         return location;
+    }
+
+    public Long getProf() {
+        return prof;
     }
 }

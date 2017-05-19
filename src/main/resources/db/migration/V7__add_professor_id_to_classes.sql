@@ -1,0 +1,1 @@
+ALTER TABLE classes ADD prof_id BIGINT REFERENCES users(id);

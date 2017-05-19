@@ -14,6 +14,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.MockMvcPrint;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -33,6 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class)
 @AutoConfigureMockMvc(print = MockMvcPrint.DEFAULT)
+@Sql(scripts = "../../filling.sql")
 public class ClassControllerTest {
     @Autowired
     private MockMvc mockMvc;
@@ -65,66 +67,54 @@ public class ClassControllerTest {
 
     @Before
     public void setup() throws Exception {
-        courseRepository.deleteAll();
-        final Course course = courseRepository.create(new Course("course"));
-        assertNotNull(course);
-
-        subjectRepository.deleteAll();
-        subject = subjectRepository.create(new SubjectResponse(course.getId(),course.getName(),"Math"));
-        assertNotNull(subject);
-
-        groupRepository.deleteAll();
-        group = groupRepository.create(new Group(course.getId(), course.getName(), "ИУ6-43"));
-        assertNotNull(group);
-
-        classRepository.deleteAll();
-        classModel = classRepository.create(new ClassModel("Machine learning", subject.getId(), group.getId(),
-                "2017-05-06 14:00:00", "2017-05-06 15:30:00", "213"));
-        assertNotNull(classModel);
-
-        userRepository.deleteAll();
-        admin = userRepository.create(new User(0, "email@mail.ru",
-                passwordEncoder.encode("qwerty123"), "sergey", "volodin",
-                null,"about"));
+//        subjectRepository.deleteAll();
+//        groupRepository.deleteAll();
+//        courseRepository.deleteAll();
+//        final Course course = courseRepository.create(new Course("course"));
+//        assertNotNull(course);
+//
+//
+//        subject = subjectRepository.create(new SubjectResponse(course.getId(),course.getName(),"Math"));
+//        assertNotNull(subject);
+//
+//
+//        group = groupRepository.create(new Group(course.getId(), course.getName(), "ИУ6-43"));
+//        assertNotNull(group);
+//
+//        classRepository.deleteAll();
+////        classModel = classRepository.create(new ClassModel("Machine learning", subject.getId(), group.getId(),
+////                , profId, profFirstName, profLastName, "2017-05-06 14:00:00", "2017-05-06 15:30:00", "213"));
+//        assertNotNull(classModel);
+        admin = userRepository.find(-25L);
         assertNotNull(admin);
-
-        //login
-        final MvcResult result = mockMvc
-                .perform(post("/session/login")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content('{' +
-                                "\"email\":\"email@mail.ru\"," +
-                                "\"password\":\"qwerty123\"" +
-                                '}'))
-                .andExpect(status().isOk())
-                .andReturn();
-
-        assertEquals(admin.getId(), result.getRequest().getSession().getAttribute(USER_ID));
     }
 
     @Test
     public void getClassInController() throws Exception {
+        classModel = classRepository.find(-1L);
         mockMvc
                 .perform(get("/class/"+classModel.getId())
                         .sessionAttr(USER_ID, admin.getId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("id").value(classModel.getId()))
-                .andExpect(jsonPath("group_id").value(group.getId()))
-                .andExpect(jsonPath("subject_id").value(subject.getId()))
+                .andExpect(jsonPath("group_id").value(classModel.getGroupId()))
+                .andExpect(jsonPath("subject_id").value(classModel.getSubjectId()))
                 .andExpect(jsonPath("topic").value(classModel.getTopic()))
         ;
     }
 
     @Test
     public void createClass() throws Exception {
+
         mockMvc
                 .perform(post("/class/create")
                         .sessionAttr(USER_ID, admin.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content('{' +
                                     "\"topic\":\"Normal equations\"," +
-                                    "\"subject_id\":\""+subject.getId()+"\"," +
-                                    "\"group_id\":\""+group.getId()+"\"," +
+                                    "\"subject_id\": "+-1L+"," +
+                                    "\"group_id\":"+-2L+ ',' +
+                                    "\"prof_id\":"+-21L+ ',' +
                                     "\"location\":\"432\"," +
                                     "\"begin_time\":\"2017-05-06 14:00:00\"," +
                                     "\"end_time\":\"2017-05-06 15:30:00\"" +
@@ -143,8 +133,10 @@ public class ClassControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content('{' +
                                 "\"topic\":\"Normal equations\"," +
-                                "\"subject_id\":\""+subject.getId()+"\"," +
-                                "\"group_id\":\""+group.getId()+"\"," +
+                                "\"subject_id\": "+-1L+"," +
+                                "\"group_id\":"+-2L+ ',' +
+                                "\"prof_id\":"+-21L+ ',' +
+                                "\"location\":\"432\"," +
                                 "\"begin_time\":\"2017-05-06 14:00:00\"," +
                                 "\"end_time\":\"2017-05-06 15:30:00\"" +
                                 '}'))
@@ -155,6 +147,9 @@ public class ClassControllerTest {
 
     @Test
     public void updateClass() throws Exception {
+        classModel = classRepository.find(-1L);
+        assertNotNull(classModel);
+        assertEquals(Long.valueOf(-1), classModel.getId());
         mockMvc
                 .perform(post("/class/update")
                         .sessionAttr(USER_ID, admin.getId())
@@ -162,22 +157,25 @@ public class ClassControllerTest {
                         .content('{' +
                                 "\"id\":\""+classModel.getId()+"\"," +
                                 "\"topic\":\"updated_name\"," +
-                                "\"subject_id\":\""+subject.getId()+"\"," +
-                                "\"group_id\":\""+group.getId()+"\"," +
+                                "\"subject_id\":\""+classModel.getSubjectId()+"\"," +
+                                "\"group_id\":\""+classModel.getGroupId()+"\"," +
+                                "\"prof_id\":\""+classModel.getProfId()+"\"," +
                                 "\"location\":\"432\"," +
                                 "\"begin_time\":\"2017-05-06 14:00:00\"," +
                                 "\"end_time\":\"2017-05-06 15:30:00\"" +
                                 '}'))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("topic").value("updated_name"))
-                .andExpect(jsonPath("subject_id").value(subject.getId()))
-                .andExpect(jsonPath("group_id").value(group.getId()))
+                .andExpect(jsonPath("subject_id").value(classModel.getSubjectId()))
                 .andExpect(jsonPath("id").value(classModel.getId()))
         ;
     }
 
     @Test
     public void deleteClass() throws Exception {
+        classModel = classRepository.create(new ClassModel("topic", -1L, -2L
+                , -21L, "2017-05-06 14:00:00", "2017-05-06 15:30:00", "213"));
+        assertNotNull(classModel);
         mockMvc
                 .perform(post("/class/delete")
                         .sessionAttr(USER_ID, admin.getId())
@@ -194,27 +192,28 @@ public class ClassControllerTest {
 
     @Test
     public void select() throws  Exception {
-        classRepository.create(new ClassModel("machine creating", classModel.getSubject(), classModel.getGroup(),
-                classModel.getBegin(), classModel.getEnd(), "213"));
-        classRepository.create(new ClassModel("maches loss", classModel.getSubject(), classModel.getGroup(),
-                classModel.getBegin(), classModel.getEnd(), "213"));
-        classRepository.create(new ClassModel("Normal equations", classModel.getSubject(), classModel.getGroup(),
-                classModel.getBegin(), classModel.getEnd(), "213"));
+//        classRepository.create(new ClassModel("machine creating", classModel.getSubjectId(), classModel.getGroupId(),
+//                classModel.getBegin(), classModel.getEnd(), "213"));
+//        classRepository.create(new ClassModel("maches loss", classModel.getSubjectId(), classModel.getGroupId(),
+//                classModel.getBegin(), classModel.getEnd(), "213"));
+//        classRepository.create(new ClassModel("Normal equations", classModel.getSubjectId(), classModel.getGroupId(),
+//                classModel.getBegin(), classModel.getEnd(), "213"));
+
         mockMvc
                 .perform(post("/class/select")
                         .sessionAttr(USER_ID, admin.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content('{' +
-                                "\"limit\":1," +
+                                "\"limit\":2," +
                                 "\"offset\":1," +
                                 "\"orders\": [" +
                                 "[\"id\", \"ASC\"]" +
                                 "]," +
                                 "\"filters\": [" +
-                                "[\"topic\", \"mach\"]" +
+                                "[\"topic\", \"1\"]" +
                                 ']' +
                                 '}'))
-                .andExpect(jsonPath("$..entries.length()").value(1))
+                .andExpect(jsonPath("$..entries.length()").value(2))
                 .andExpect(jsonPath("total").value(3))
         ;
     }

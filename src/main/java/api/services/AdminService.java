@@ -7,6 +7,7 @@ import api.utils.error.PermissionDeniedException;
 import api.utils.info.*;
 import api.utils.pair.Pair;
 import api.utils.response.SubjectResponse;
+import api.utils.response.UserClass;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -84,7 +85,7 @@ public class AdminService {
             throw new PermissionDeniedException("permission denied");
         }
 
-        return classRepository.create(new ClassModel(info.getTopic(), info.getSubject(), info.getGroup(), info.getBegin(),
+        return classRepository.create(new ClassModel(info.getTopic(), info.getSubject(), info.getGroup(), info.getProf(), info.getBegin(),
                 info.getEnd(), info.getLocation()));
     }
 
@@ -140,7 +141,7 @@ public class AdminService {
         }
 
         return classRepository.update(new ClassModel(info.getId(), info.getTopic(), info.getSubject(), info.getGroup(),
-                info.getBegin(), info.getEnd(), info.getLocation()));
+                info.getProf(), info.getBegin(), info.getEnd(), info.getLocation()));
     }
 
     public void deleteCourse(CourseInfo courseData, HttpSession session) throws PermissionDeniedException {

@@ -44,11 +44,11 @@ public class ProfessorServiceTest {
         assertEquals(2, res.size());
     }
 
-    @Test
-    public void getProfClasses() {
-        final List<UserClass> res = professorService.getProfClasses(-21, "2017-05-09", "2017-05-11");
-        assertEquals(3, res.size());
-    }
+//    @Test
+//    public void getProfClasses() {
+//        final List<UserClass> res = professorService.getProfClasses(-21, "2017-05-09", "2017-05-11");
+//        assertEquals(3, res.size());
+//    }
 
     @Test
     public void addAttendencies() throws PermissionDeniedException {
