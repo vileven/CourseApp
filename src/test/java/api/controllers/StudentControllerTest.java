@@ -51,14 +51,14 @@ public class StudentControllerTest {
         ;
     }
 
-//    @Test
-//    public void getClasses() throws Exception {
-//        mockMvc
-//                .perform(get("/student/"+ -1 +"/classes?from=2017-05-05&to=2017-05-16"))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("length()").value(5))
-//        ;
-//    }
+    @Test
+    public void getClasses() throws Exception {
+        mockMvc
+                .perform(get("/student/"+ -1 +"/classes?from=2017-05-05&to=2017-05-16"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("length()").value(5))
+        ;
+    }
 
     @Test
     public void createRequest() throws Exception {

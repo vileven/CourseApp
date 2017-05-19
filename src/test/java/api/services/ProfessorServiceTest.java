@@ -1,6 +1,7 @@
 package api.services;
 
 import api.Application;
+import api.models.ClassModel;
 import api.utils.error.PermissionDeniedException;
 import api.utils.info.AttendancesInfo;
 import api.utils.response.GroupAndSubjectResponse;
@@ -44,11 +45,17 @@ public class ProfessorServiceTest {
         assertEquals(2, res.size());
     }
 
-//    @Test
-//    public void getProfClasses() {
-//        final List<UserClass> res = professorService.getProfClasses(-21, "2017-05-09", "2017-05-11");
-//        assertEquals(3, res.size());
-//    }
+    @Test
+    public void getProfClasses() {
+        final List<ClassModel> res = professorService.getProfClasses(-21, "2017-05-09", "2017-05-11");
+        assertEquals(2, res.size());
+    }
+
+    @Test
+    public void getProfClassesEmplty() {
+        final List<ClassModel> res = professorService.getProfClasses(-21, "2017-05-09", null);
+        assertEquals(3, res.size());
+    }
 
     @Test
     public void addAttendencies() throws PermissionDeniedException {

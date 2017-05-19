@@ -1,5 +1,6 @@
 package api.controllers;
 
+import api.models.ClassModel;
 import api.models.Course;
 import api.models.Group;
 import api.services.StudentService;
@@ -37,8 +38,8 @@ public class StudentController {
     }
 
     @GetMapping("/{id}/classes")
-    public List<UserClass> getStudentClasses(@PathVariable Long id, @RequestParam("from") String from,
-                                             @RequestParam("to") String to) {
+    public List<ClassModel> getStudentClasses(@PathVariable Long id, @RequestParam("from") String from,
+                                              @RequestParam("to") String to) {
         return studentService.getStudentClasses(id, from, to);
     }
 

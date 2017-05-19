@@ -1,6 +1,7 @@
 package api.services;
 
 import api.Application;
+import api.models.ClassModel;
 import api.models.Course;
 import api.models.Group;
 import api.utils.response.UserClass;
@@ -51,14 +52,13 @@ public class StudentServiceTest {
         assertEquals("first course", res.get(0).getName());
     }
 
-//    @Test
-//    public void getStudentClasses() {
-//        final List<UserClass> res = studentService.getStudentClasses(-1,
-//                "2017-05-05", "2017-05-14");
-//        assertEquals(3, res.size());
-//        assertEquals("Math", res.get(0).getSubjectName());
-//        assertEquals("English", res.get(2).getSubjectName());
-//    }
+    @Test
+    public void getStudentClasses() {
+        final List<ClassModel> res = studentService.getStudentClasses(-1, "2017-05-05", "2017-05-14");
+        assertEquals(3, res.size());
+        assertEquals("Math", res.get(0).getSubjectName());
+        assertEquals("English", res.get(2).getSubjectName());
+    }
 
     @Test
     public void createRequest() {

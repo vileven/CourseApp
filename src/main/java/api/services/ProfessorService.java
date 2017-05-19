@@ -1,5 +1,6 @@
 package api.services;
 
+import api.models.ClassModel;
 import api.repositories.CourseRepository;
 import api.repositories.GroupRepository;
 import api.repositories.SubjectRepository;
@@ -8,6 +9,7 @@ import api.utils.error.PermissionDeniedException;
 import api.utils.info.AttendancesInfo;
 import api.utils.response.GroupAndSubjectResponse;
 import api.utils.response.UserClass;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -15,7 +17,9 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpSession;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static api.controllers.SessionController.USER_ID;
@@ -41,11 +45,15 @@ public class ProfessorService {
         this.template = template;
     }
 
-    private final RowMapper<UserClass> userClassMapper = (((rs, rowNum) -> new UserClass(rs.getLong("id"),
-            rs.getLong("subject_id"), rs.getString("subject_name"),
-            rs.getLong("group_id"), rs.getString("group_name"),
-            rs.getString("professors"), rs.getString("topic"), rs.getString("begin_time"),
-            rs.getString("end_time"))));
+    private final RowMapper<ClassModel> classMapper = (((rs, rowNum) ->
+            new ClassModel(rs.getLong("id"),
+                    rs.getString("topic"), rs.getLong("subject_id"),
+                    rs.getString("subject_name"), rs.getLong("group_id"),
+                    rs.getString("group_name"), rs.getLong("prof_id"),
+                    rs.getString("prof_first_name"), rs.getString("prof_last_name"),
+                    rs.getString("begin_time"), rs.getString("end_time"),
+                    rs.getString("location"))
+    ));
 
     private final RowMapper<GroupAndSubjectResponse> groupAndSubjectMapper = (((rs, rowNum) ->
             new GroupAndSubjectResponse(rs.getLong("subject_id"), rs.getString("subject_name"),
@@ -69,34 +77,37 @@ public class ProfessorService {
                         "WHERE cl.id = ? AND u.id =? ", idMapper, (Long) id, classId).isEmpty();
     }
 
-    public List<UserClass> getProfClasses(long id, String from, String to) {
+    public List<ClassModel> getProfClasses(long id, @Nullable String from, @Nullable String to) {
         if (from == null) {
             from = LocalDateTime.now().toString();
         }
 
         if (to == null) {
-            to = (LocalDateTime.parse(from).plusDays(7)).toString();
+            to = (LocalDate.parse(from).plusDays(8)).toString();
         }
 
-        final String query =
-                        "SELECT " +
-                        "  cl.id, " +
-                        "  cl.subject_id, " +
-                        "  s.name AS subject_name, " +
-                        "  cl.group_id, " +
-                        "  g.name AS group_name, " +
-                        "  cl.begin_time, " +
-                        "  cl.end_time " +
-                        "FROM " +
-                        " classes AS cl " +
-                        " JOIN subjects AS s ON cl.subject_id = s.id " +
-                        " JOIN professors AS pr ON s.id = pr.subject_id " +
-                        " JOIN users AS u ON pr.prof_id = u.id " +
-                        " JOIN groups AS g ON cl.group_id = g.id "+
-                        "WHERE u.id = ? AND cl.begin_time >= ?::TIMESTAMPTZ AND cl.begin_time <= ?::TIMESTAMPTZ " +
+        final String query = "SELECT\n" +
+                                "  cl.id,\n" +
+                                "  cl.subject_id,\n" +
+                                "  s.name AS subject_name,\n" +
+                                "  cl.group_id,\n" +
+                                "  g.name AS group_name,\n" +
+                                "  cl.prof_id,\n" +
+                                "  u.first_name AS prof_first_name,\n" +
+                                "  u.last_name AS prof_last_name,\n" +
+                                "  cl.topic,\n" +
+                                "  cl.location,\n" +
+                                "  cl.begin_time,\n" +
+                                "  cl.end_time\n" +
+                                "FROM\n" +
+                                "  classes cl\n" +
+                                "  JOIN subjects s ON cl.subject_id = s.id\n" +
+                                "  JOIN users u ON cl.prof_id = u.id\n" +
+                                "  JOIN groups g ON cl.group_id = g.id\n" +
+                                "WHERE cl.prof_id = ? AND cl.begin_time >= ?::TIMESTAMPTZ AND cl.begin_time <= ?::TIMESTAMPTZ " +
                         "ORDER BY cl.begin_time ";
 
-        return template.query(query, userClassMapper, id, from, to);
+        return template.query(query, classMapper, id, from, to);
     }
 
     public List<GroupAndSubjectResponse> getGroupsAndSubjects(long id) {

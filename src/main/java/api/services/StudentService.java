@@ -1,5 +1,6 @@
 package api.services;
 
+import api.models.ClassModel;
 import api.models.Course;
 import api.models.Group;
 import api.repositories.CourseRepository;
@@ -25,11 +26,15 @@ public class StudentService {
     private final CourseRepository courseRepository;
     private final JdbcTemplate template;
 
-    private final RowMapper<UserClass> userClassMapper = (((rs, rowNum) -> new UserClass(rs.getLong("id"),
-            rs.getLong("subject_id"), rs.getString("subject_name"),
-            rs.getLong("group_id"), rs.getString("group_name"),
-            rs.getString("professors"), rs.getString("topic"), rs.getString("begin_time"),
-            rs.getString("end_time"))));
+    private final RowMapper<ClassModel> classMapper = (((rs, rowNum) ->
+            new ClassModel(rs.getLong("id"),
+                    rs.getString("topic"), rs.getLong("subject_id"),
+                    rs.getString("subject_name"), rs.getLong("group_id"),
+                    rs.getString("group_name"), rs.getLong("prof_id"),
+                    rs.getString("prof_first_name"), rs.getString("prof_last_name"),
+                    rs.getString("begin_time"), rs.getString("end_time"),
+                    rs.getString("location"))
+    ));
 
     @Autowired
     public StudentService(UserRepository userRepository, SubjectRepository subjectRepository,
@@ -73,24 +78,29 @@ public class StudentService {
         return this.template.query(query, courseRepository.getMapper(), id);
     }
 
-    public List<UserClass> getStudentClasses(long id, String from, String to) {
+    public List<ClassModel> getStudentClasses(long id, String from, String to) {
         if (from == null) {
             from = LocalDate.now().atStartOfDay().toString();
         }
 
         if (to == null) {
-            to = (LocalDateTime.parse(from).plusDays(7)).toString();
+            to = (LocalDate.parse(from).plusDays(8)).toString();
         }
 
         final String query =
                 "SELECT " +
-                "  cl.id, " +
-                "  cl.subject_id, " +
-                "  s.name AS subject_name, " +
-                "  cl.group_id, " +
-                "  g.name AS group_name, " +
-                "  cl.begin_time, " +
-                "  cl.end_time " +
+                        "  cl.id,\n" +
+                        "  cl.subject_id,\n" +
+                        "  s.name AS subject_name,\n" +
+                        "  cl.group_id,\n" +
+                        "  g.name AS group_name,\n" +
+                        "  cl.prof_id,\n" +
+                        "  u.first_name AS prof_first_name,\n" +
+                        "  u.last_name AS prof_last_name,\n" +
+                        "  cl.topic,\n" +
+                        "  cl.location,\n" +
+                        "  cl.begin_time,\n" +
+                        "  cl.end_time\n" +
                 "FROM " +
                 "  classes AS cl " +
                 "  JOIN groups AS g ON cl.group_id = g.id " +
@@ -100,7 +110,7 @@ public class StudentService {
                 "WHERE u.id = ? AND cl.begin_time >= ?::TIMESTAMPTZ AND cl.begin_time <= ?::TIMESTAMPTZ " +
                 "ORDER BY cl.begin_time ";
 
-        return template.query(query, userClassMapper, id, from, to);
+        return template.query(query, classMapper, id, from, to);
     }
 
     public void createRequest(long studentId, long courseId) throws DataIntegrityViolationException {

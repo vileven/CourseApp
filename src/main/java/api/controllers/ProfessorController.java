@@ -1,5 +1,6 @@
 package api.controllers;
 
+import api.models.ClassModel;
 import api.services.ProfessorService;
 import api.utils.ErrorCodes;
 import api.utils.error.PermissionDeniedException;
@@ -35,8 +36,8 @@ public class ProfessorController {
     }
 
     @GetMapping("/{id}/classes")
-    public List<UserClass> getProfClasses(@PathVariable Long id, @RequestParam("from") String from,
-                                          @RequestParam("to") String to) {
+    public List<ClassModel> getProfClasses(@PathVariable Long id, @RequestParam("from") String from,
+                                           @RequestParam("to") String to) {
         return professorService.getProfClasses(id, from, to);
     }
 
