@@ -85,7 +85,7 @@ public class AdminService {
         }
 
         return classRepository.create(new ClassModel(info.getTopic(), info.getSubject(), info.getGroup(), info.getBegin(),
-                info.getEnd()));
+                info.getEnd(), info.getLocation()));
     }
 
     @Nullable
@@ -140,7 +140,7 @@ public class AdminService {
         }
 
         return classRepository.update(new ClassModel(info.getId(), info.getTopic(), info.getSubject(), info.getGroup(),
-                info.getBegin(), info.getEnd()));
+                info.getBegin(), info.getEnd(), info.getLocation()));
     }
 
     public void deleteCourse(CourseInfo courseData, HttpSession session) throws PermissionDeniedException {

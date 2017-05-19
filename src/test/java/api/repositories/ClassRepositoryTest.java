@@ -72,7 +72,7 @@ public class ClassRepositoryTest {
 
         final SimpleJdbcInsert insert = new SimpleJdbcInsert(template).withTableName("classes").usingGeneratedKeyColumns("id");
         classModel = new ClassModel("topic", subject.getId(), group.getId(), "2017-05-05 14:00:00",
-                "2017-05-05 15:30:00");
+                "2017-05-05 15:30:00", "213");
 
         final Map<String, Object> parameters = new HashMap<>();
         parameters.put("topic", classModel.getTopic());
@@ -80,6 +80,7 @@ public class ClassRepositoryTest {
         parameters.put("group_id", classModel.getGroup());
         parameters.put("begin_time", classModel.getBegin());
         parameters.put("end_time", classModel.getEnd());
+        parameters.put("location", classModel.getLocation());
         final Number id = insert.executeAndReturnKey(parameters);
         classModel.setId((Long) id);
     }
@@ -87,7 +88,7 @@ public class ClassRepositoryTest {
     @Test
     public void create() {
         final ClassModel createdClass = classRepository.create(new ClassModel("topic", subject.getId(), group.getId(),
-                "2017-05-06 14:00:00", "2017-05-06 15:30:00"));
+                "2017-05-06 14:00:00", "2017-05-06 15:30:00", "213"));
         assertNotNull(createdClass);
         assertFalse(createdClass.isNew());
     }
@@ -118,7 +119,7 @@ public class ClassRepositoryTest {
     public void selectWithParams() {
         for (int i = 0; i < 10; i++) {
             classRepository.create(new ClassModel(Integer.toString(i), classModel.getSubject(), classModel.getGroup(),
-                    classModel.getBegin(), classModel.getEnd()));
+                    classModel.getBegin(), classModel.getEnd(), "213"));
         }
 
         List<ClassModel> res = classRepository.selectWithParams(10, 0, null,  null);

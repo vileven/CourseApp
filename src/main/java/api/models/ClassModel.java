@@ -2,8 +2,6 @@ package api.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.time.LocalDateTime;
-
 
 public class ClassModel extends Model<Long> {
 
@@ -22,21 +20,25 @@ public class ClassModel extends Model<Long> {
     @JsonProperty("end_id")
     private String end;
 
-    public ClassModel(Long id, String topic, Long subject, Long group, String begin, String end) {
+    private String location;
+
+    public ClassModel(Long id, String topic, Long subject, Long group, String begin, String end, String location) {
         this.id = id;
         this.topic = topic;
         this.subject = subject;
         this.group = group;
         this.begin = begin;
         this.end = end;
+        this.location = location;
     }
 
-    public ClassModel(String topic, Long subject, Long group, String begin, String end) {
+    public ClassModel(String topic, Long subject, Long group, String begin, String end, String location) {
         this.topic = topic;
         this.subject = subject;
         this.group = group;
         this.begin = begin;
         this.end = end;
+        this.location = location;
     }
 
     public void setId(Long id) {
@@ -86,5 +88,9 @@ public class ClassModel extends Model<Long> {
     @Override
     public Long getId() {
         return id;
+    }
+
+    public String getLocation() {
+        return location;
     }
 }

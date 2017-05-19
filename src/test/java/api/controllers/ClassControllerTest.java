@@ -79,7 +79,7 @@ public class ClassControllerTest {
 
         classRepository.deleteAll();
         classModel = classRepository.create(new ClassModel("Machine learning", subject.getId(), group.getId(),
-                "2017-05-06 14:00:00", "2017-05-06 15:30:00"));
+                "2017-05-06 14:00:00", "2017-05-06 15:30:00", "213"));
         assertNotNull(classModel);
 
         userRepository.deleteAll();
@@ -125,6 +125,7 @@ public class ClassControllerTest {
                                     "\"topic\":\"Normal equations\"," +
                                     "\"subject_id\":\""+subject.getId()+"\"," +
                                     "\"group_id\":\""+group.getId()+"\"," +
+                                    "\"location\":\"432\"," +
                                     "\"begin_time\":\"2017-05-06 14:00:00\"," +
                                     "\"end_time\":\"2017-05-06 15:30:00\"" +
                                 '}'))
@@ -163,6 +164,7 @@ public class ClassControllerTest {
                                 "\"topic\":\"updated_name\"," +
                                 "\"subject_id\":\""+subject.getId()+"\"," +
                                 "\"group_id\":\""+group.getId()+"\"," +
+                                "\"location\":\"432\"," +
                                 "\"begin_time\":\"2017-05-06 14:00:00\"," +
                                 "\"end_time\":\"2017-05-06 15:30:00\"" +
                                 '}'))
@@ -193,11 +195,11 @@ public class ClassControllerTest {
     @Test
     public void select() throws  Exception {
         classRepository.create(new ClassModel("machine creating", classModel.getSubject(), classModel.getGroup(),
-                classModel.getBegin(), classModel.getEnd()));
+                classModel.getBegin(), classModel.getEnd(), "213"));
         classRepository.create(new ClassModel("maches loss", classModel.getSubject(), classModel.getGroup(),
-                classModel.getBegin(), classModel.getEnd()));
+                classModel.getBegin(), classModel.getEnd(), "213"));
         classRepository.create(new ClassModel("Normal equations", classModel.getSubject(), classModel.getGroup(),
-                classModel.getBegin(), classModel.getEnd()));
+                classModel.getBegin(), classModel.getEnd(), "213"));
         mockMvc
                 .perform(post("/class/select")
                         .sessionAttr(USER_ID, admin.getId())

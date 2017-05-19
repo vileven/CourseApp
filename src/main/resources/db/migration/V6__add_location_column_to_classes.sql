@@ -1,0 +1,1 @@
+ALTER TABLE classes ADD location TEXT NOT NULL ;

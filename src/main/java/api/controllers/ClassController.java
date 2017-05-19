@@ -50,13 +50,15 @@ public class ClassController {
             final ClassModel classModel = adminService.createClass(info, session);
 
             if (classModel == null) {
-                Response.badRequest(ErrorCodes.BAD_VALIDATOR, "subject_id or group_id not valid");
+                return Response.badRequest(ErrorCodes.BAD_VALIDATOR, "wrong request data");
             }
 
             return ResponseEntity.ok(classModel);
         } catch (PermissionDeniedException e) {
 
             return Response.badRequest(ErrorCodes.PERMISSION_DENIED, e.message);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body("error");
         }
     }
 

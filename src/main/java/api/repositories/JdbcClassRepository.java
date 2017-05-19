@@ -32,7 +32,7 @@ public class JdbcClassRepository implements ClassRepository {
 
     private final RowMapper<ClassModel> classMapper = (((rs, rowNum) -> new ClassModel(rs.getLong("id"),
             rs.getString("topic"), rs.getLong("subject_id"), rs.getLong("group_id"),
-            rs.getString("begin_time"), rs.getString("end_time"))));
+            rs.getString("begin_time"), rs.getString("end_time"), rs.getString("location"))));
 
     @Nullable
     @Override
@@ -43,6 +43,7 @@ public class JdbcClassRepository implements ClassRepository {
         parameters.put("group_id", classModel.getGroup());
         parameters.put("begin_time", classModel.getBegin());
         parameters.put("end_time", classModel.getEnd());
+        parameters.put("location", classModel.getLocation());
 
         try {
             final Number id = classInsert.executeAndReturnKey(parameters);
@@ -69,11 +70,11 @@ public class JdbcClassRepository implements ClassRepository {
 
     @Override
     public ClassModel update(ClassModel classModel) throws DataIntegrityViolationException, EntityNotFoundException {
-        final String query = "UPDATE classes SET topic = ?, subject_id = ?, group_id = ? ," +
+        final String query = "UPDATE classes SET topic = ?, subject_id = ?, group_id = ? , location = ?, " +
                                                 "begin_time = ?::TIMESTAMPTZ, end_time = ?::TIMESTAMPTZ " +
                             " WHERE id = ?";
         final int count = template.update(query, classModel.getTopic(), classModel.getSubject(), classModel.getGroup(),
-                classModel.getBegin(),classModel.getEnd(), classModel.getId());
+                classModel.getLocation(), classModel.getBegin(),classModel.getEnd(), classModel.getId());
         if (count == 0) {
             throw new EntityNotFoundException("class not found");
         }
