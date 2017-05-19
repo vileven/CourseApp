@@ -126,6 +126,28 @@ public class ClassControllerTest {
     }
 
     @Test
+    public void createBatchCourses() throws Exception {
+        mockMvc
+                .perform(post("/class/createBatch")
+                        .sessionAttr(USER_ID, admin.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content('{' +
+                                "\"topic\":\"Normal equations\"," +
+                                "\"subject_id\": "+-1L+"," +
+                                "\"group_ids\": [ -2, -1 ]," +
+                                "\"prof_id\": -21," +
+                                "\"location\":\"432\"," +
+                                "\"amount\": 10," +
+                                "\"week_offset\": 1," +
+                                "\"begin_time\":\"2017-05-06T14:00:00\"," +
+                                "\"end_time\":\"2017-05-06T15:30:00\"" +
+                                '}'))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("msg").value("success"))
+        ;
+    }
+
+    @Test
     public void itShouldNotWorkWithoutAdminAuth() throws Exception {
         mockMvc
                 .perform(post("/class/create")

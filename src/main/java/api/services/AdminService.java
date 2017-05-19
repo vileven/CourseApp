@@ -15,7 +15,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpSession;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static api.controllers.SessionController.USER_ID;
 
@@ -89,6 +94,28 @@ public class AdminService {
                 info.getEnd(), info.getLocation()));
     }
 
+    @Transactional
+    public void createBatchClass(ClassCreationInfo info, HttpSession session) throws PermissionDeniedException {
+        if (!isAdmin(session)) {
+            throw new PermissionDeniedException("permission denied");
+        }
+
+
+        info.getGroups().forEach(group -> IntStream.range(0, info.getAmount())
+                .forEach(el -> {
+                    final String beginTime = LocalDateTime.parse(info.getBegin())
+                            .plusWeeks(el).toString();
+                    final String endTime = LocalDateTime.parse(info.getEnd())
+                            .plusWeeks(el).toString();
+
+                    final ClassModel classModel = classRepository.create(new ClassModel(info.getTopic(), info.getSubject(), group,
+                            info.getProf(), beginTime, endTime, info.getLocation()));
+                    System.out.println(classModel.getLocation() + "   " + classModel.getId());
+                })
+        );
+
+
+    }
     @Nullable
     public Course getCourse(long id) {
         return courseRepository.find(id);

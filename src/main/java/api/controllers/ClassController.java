@@ -5,6 +5,7 @@ import api.services.AdminService;
 import api.utils.ErrorCodes;
 import api.utils.error.EntityNotFoundException;
 import api.utils.error.PermissionDeniedException;
+import api.utils.info.ClassCreationInfo;
 import api.utils.info.ClassInfo;
 import api.utils.info.SelectParametersInfo;
 import api.utils.response.Response;
@@ -95,6 +96,16 @@ public class ClassController {
     public ResponseEntity<?> selectClasses(@RequestBody SelectParametersInfo info, HttpSession session) {
         try {
             return ResponseEntity.ok(new SelectBody(adminService.selectClassesWithParams(info, session), adminService.getCount("classes", info.getFilters())));
+        } catch (PermissionDeniedException e) {
+            return Response.badRequest(ErrorCodes.PERMISSION_DENIED, e.message);
+        }
+    }
+
+    @PostMapping("/createBatch")
+    public ResponseEntity<?> createBatch(@RequestBody ClassCreationInfo info, HttpSession session){
+        try {
+            adminService.createBatchClass(info, session);
+            return ResponseEntity.ok("{\"msg\":\"success\"}");
         } catch (PermissionDeniedException e) {
             return Response.badRequest(ErrorCodes.PERMISSION_DENIED, e.message);
         }

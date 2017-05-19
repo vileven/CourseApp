@@ -10,9 +10,11 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,9 +61,15 @@ public class JdbcClassRepository implements ClassRepository {
         parameters.put("prof_id", classModel.getProfId());
         parameters.put("location", classModel.getLocation());
 
+
         try {
-            final Number id = classInsert.executeAndReturnKey(parameters);
-            return find((Long) id);
+//            final Number id = classInsert.executeAndReturnKey(new MapSqlParameterSource(parameters));
+//            return find((Long) id);
+
+            final Long id = template.queryForObject( "INSERT INTO classes (topic, subject_id, group_id, begin_time, end_time, location, prof_id)" +
+                    "VALUES (?,?,?,?::TIMESTAMPTZ,?::TIMESTAMPTZ,?,?) RETURNING id ",Long.class, classModel.getTopic(), classModel.getSubjectId(),
+                    classModel.getGroupId(), classModel.getBegin(), classModel.getEnd(), classModel.getLocation(), classModel.getProfId());
+            return find(id);
         } catch (DataIntegrityViolationException e) {
             return null;
         }
@@ -150,6 +158,7 @@ public class JdbcClassRepository implements ClassRepository {
 
             for (int i = 1; i <= orders.size(); i++) {
                 queryBuilder
+                        .append("cl.")
                         .append(orders.get(i-1).getKey())
                         .append(' ')
                         .append(orders.get(i-1).getValue())
