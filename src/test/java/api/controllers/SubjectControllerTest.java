@@ -18,6 +18,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.MockMvcPrint;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -37,6 +38,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class)
 @AutoConfigureMockMvc(print = MockMvcPrint.DEFAULT)
+@Sql(scripts = "../../filling.sql")
 public class SubjectControllerTest {
     @Autowired
     private MockMvc mockMvc;
@@ -61,42 +63,44 @@ public class SubjectControllerTest {
 
     @Before
     public void setup() throws Exception {
-        courseRepository.deleteAll();
-        course = courseRepository.create(new Course("course"));
-        assertNotNull(course);
-
-        subjectRepository.deleteAll();
-        subject = subjectRepository.create(new SubjectResponse(course.getId(),null,"Math"));
-        assertNotNull(subject);
-
-        userRepository.deleteAll();
-        admin = userRepository.create(new User(0, "email@mail.ru", passwordEncoder.encode("qwerty123"),
-                "sergey", "volodin", null,"about"));
+//        courseRepository.deleteAll();
+//        course = courseRepository.create(new Course("course"));
+//        assertNotNull(course);
+//
+//        subjectRepository.deleteAll();
+//        subject = subjectRepository.create(new SubjectResponse(course.getId(),null,"Math"));
+//        assertNotNull(subject);
+//
+//        userRepository.deleteAll();
+//        admin = userRepository.create(new User(0, "email@mail.ru", passwordEncoder.encode("qwerty123"),
+//                "sergey", "volodin", null,"about"));
+//        assertNotNull(admin);
+//
+//        //login
+//        final MvcResult result = mockMvc
+//                .perform(post("/session/login")
+//                        .contentType(MediaType.APPLICATION_JSON)
+//                        .content('{' +
+//                                "\"email\":\"email@mail.ru\"," +
+//                                "\"password\":\"qwerty123\"" +
+//                                '}'))
+//                .andExpect(status().isOk())
+//                .andReturn();
+//
+//        assertEquals(admin.getId(), result.getRequest().getSession().getAttribute(USER_ID));
+        admin = userRepository.find(-25L);
         assertNotNull(admin);
-
-        //login
-        final MvcResult result = mockMvc
-                .perform(post("/session/login")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content('{' +
-                                "\"email\":\"email@mail.ru\"," +
-                                "\"password\":\"qwerty123\"" +
-                                '}'))
-                .andExpect(status().isOk())
-                .andReturn();
-
-        assertEquals(admin.getId(), result.getRequest().getSession().getAttribute(USER_ID));
     }
 
     @Test
     public void getSubject() throws Exception {
         mockMvc
-                .perform(get("/subject/"+subject.getId())
+                .perform(get("/subject/-1")
                         .sessionAttr(USER_ID, admin.getId()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("id").value(subject.getId()))
-                .andExpect(jsonPath("course_id").value(course.getId()))
-                .andExpect(jsonPath("name").value(subject.getName()))
+                .andExpect(jsonPath("id").value(-1))
+                .andExpect(jsonPath("course_id").value(-1))
+                .andExpect(jsonPath("name").value("Math"))
         ;
     }
 
@@ -107,7 +111,7 @@ public class SubjectControllerTest {
                         .sessionAttr(USER_ID, admin.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content('{' +
-                                "\"course_id\":\""+course.getId()+"\"," +
+                                "\"course_id\":-1," +
                                 "\"name\":\"created_subject\"" +
                                 '}'))
                 .andExpect(status().isOk())
@@ -118,24 +122,26 @@ public class SubjectControllerTest {
 
     @Test
     public void updateSubject() throws Exception {
+        subject = subjectRepository.create(new SubjectResponse(-1L, null,"physics"));
         mockMvc
                 .perform(post("/subject/update")
                         .sessionAttr(USER_ID, admin.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content('{' +
                                 "\"id\":\""+subject.getId()+"\"," +
-                                "\"course_id\":\""+course.getId()+"\"," +
+                                "\"course_id\":\""+subject.getCourseId()+"\"," +
                                 "\"name\":\"updated_name\"" +
                                 '}'))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("name").value("updated_name"))
-                .andExpect(jsonPath("course_id").value(course.getId()))
+                .andExpect(jsonPath("course_id").value(subject.getCourseId()))
                 .andExpect(jsonPath("id").value(subject.getId()))
         ;
     }
 
     @Test
     public void deleteSubject() throws Exception {
+        subject = subjectRepository.create(new SubjectResponse(-1L, "first course","name"));
         mockMvc
                 .perform(post("/subject/delete")
                         .sessionAttr(USER_ID, admin.getId())
@@ -151,10 +157,19 @@ public class SubjectControllerTest {
     }
 
     @Test
+    public void getSubjectProfs() throws Exception {
+        mockMvc
+                .perform(get("/subject/-1/professors"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("length()").value(2))
+                ;
+    }
+
+    @Test
     public void selectSubjects() throws Exception {
-        subjectRepository.create(new SubjectResponse(course.getId(), null,"physics"));
-        subjectRepository.create(new SubjectResponse(course.getId(), null,"mathematics"));
-        subjectRepository.create(new SubjectResponse(course.getId(),null, "Math Analisis"));
+        subjectRepository.create(new SubjectResponse(-1L, null,"physics"));
+        subjectRepository.create(new SubjectResponse(-1L, null,"mathematics"));
+        subjectRepository.create(new SubjectResponse(-1L,null, "Math Analisis"));
         mockMvc
                 .perform(post("/subject/select")
                         .sessionAttr(USER_ID, admin.getId())

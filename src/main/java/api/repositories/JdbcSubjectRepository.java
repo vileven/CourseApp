@@ -4,6 +4,7 @@ import api.models.Subject;
 import api.utils.error.EntityNotFoundException;
 import api.utils.pair.Pair;
 import api.utils.response.SubjectResponse;
+import api.utils.response.UserResponseBody;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -35,6 +36,12 @@ public class JdbcSubjectRepository implements SubjectRepository {
     private final RowMapper<SubjectResponse> subjectMapper = (((rs, rowNum) -> new SubjectResponse(rs.getLong("id"),
             rs.getLong("course_id"), rs.getString("course_name"), rs.getString("name"))));
 
+    private final RowMapper<UserResponseBody> userMapperWithotPassword = (((rs, rowNum) ->
+            new UserResponseBody(rs.getLong("id"), rs.getInt("role"),
+                    rs.getString("email"),
+                    rs.getString("first_name"), rs.getString("last_name"),
+                    rs.getString("about"))
+    ));
 
     @Nullable
     @Override
@@ -146,5 +153,24 @@ public class JdbcSubjectRepository implements SubjectRepository {
     @Override
     public void deleteAll() {
         template.update("DELETE FROM subjects");
+    }
+
+    @Override
+    public List<UserResponseBody> getProfessors(long id) {
+        final String sql =
+                "SELECT " +
+                "  u.id, " +
+                "  u.role, " +
+                "  u.email, " +
+                "  u.password, " +
+                "  u.first_name, " +
+                "  u.last_name, " +
+                "  u.about " +
+                "FROM " +
+                "  professors AS pr " +
+                "  JOIN users u ON pr.prof_id = u.id  " +
+                "WHERE pr.subject_id = ? ";
+
+        return template.query(sql, userMapperWithotPassword, id);
     }
 }

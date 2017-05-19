@@ -54,6 +54,11 @@ public class SubjectController {
         return ResponseEntity.ok(subject);
     }
 
+    @GetMapping("/{id}/professors")
+    public ResponseEntity<?> getProfessors(@PathVariable Long id) {
+        return ResponseEntity.ok(adminService.getSubjectProfs(id));
+    }
+
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Success", response = SubjectResponse.class),
             @ApiResponse(code = 400, message = "Bad request", response = ResponseBody.class)

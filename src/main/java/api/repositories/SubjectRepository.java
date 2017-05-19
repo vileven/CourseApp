@@ -4,6 +4,7 @@ import api.models.Subject;
 import api.utils.error.EntityNotFoundException;
 import api.utils.pair.Pair;
 import api.utils.response.SubjectResponse;
+import api.utils.response.UserResponseBody;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.dao.DataIntegrityViolationException;
 
@@ -34,4 +35,6 @@ public interface SubjectRepository {
                                            @Nullable List<Pair<String, String>> filters);
 
     void deleteAll();
+
+    List<UserResponseBody> getProfessors(long id);
 }

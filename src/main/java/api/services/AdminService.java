@@ -8,6 +8,7 @@ import api.utils.info.*;
 import api.utils.pair.Pair;
 import api.utils.response.SubjectResponse;
 import api.utils.response.UserClass;
+import api.utils.response.UserResponseBody;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -284,4 +285,7 @@ public class AdminService {
         return courseRepository.getSubjects(id);
     }
 
+    public List<UserResponseBody> getSubjectProfs(long id) {
+        return subjectRepository.getProfessors(id);
+    }
 }
