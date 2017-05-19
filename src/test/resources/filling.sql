@@ -1,11 +1,17 @@
 INSERT INTO courses (id, name) VALUES
   (-1,'first course');
 
+INSERT INTO courses (id, name) VALUES
+  (-2, 'second course');
+
 INSERT INTO groups (id, course_id, name) VALUES
   (-1, -1, 'IU6-41');
 
 INSERT INTO groups (id, course_id, name) VALUES
   (-2, -1, 'IU6-43');
+
+INSERT INTO groups (id, course_id, name) VALUES
+  (-3, -2, 'IU7-43');
 
 INSERT INTO subjects (id, course_id, name) VALUES
   (-1, -1, 'Math');
@@ -17,6 +23,7 @@ INSERT INTO subjects (id, course_id, name) VALUES
   (-3, -1, 'Physics');
 
 INSERT INTO users (id, role, email, password, first_name, last_name, avatar, about) VALUES
+  (0, 0, 'kek@com', 'password', 'name', 'surname', NULL ,'about'),
   (-1, 1, '1@mail.com', 'password', 'name', 'surname', NULL ,'about'),
   (-2, 1, '2@mail.com', 'password', 'name', 'surname', NULL ,'about'),
   (-3, 1, '3@mail.com', 'password', 'name', 'surname', NULL ,'about'),
@@ -111,3 +118,5 @@ INSERT INTO attendances (class_id, student_id, mark, comment) VALUES
   (-6, -17, 4, NULL ),
   (-6, -18, 4, NULL ),
   (-6, -20, 2, NULL );
+
+INSERT INTO requests (id, student_id, course_id) VALUES (-1, -1, -2);

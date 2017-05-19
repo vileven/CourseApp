@@ -4,8 +4,6 @@ import api.models.Course;
 import api.models.Group;
 import api.services.StudentService;
 import api.utils.info.IdInfo;
-import api.utils.info.TimeInfo;
-import api.utils.info.ValueInfo;
 import api.utils.response.Response;
 import api.utils.response.UserClass;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,9 +15,6 @@ import java.util.List;
 
 import static api.controllers.SessionController.USER_ID;
 
-/**
- * Created by Vileven on 16.05.17.
- */
 @CrossOrigin(origins = {"http://localhost:3000", "*", "http://127.0.0.1:3000"})
 @RestController
 @RequestMapping(path = "/student")

@@ -3,6 +3,7 @@ package api.repositories;
 import api.models.Group;
 import api.utils.error.EntityNotFoundException;
 import api.utils.pair.Pair;
+import api.utils.response.UserResponseBody;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -32,6 +33,11 @@ public class JdbcGroupRepository implements GroupRepository {
 
     private final RowMapper<Group> groupMapper = (((rs, rowNum) -> new Group(rs.getLong("id"),
             rs.getLong("course_id"), rs.getString("course_name"), rs.getString("name"))));
+
+    private final RowMapper<UserResponseBody> userMapper = (((rs, rowNum) -> new UserResponseBody(
+            rs.getLong("id"), rs.getInt("role"), rs.getString("email"),
+            rs.getString("first_name"), rs.getString("last_name"),
+            rs.getString("about"))));
 
     @Nullable
     @Override
@@ -134,6 +140,50 @@ public class JdbcGroupRepository implements GroupRepository {
         }
         queryBuilder.append(" LIMIT ? OFFSET ?");
         return template.query(queryBuilder.toString(), groupMapper,limit, offset);
+    }
+
+    @Override
+    public List<UserResponseBody> getStudents(Long id, Integer limit, Integer offset, @Nullable List<Pair<String, String>> orders,
+                                              @Nullable List<Pair<String, String>> filters) {
+        final StringBuilder sqlConstructor = new StringBuilder();
+        sqlConstructor.append(" SELECT u.id, u.role, u.email, u.first_name, u.last_name, u.about FROM groups AS g ")
+                .append("  JOIN applications AS a ON g.id = a.group_id ")
+                .append("  JOIN users AS u ON a.student_id = u.id ")
+                .append(" WHERE g.id = ? ");
+
+        if (filters != null && !filters.isEmpty()) {
+            sqlConstructor.append("  AND ");
+            for (int i = 0; i < filters.size(); i++) {
+                sqlConstructor
+                        .append("u.")
+                        .append(filters.get(i).getKey())
+                        .append(" ~* '")
+                        .append(filters.get(i).getValue())
+                        .append('\'')
+                ;
+                if (i != filters.size() - 1) {
+                    sqlConstructor.append(" AND ");
+                }
+            }
+        }
+
+        if (orders != null && !orders.isEmpty()) {
+            sqlConstructor.append(" ORDER BY ");
+
+            for (int i = 0; i < orders.size(); i++) {
+                sqlConstructor
+                        .append(orders.get(i).getKey())
+                        .append(' ')
+                        .append(orders.get(i).getValue())
+                ;
+
+                if (i != orders.size() - 1) {
+                    sqlConstructor.append(", ");
+                }
+            }
+        }
+        sqlConstructor.append(" LIMIT ? OFFSET ?");
+        return template.query(sqlConstructor.toString(), userMapper, id, limit, offset);
     }
 
     @Override

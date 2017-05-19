@@ -3,6 +3,7 @@ package api.repositories;
 import api.models.Group;
 import api.utils.error.EntityNotFoundException;
 import api.utils.pair.Pair;
+import api.utils.response.UserResponseBody;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.RowMapper;
@@ -32,6 +33,9 @@ public interface GroupRepository {
 
     List<Group> selectWithParams(Integer limit, Integer offset,@Nullable List<Pair<String, String>> orders,
                                  @Nullable List<Pair<String, String>> filters);
+
+    List<UserResponseBody> getStudents(Long id, Integer limit, Integer offset,@Nullable List<Pair<String, String>> orders,
+                                       @Nullable List<Pair<String, String>> filters);
 
     void deleteAll();
 

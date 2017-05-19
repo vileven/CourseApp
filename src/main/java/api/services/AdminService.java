@@ -11,6 +11,7 @@ import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpSession;
 import java.util.List;
@@ -224,5 +225,26 @@ public class AdminService {
         }
 
         return template.queryForObject(sqlBuilder.toString(), Integer.class);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void acceptRequest(AcceptRequestInfo info, HttpSession session) throws PermissionDeniedException {
+        if (!isAdmin(session)) {
+            throw new PermissionDeniedException("permission denied");
+        }
+
+        template.update("INSERT INTO applications (student_id, group_id)  VALUES " +
+                "  ((SELECT student_id FROM requests WHERE id = ?), ?) ",  info.id, info.groupId);
+
+        template.update(" DELETE FROM requests WHERE id = ? ", info.id);
+
+    }
+
+    public void deleteRequest(IdInfo idInfo, HttpSession session) throws PermissionDeniedException {
+        if (!isAdmin(session)) {
+            throw new PermissionDeniedException("permission denied");
+        }
+
+        template.update("DELETE FROM requests WHERE id = ? ", idInfo.getId());
     }
 }

@@ -110,4 +110,16 @@ public class GroupController {
             return Response.badRequest(ErrorCodes.PERMISSION_DENIED, e.message);
         }
     }
+
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success", response = SelectBody.class),
+            @ApiResponse(code = 400, message = "Bad request", response = ResponseBody.class)
+    })
+    @GetMapping("/{id}/students")
+    public ResponseEntity<?> selectStudents(@PathVariable Long id) {
+
+        return ResponseEntity.ok().body(null);
+    }
+
+
 }

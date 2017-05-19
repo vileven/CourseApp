@@ -3,7 +3,9 @@ package api.repositories;
 import api.Application;
 import api.models.Course;
 import api.models.Group;
+import api.models.User;
 import api.utils.pair.Pair;
+import api.utils.response.UserResponseBody;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -43,6 +45,9 @@ public class GroupRepositoryTest {
 
     @Autowired
     private CourseRepository courseRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     private Group group;
 
@@ -116,6 +121,32 @@ public class GroupRepositoryTest {
         res = groupRepository.selectWithParams(1000, 0, null, params);
         assertEquals(1, res.size());
         assertEquals("1", res.get(0).getName());
+    }
+
+    @Test
+    public void selectStudents() {
+
+        for (int i = 0; i < 10; i++) {
+            final User user = userRepository.create(new User(1, String.valueOf(i), "password", "ser",
+                    "vol", null, "about"));
+
+            template.update("INSERT INTO applications (student_id, group_id) VALUES (?, ?)", user.getId(), group.getId());
+        }
+
+        List<UserResponseBody> res = groupRepository.getStudents(group.getId(), 1000, 0, null, null);
+        assertEquals(10, res.size());
+
+        List<Pair<String, String>> params = Collections.singletonList(new Pair<>("id", "DESC"));
+
+        res = groupRepository.getStudents(group.getId(),5, 5, params, null);
+        assertEquals(5, res.size());
+        assertEquals("0", res.get(4).email);
+
+        params = Collections.singletonList(new Pair<>("email", "2"));
+        res = groupRepository.getStudents(group.getId(),5, 0, null, params);
+        assertEquals(1, res.size());
+        assertEquals("2", res.get(0).email);
+
     }
 
 
