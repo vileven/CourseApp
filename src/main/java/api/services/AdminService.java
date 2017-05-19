@@ -247,4 +247,13 @@ public class AdminService {
 
         template.update("DELETE FROM requests WHERE id = ? ", idInfo.getId());
     }
+
+    public List<Group> getCourseGroups(long id) {
+        return courseRepository.getGroups(id);
+    }
+
+    public List<SubjectResponse> getCourseSubjects(long id) {
+        return courseRepository.getSubjects(id);
+    }
+
 }

@@ -1,8 +1,10 @@
 package api.repositories;
 
 import api.models.Course;
+import api.models.Group;
 import api.utils.error.EntityNotFoundException;
 import api.utils.pair.Pair;
+import api.utils.response.SubjectResponse;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -33,6 +35,12 @@ public class JdbcCourseRepository implements CourseRepository {
 
     private final RowMapper<Course> courseMapper = (((rs, rowNum) -> new Course(
             rs.getLong("id"), rs.getString("name"))));
+
+    private final RowMapper<Group> groupMapper = (((rs, rowNum) -> new Group(rs.getLong("id"),
+            rs.getLong("course_id"), rs.getString("course_name"), rs.getString("name"))));
+
+    private final RowMapper<SubjectResponse> subjectMapper = (((rs, rowNum) -> new SubjectResponse(rs.getLong("id"),
+            rs.getLong("course_id"), rs.getString("course_name"), rs.getString("name"))));
 
 
 
@@ -78,6 +86,41 @@ public class JdbcCourseRepository implements CourseRepository {
     public List<Course> findByName(String name) {
         return template.query("SELECT * FROM courses AS c WHERE c.name = ?", courseMapper, name);
     }
+
+    @Override
+    public List<Group> getGroups(long id) {
+        final String sql =
+                "SELECT " +
+                "  g.id, " +
+                "  g.course_id, " +
+                "  c.name AS course_name, " +
+                "  g.name " +
+                "FROM " +
+                "  groups g " +
+                "  JOIN courses c ON g.course_id = c.id " +
+                "WHERE g.course_id = ? " +
+                "ORDER BY g.name ";
+
+        return template.query(sql,groupMapper, id);
+    }
+
+    @Override
+    public List<SubjectResponse> getSubjects(long id) {
+        final String sql =
+                "SELECT " +
+                        "  s.id, " +
+                        "  s.course_id, " +
+                        "  c.name AS course_name, " +
+                        "  s.name " +
+                        "FROM " +
+                        "  subjects s " +
+                        "  JOIN courses c ON s.course_id = c.id " +
+                        "WHERE s.course_id = ? " +
+                        "ORDER BY s.name ";
+
+        return template.query(sql,subjectMapper, id);
+    }
+
 
     @Override
     public List<Course> selectWithParams(Integer limit, Integer offset, @Nullable List<Pair<String, String>> orders,

@@ -1,8 +1,10 @@
 package api.repositories;
 
 import api.models.Course;
+import api.models.Group;
 import api.utils.error.EntityNotFoundException;
 import api.utils.pair.Pair;
+import api.utils.response.SubjectResponse;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.RowMapper;
@@ -24,6 +26,10 @@ public interface CourseRepository {
     Course find(long id);
 
     List<Course> findByName(String name);
+
+    List<Group> getGroups(long id);
+
+    List<SubjectResponse> getSubjects(long id);
 
     List<Course> selectWithParams(Integer limit, Integer offset,@Nullable List<Pair<String, String>> orders,
                                   @Nullable List<Pair<String, String>> filters);

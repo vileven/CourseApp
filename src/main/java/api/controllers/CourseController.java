@@ -6,17 +6,14 @@ import api.utils.ErrorCodes;
 import api.utils.error.EntityNotFoundException;
 import api.utils.error.PermissionDeniedException;
 import api.utils.info.CourseInfo;
-import api.utils.info.IdInfo;
 import api.utils.info.SelectParametersInfo;
-import api.utils.response.CourseBody;
 import api.utils.response.Response;
 import api.utils.response.SelectBody;
-import api.utils.response.generic.ResponseBody;
+import api.utils.response.SubjectAndGroupsResponse;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -111,5 +108,14 @@ public class CourseController {
         } catch (PermissionDeniedException e) {
             return Response.badRequest(ErrorCodes.PERMISSION_DENIED, e.message);
         }
+    }
+
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success", response = SubjectAndGroupsResponse.class),
+    })
+    @GetMapping("/{id}/subjectsAndGroups")
+    public ResponseEntity<?> getSubjectsAndGroup(@PathVariable Long id) {
+        return ResponseEntity.ok(new SubjectAndGroupsResponse(adminService.getCourseGroups(id),
+                adminService.getCourseSubjects(id)));
     }
 }

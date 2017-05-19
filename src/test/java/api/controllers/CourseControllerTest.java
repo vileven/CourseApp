@@ -2,10 +2,14 @@ package api.controllers;
 
 import api.Application;
 import api.models.Course;
+import api.models.Group;
 import api.models.User;
 import api.repositories.CourseRepository;
+import api.repositories.GroupRepository;
+import api.repositories.SubjectRepository;
 import api.repositories.UserRepository;
 import api.utils.ErrorCodes;
+import api.utils.response.SubjectResponse;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,10 +19,15 @@ import org.springframework.boot.test.autoconfigure.web.servlet.MockMvcPrint;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import static api.controllers.SessionController.USER_ID;
 import static org.junit.Assert.*;
@@ -41,6 +50,12 @@ public class CourseControllerTest {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private GroupRepository groupRepository;
+
+    @Autowired
+    private SubjectRepository subjectRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -166,6 +181,22 @@ public class CourseControllerTest {
                                 '}'))
                 .andExpect(jsonPath("$..entries.length()").value(1))
                 .andExpect(jsonPath("total").value(1))
+        ;
+    }
+
+    @Test
+    public void getCourseGroupsAndSubjects() throws Exception {
+
+        IntStream.iterate(0, x -> x+1).limit(10).mapToObj(x -> new Group(course.getId(),
+                course.getName(), String.valueOf(x))).forEach(x -> groupRepository.create(x));
+
+        IntStream.iterate(0, x -> x+1).limit(10).mapToObj(x -> new SubjectResponse(course.getId(),
+                course.getName(), String.valueOf(x))).forEach(x -> subjectRepository.create(x));
+
+        mockMvc
+                .perform(get("/course/"+course.getId()+"/subjectsAndGroups"))
+                .andExpect(jsonPath("$..groups.length()").value(10))
+                .andExpect(jsonPath("$..subjects.length()").value(10))
         ;
     }
 
