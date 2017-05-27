@@ -5,7 +5,6 @@ import api.models.ClassModel;
 import api.utils.error.PermissionDeniedException;
 import api.utils.info.AttendancesInfo;
 import api.utils.response.GroupAndSubjectResponse;
-import api.utils.response.UserClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +17,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpSession;
-import java.sql.ResultSet;
 import java.util.List;
 
 import static api.controllers.SessionController.USER_ID;
@@ -61,7 +59,7 @@ public class ProfessorServiceTest {
     public void addAttendencies() throws PermissionDeniedException {
         HttpSession session = new MockHttpSession();
         session.setAttribute(USER_ID, -21L);
-        professorService.addAttendencies(new AttendancesInfo(-1L, -3L,10, null), session);
+        professorService.addAttendencies(new AttendancesInfo(-1L, -3L,10, null, false), session);
 
 
         assertEquals(Integer.valueOf(10), template.queryForObject("SELECT mark FROM attendances WHERE class_id = -1 AND student_id = -3;",
