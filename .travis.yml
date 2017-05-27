@@ -1,8 +1,9 @@
-sudo: false
+dist: trusty
+sudo: required
 services:
 - postgresql
 addons:
-  postgresql: "9.5"
+  postgresql: "9.6"
 before_script:
 - psql -c "create user root;" -U postgres
 - psql -c "create database course_test;" -U postgres
