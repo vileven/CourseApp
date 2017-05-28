@@ -8,6 +8,7 @@ import api.repositories.GroupRepository;
 import api.repositories.SubjectRepository;
 import api.repositories.UserRepository;
 import api.utils.response.UserClass;
+import api.utils.response.student_info.StudentInfoBody;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -58,10 +59,13 @@ public class StudentService {
                 "  JOIN applications AS a ON u.id = a.student_id " +
                 "  JOIN groups AS g ON a.group_id = g.id " +
                 "  JOIN courses AS c ON c.id = g.course_id " +
-                "WHERE u.id = ? ";
+                "WHERE u.id = ? " +
+                "ORDER BY g.id";
 
         return this.template.query(query, groupRepository.getMapper(), id);
     }
+
+//    public List<StudentInfoBody> getStudentInfo
 
     public List<Course> getStudentCourses(long id) {
         final String query =
@@ -119,6 +123,12 @@ public class StudentService {
 
     public List<Course> getAvaliableCourses(long studentId) {
         return courseRepository.getAvaliableCourses(studentId);
+    }
+
+    public void getInfo() {
+        final String query = "";
+
+//        template.update("SELECT ")
     }
 
 }

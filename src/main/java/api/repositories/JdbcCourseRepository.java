@@ -188,7 +188,7 @@ public class JdbcCourseRepository implements CourseRepository {
                 "  JOIN applications app ON u.id = app.student_id " +
                 "  JOIN groups g ON app.group_id = g.id " +
                 "  RIGHT JOIN courses c ON g.course_id = c.id " +
-                "WHERE g.course_id IS NULL";
+                "WHERE g.course_id IS NULL ORDER BY c.id ";
 
         return template.query(query , courseMapper);
     }

@@ -43,6 +43,11 @@ public class StudentController {
         return studentService.getStudentClasses(id, from, to);
     }
 
+//    @GetMapping("/getInfo")
+//    public ResponseEntity<?> getInfo() {
+//
+//    }
+
     @GetMapping("/avaliableCourses")
     public ResponseEntity<?> getAvaliableCourses(HttpSession session) {
         final Object num = session.getAttribute(USER_ID);
