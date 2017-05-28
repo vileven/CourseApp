@@ -21,10 +21,10 @@ public class StudentInfoBody {
     public final String groupName;
 
     @JsonProperty("subjects")
-    public final List<StudentInfoBody> subjects;
+    public final List<SubjectInfoBody> subjects;
 
 
-    public StudentInfoBody(Long courseId, String courseName, Long groupId, String groupName, List<StudentInfoBody> subjects) {
+    public StudentInfoBody(Long courseId, String courseName, Long groupId, String groupName, List<SubjectInfoBody> subjects) {
         this.courseId = courseId;
         this.courseName = courseName;
         this.groupId = groupId;

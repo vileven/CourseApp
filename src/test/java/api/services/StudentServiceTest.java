@@ -5,6 +5,7 @@ import api.models.ClassModel;
 import api.models.Course;
 import api.models.Group;
 import api.utils.response.UserClass;
+import api.utils.response.student_info.StudentInfoBody;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,8 +72,19 @@ public class StudentServiceTest {
     public void getAvaliableCourses() {
         final List<Course> res = studentService.getAvaliableCourses(-1);
         assertEquals(2, res.size());
-        res.forEach(row -> {
-            assertTrue(-2 >= row.getId());
-        });
+        res.forEach(row -> assertTrue(-2 >= row.getId()));
     }
+
+    @Test
+    public void getInfo() {
+        final List<StudentInfoBody> res = studentService.getInfo(-2);
+        assertNotNull(res);
+
+        assertEquals(2, res.size());
+        assertEquals(3,res.get(1).subjects.size());
+        assertEquals("Math", res.get(1).subjects.get(2).subjectName);
+    }
+
+
+
 }

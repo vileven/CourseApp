@@ -9,6 +9,8 @@ import api.utils.error.PermissionDeniedException;
 import api.utils.info.AttendancesInfo;
 import api.utils.response.GroupAndSubjectResponse;
 import api.utils.response.UserClass;
+import api.utils.response.prof_info.GroupInfoBody;
+import api.utils.response.prof_info.ProfInfoBody;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -20,6 +22,7 @@ import javax.servlet.http.HttpSession;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 import static api.controllers.SessionController.USER_ID;
@@ -139,4 +142,39 @@ public class ProfessorService {
         template.update(query, info.classId, info.studentId, info.mark, info.comment);
     }
 
+
+    public List<ProfInfoBody> getInfo(long profId) {
+        final String query =
+                "SELECT " +
+                "  s.id as subject_id, " +
+                "  s.name as subject_name, " +
+                "  c.id as course_id, " +
+                "  c.name as course_name, " +
+                "  g.id as group_id, " +
+                "  g.name as group_name " +
+                "FROM " +
+                "  professors pr " +
+                "  JOIN subjects s ON pr.subject_id = s.id " +
+                "  JOIN courses c ON s.course_id = c.id " +
+                "  JOIN groups g ON c.id = g.course_id " +
+                "WHERE pr.prof_id = ? " +
+                "GROUP BY s.id, c.id, g.id " +
+                "ORDER BY s.id, c.id, g.id";
+
+        final List<ProfInfoBody> res = new ArrayList<>();
+        final long[] currentSubject = {0};
+        template.query(query, rs -> {
+            final long sId = rs.getLong("subject_id");
+            if (sId != currentSubject[0]) {
+                currentSubject[0] = sId;
+                res.add(new ProfInfoBody(rs.getLong("course_id"), rs.getString("course_name"),
+                        sId, rs.getString("subject_name") , new ArrayList<>()));
+            }
+
+            res.get(res.size() - 1).groups.add(new GroupInfoBody(rs.getLong("group_id"),
+                    rs.getString("group_name")));
+        }, profId);
+
+        return res;
+    }
 }

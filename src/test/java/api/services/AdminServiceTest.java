@@ -59,9 +59,14 @@ public class AdminServiceTest {
     public void acceptRequest() throws PermissionDeniedException {
         final HttpSession session = new MockHttpSession();
         session.setAttribute(USER_ID, 0L);
-        adminService.acceptRequest(new AcceptRequestInfo(-1L, -3L), session);
-        final List<UserResponseBody> res = groupRepository.getStudents(-3L, 1000, 0, null, null);
+        List<UserResponseBody> res = groupRepository.getStudents(-3L, 1000, 0, null, null);
         assertEquals(1, res.size());
+
+        adminService.acceptRequest(new AcceptRequestInfo(-1L, -3L), session);
+
+        res = groupRepository.getStudents(-3L, 1000, 0, null, null);
+        assertEquals(2, res.size());
+
         assertEquals(Integer.valueOf(0), template.queryForObject("SELECT count(*) FROM  requests", Integer.class));
     }
 

@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpSession;
 import java.util.List;
 
+import static api.controllers.SessionController.USER_ID;
+
 /**
  * Created by Vileven on 16.05.17.
  */
@@ -53,5 +55,15 @@ public class ProfessorController {
 
             return Response.badRequest(ErrorCodes.BAD_VALIDATOR, "not valid");
         }
+    }
+
+    @GetMapping("/info")
+    public ResponseEntity<?> getInfo(HttpSession session) {
+        final Object id = session.getAttribute(USER_ID);
+        if (id == null) {
+            return Response.invalidSession();
+        }
+
+        return ResponseEntity.ok(professorService.getInfo((Long) id));
     }
 }

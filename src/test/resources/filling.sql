@@ -25,6 +25,9 @@ INSERT INTO subjects (id, course_id, name) VALUES
 INSERT INTO subjects (id, course_id, name) VALUES
   (-3, -1, 'Physics');
 
+INSERT INTO subjects (id, course_id, name) VALUES
+  (-4, -2, 'Chemistry');
+
 INSERT INTO users (id, role, email, password, first_name, last_name, avatar, about) VALUES
   (0, 0, 'kek@com', 'password', 'name', 'surname', NULL ,'about'),
   (-1, 1, '1@mail.com', 'password', 'name', 'surname', NULL ,'about'),
@@ -68,7 +71,8 @@ INSERT INTO applications (student_id, group_id) VALUES
   (-17,-2),
   (-18,-2),
   (-19,-2),
-  (-20,-2) ;
+  (-20,-2),
+  (-2, -3);
 
 
 INSERT INTO users (id, role, email, password, first_name, last_name, avatar, about) VALUES
@@ -137,5 +141,5 @@ INSERT INTO users (id, role, email, password, first_name, last_name, avatar, abo
   (-25, 0, 'kek@mail.ru', 'password', 'name', 'surname', NULL ,'about');
 
 
-
+INSERT INTO professors (prof_id, subject_id) VALUES (-21, -4);
 

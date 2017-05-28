@@ -9,6 +9,7 @@ import api.repositories.SubjectRepository;
 import api.repositories.UserRepository;
 import api.utils.response.UserClass;
 import api.utils.response.student_info.StudentInfoBody;
+import api.utils.response.student_info.SubjectInfoBody;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -125,10 +127,40 @@ public class StudentService {
         return courseRepository.getAvaliableCourses(studentId);
     }
 
-    public void getInfo() {
-        final String query = "";
+    public List<StudentInfoBody> getInfo(long studentId) {
+        final String query =
+                "SELECT " +
+                "  c.id as course_id, " +
+                "  c.name AS course_name, " +
+                "  g.id   AS group_id, " +
+                "  g.name as group_name, " +
+                "  s.id   AS subject_id, " +
+                "  s.name AS subject_name " +
+                "FROM " +
+                "  users AS u " +
+                "  JOIN applications AS a ON u.id = a.student_id " +
+                "  JOIN groups AS g ON a.group_id = g.id " +
+                "  JOIN courses AS c ON c.id = g.course_id " +
+                "  JOIN subjects AS s ON c.id = s.course_id " +
+                "WHERE u.id = ? " +
+                "GROUP BY c.id, g.id, s.id " +
+                "ORDER BY c.id, g.id, s.id ";
 
-//        template.update("SELECT ")
+        final List<StudentInfoBody> res = new ArrayList<>();
+        final long[] currentCourse = {0};
+        template.query(query, rs -> {
+            final long cId = rs.getLong("course_id");
+            if (cId != currentCourse[0]) {
+                currentCourse[0] = cId;
+                res.add(new StudentInfoBody(cId, rs.getString("course_name"),
+                        rs.getLong("group_id"), rs.getString("group_name"), new ArrayList<>()));
+            }
+
+            res.get(res.size() - 1).subjects.add(new SubjectInfoBody(rs.getLong("subject_id"),
+                    rs.getString("subject_name")));
+        }, studentId);
+
+        return res;
     }
 
 }

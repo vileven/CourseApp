@@ -43,10 +43,15 @@ public class StudentController {
         return studentService.getStudentClasses(id, from, to);
     }
 
-//    @GetMapping("/getInfo")
-//    public ResponseEntity<?> getInfo() {
-//
-//    }
+    @GetMapping("/info")
+    public ResponseEntity<?> getInfo(HttpSession session) {
+        final Object id = session.getAttribute(USER_ID);
+        if (id == null) {
+            return Response.invalidSession();
+        }
+
+        return ResponseEntity.ok(studentService.getInfo((Long) id));
+    }
 
     @GetMapping("/avaliableCourses")
     public ResponseEntity<?> getAvaliableCourses(HttpSession session) {

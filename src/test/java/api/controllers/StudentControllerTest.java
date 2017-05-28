@@ -86,4 +86,14 @@ public class StudentControllerTest {
         ;
 
     }
+
+    @Test
+    public void getInfo() throws Exception {
+        mockMvc
+                .perform(get("/student/info").sessionAttr(USER_ID, -2L))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("length()").value(2))
+                .andExpect(jsonPath("$[1].subjects.length()").value(3))
+        ;
+    }
 }

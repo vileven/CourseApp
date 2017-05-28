@@ -5,6 +5,8 @@ import api.models.ClassModel;
 import api.utils.error.PermissionDeniedException;
 import api.utils.info.AttendancesInfo;
 import api.utils.response.GroupAndSubjectResponse;
+import api.utils.response.prof_info.ProfInfoBody;
+import api.utils.response.student_info.StudentInfoBody;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +41,7 @@ public class ProfessorServiceTest {
 
     @Test
     public void getGroupsAndSubject() {
-        final List<GroupAndSubjectResponse> res = professorService.getGroupsAndSubjects(-21);
+        final List<GroupAndSubjectResponse> res = professorService.getGroupsAndSubjects(-22);
         assertEquals(2, res.size());
     }
 
@@ -64,6 +66,16 @@ public class ProfessorServiceTest {
 
         assertEquals(Integer.valueOf(10), template.queryForObject("SELECT mark FROM attendances WHERE class_id = -1 AND student_id = -3;",
                 (RowMapper<Integer>)((rs, rowNum) -> rs.getInt("mark"))));
+    }
+
+    @Test
+    public void getInfo() {
+        final List<ProfInfoBody> res = professorService.getInfo(-21);
+        assertNotNull(res);
+
+        assertEquals(2, res.size());
+        assertEquals(2,res.get(1).groups.size());
+        assertEquals("IU6-41", res.get(1).groups.get(1).groupName);
     }
 
 }

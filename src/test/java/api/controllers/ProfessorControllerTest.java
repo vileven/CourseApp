@@ -36,7 +36,7 @@ public class ProfessorControllerTest {
     @Test
     public void getSubjectsGroups() throws Exception {
         mockMvc
-                .perform(get("/professor/"+ -21 +"/subjectsGroups"))
+                .perform(get("/professor/"+ -22 +"/subjectsGroups"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("length()").value(2))
         ;
@@ -65,6 +65,16 @@ public class ProfessorControllerTest {
                                 '}'))
                 .andExpect(status().isOk())
                 .andExpect(result -> assertEquals("success", result.getResponse().getContentAsString()))
+        ;
+    }
+
+    @Test
+    public void getInfo() throws Exception {
+        mockMvc
+                .perform(get("/professor/info").sessionAttr(USER_ID, -21L))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("length()").value(2))
+                .andExpect(jsonPath("$[1].groups.length()").value(2))
         ;
     }
 }
