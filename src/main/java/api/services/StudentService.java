@@ -89,18 +89,18 @@ public class StudentService {
 
         final String query =
                 "SELECT " +
-                        "  cl.id,\n" +
-                        "  cl.subject_id,\n" +
-                        "  s.name AS subject_name,\n" +
-                        "  cl.group_id,\n" +
-                        "  g.name AS group_name,\n" +
-                        "  cl.prof_id,\n" +
-                        "  u.first_name AS prof_first_name,\n" +
-                        "  u.last_name AS prof_last_name,\n" +
-                        "  cl.topic,\n" +
-                        "  cl.location,\n" +
-                        "  cl.begin_time,\n" +
-                        "  cl.end_time\n" +
+                        "  cl.id, " +
+                        "  cl.subject_id, " +
+                        "  s.name AS subject_name, " +
+                        "  cl.group_id, " +
+                        "  g.name AS group_name, " +
+                        "  cl.prof_id, " +
+                        "  u.first_name AS prof_first_name, " +
+                        "  u.last_name AS prof_last_name, " +
+                        "  cl.topic, " +
+                        "  cl.location, " +
+                        "  cl.begin_time, " +
+                        "  cl.end_time " +
                 "FROM " +
                 "  classes AS cl " +
                 "  JOIN groups AS g ON cl.group_id = g.id " +
@@ -115,6 +115,10 @@ public class StudentService {
 
     public void createRequest(long studentId, long courseId) throws DataIntegrityViolationException {
         template.update("INSERT INTO requests (student_id, course_id) VALUES (?, ?) ", studentId, courseId);
+    }
+
+    public List<Course> getAvaliableCourses(long studentId) {
+        return courseRepository.getAvaliableCourses(studentId);
     }
 
 }

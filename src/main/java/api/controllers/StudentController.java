@@ -43,6 +43,16 @@ public class StudentController {
         return studentService.getStudentClasses(id, from, to);
     }
 
+    @GetMapping("/avaliableCourses")
+    public ResponseEntity<?> getAvaliableCourses(HttpSession session) {
+        final Object num = session.getAttribute(USER_ID);
+        if (num == null) {
+            return Response.invalidSession();
+        }
+
+        return ResponseEntity.ok(studentService.getAvaliableCourses((Long)num));
+    }
+
     @PostMapping("/createRequest")
     public final ResponseEntity<?> createRequest(@RequestBody IdInfo info, HttpSession session) {
         final Object userId = session.getAttribute(USER_ID);

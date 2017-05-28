@@ -38,5 +38,7 @@ public interface CourseRepository {
 
     void deleteAll();
 
+    List<Course> getAvaliableCourses(long studentId);
+
     RowMapper<Course> getMapper();
 }

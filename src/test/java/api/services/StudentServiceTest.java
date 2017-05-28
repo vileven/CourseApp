@@ -66,4 +66,13 @@ public class StudentServiceTest {
         assertEquals(1, template.query("SELECT count(*) FROM requests",
                 (rs, rowNum) -> rs.getInt("count")).size());
     }
+
+    @Test
+    public void getAvaliableCourses() {
+        final List<Course> res = studentService.getAvaliableCourses(-1);
+        assertEquals(2, res.size());
+        res.forEach(row -> {
+            assertTrue(-2 >= row.getId());
+        });
+    }
 }

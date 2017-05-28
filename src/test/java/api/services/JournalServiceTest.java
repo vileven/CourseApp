@@ -46,4 +46,13 @@ public class JournalServiceTest {
                 "WHERE class_id = -1 AND student_id = -3", Integer.class));
     }
 
+
+    @Test
+    public void checkTriggersUpdateStats() {
+        assertEquals(Integer.valueOf(85), template.queryForObject("SELECT total FROM subject_stats " +
+                "WHERE subject_id = -1 AND student_id = -1 ",Integer.class));
+
+        assertEquals(Long.valueOf(-4), template.queryForObject("SELECT mark_id FROM subject_stats " +
+                "WHERE subject_id = -1 AND student_id = -1", Long.class));
+    }
 }

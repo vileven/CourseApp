@@ -61,7 +61,7 @@ public class ProfessorService {
 
     private final RowMapper<Long> idMapper = ((rs, rowNum) -> rs.getLong("id"));
 
-    private boolean isValidProf(HttpSession session, Long classId) {
+    public boolean isValidProf(HttpSession session, Long classId) {
         final Object id = session.getAttribute(USER_ID);
         if (id == null) {
             return false;
@@ -74,7 +74,7 @@ public class ProfessorService {
                         "  users AS u " +
                         "  JOIN professors AS pr ON u.id = pr.prof_id " +
                         "  JOIN classes AS cl ON cl.subject_id = pr.subject_id " +
-                        "WHERE cl.id = ? AND u.id =? ", idMapper, (Long) id, classId).isEmpty();
+                        "WHERE cl.id = ? AND u.id =? ", idMapper, (Long) id, classId).isEmpty() || ((Long) id == 0 );
     }
 
     public List<ClassModel> getProfClasses(long id, @Nullable String from, @Nullable String to) {

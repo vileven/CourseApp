@@ -4,6 +4,9 @@ INSERT INTO courses (id, name) VALUES
 INSERT INTO courses (id, name) VALUES
   (-2, 'second course');
 
+INSERT INTO courses (id, name) VALUES
+  (-3, 'third course');
+
 INSERT INTO groups (id, course_id, name) VALUES
   (-1, -1, 'IU6-41');
 
@@ -94,6 +97,13 @@ INSERT INTO classes (id, topic, subject_id, group_id, prof_id, begin_time, end_t
   (-11, '3p', -3, -1, -24,'2017-05-18 16:30:00', '2017-05-18 18:00:00', '2313'),
   (-12, '4p', -3, -2, -24,'2017-05-18 18:00:00', '2017-05-18 19:30:00', '2313');
 
+INSERT INTO marks (id, min, max, name, subject_id) VALUES
+  (-1, 0, 19, 'неуд' , -1),
+  (-2, 20, 49, 'уд' , -1),
+  (-3, 50, 74, 'хор' , -1),
+  (-4, 75, 100, 'отл' , -1),
+  (-5, 71235, 1031230, 'супер отл' , -2);
+
 INSERT INTO attendances (class_id, student_id, mark, comment) VALUES
   (-1, -1, 5, NULL ),
   (-1, -2, 4, NULL ),
@@ -117,9 +127,15 @@ INSERT INTO attendances (class_id, student_id, mark, comment) VALUES
   (-6, -15, 5, NULL ),
   (-6, -17, 4, NULL ),
   (-6, -18, 4, NULL ),
-  (-6, -20, 2, NULL );
+  (-6, -20, 2, NULL ),
+  (-3, -1, 80, 'Хорошо!!!' )
+;
 
 INSERT INTO requests (id, student_id, course_id) VALUES (-1, -1, -2);
 
 INSERT INTO users (id, role, email, password, first_name, last_name, avatar, about) VALUES
   (-25, 0, 'kek@mail.ru', 'password', 'name', 'surname', NULL ,'about');
+
+
+
+

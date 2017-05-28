@@ -1,25 +1,37 @@
 package api.models;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class Mark extends Model<Long> {
     private Long id;
     private Integer min;
     private Integer max;
     private String name;
-    private Long subject;
+    @JsonProperty("subject_id")
+    private Long subjectId;
+    @JsonProperty("subject_name")
+    private String subjectName;
 
-    public Mark(Long id, Integer min, Integer max, String name, Long subject) {
+
+    @JsonCreator
+    public Mark(@JsonProperty("id") Long id,@JsonProperty("min") Integer min,
+                @JsonProperty("max") Integer max,@JsonProperty("name") String name,
+                @JsonProperty("subject_id") Long subject,@JsonProperty("subject_name") String subjectName) {
         this.id = id;
         this.min = min;
         this.max = max;
         this.name = name;
-        this.subject = subject;
+        this.subjectId = subject;
+        this.subjectName = subjectName;
     }
 
-    public Mark(Integer min, Integer max, String name, Long subject) {
+    public Mark(Integer min, Integer max, String name, Long subject, String subjectName) {
         this.min = min;
         this.max = max;
         this.name = name;
-        this.subject = subject;
+        this.subjectId = subject;
+        this.subjectName = subjectName;
     }
 
     @Override
@@ -55,13 +67,21 @@ public class Mark extends Model<Long> {
         this.name = name;
     }
 
-    public Long getSubject() {
-        return subject;
+    public void setSubjectName(String subjectName) {
+        this.subjectName = subjectName;
+    }
+
+    public Long getSubjectId() {
+
+        return subjectId;
     }
 
     public void setSubject(Long subject) {
-        this.subject = subject;
+        this.subjectId = subject;
     }
 
 
+    public String getSubjectName() {
+        return subjectName;
+    }
 }

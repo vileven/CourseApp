@@ -73,4 +73,17 @@ public class StudentControllerTest {
                 .andExpect(result -> assertEquals("success", result.getResponse().getContentAsString()))
         ;
     }
+
+    @Test
+    public void getAvailibleCourses() throws Exception {
+        mockMvc
+                .perform(get("/student/avaliableCourses")
+                        .sessionAttr(USER_ID, -1L)
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("length()").value(2))
+                .andExpect(jsonPath("$[1].id").value(-2))
+        ;
+
+    }
 }

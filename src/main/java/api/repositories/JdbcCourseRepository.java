@@ -178,6 +178,22 @@ public class JdbcCourseRepository implements CourseRepository {
     }
 
     @Override
+    public List<Course> getAvaliableCourses(long studentId) {
+        final String query =
+                "SELECT " +
+                "  c.id, " +
+                "  c.name " +
+                "FROM " +
+                "  users u " +
+                "  JOIN applications app ON u.id = app.student_id " +
+                "  JOIN groups g ON app.group_id = g.id " +
+                "  RIGHT JOIN courses c ON g.course_id = c.id " +
+                "WHERE g.course_id IS NULL";
+
+        return template.query(query , courseMapper);
+    }
+
+    @Override
     public RowMapper<Course> getMapper() {
         return courseMapper;
     }

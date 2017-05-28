@@ -49,7 +49,7 @@ public class AdminService {
         this.template = template;
     }
 
-    private boolean isAdmin(HttpSession session) {
+    public boolean isAdmin(HttpSession session) {
         Object id = session.getAttribute(USER_ID);
         User user = null;
         if (id != null) {
@@ -101,7 +101,6 @@ public class AdminService {
             throw new PermissionDeniedException("permission denied");
         }
 
-
         info.getGroups().forEach(group -> IntStream.range(0, info.getAmount())
                 .forEach(el -> {
                     final String beginTime = LocalDateTime.parse(info.getBegin())
@@ -111,7 +110,6 @@ public class AdminService {
 
                     final ClassModel classModel = classRepository.create(new ClassModel(info.getTopic(), info.getSubject(), group,
                             info.getProf(), beginTime, endTime, info.getLocation()));
-                    System.out.println(classModel.getLocation() + "   " + classModel.getId());
                 })
         );
 
