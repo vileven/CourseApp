@@ -6,10 +6,7 @@ import api.services.AdminService;
 import api.utils.ErrorCodes;
 import api.utils.error.EntityNotFoundException;
 import api.utils.error.PermissionDeniedException;
-import api.utils.info.GroupInfo;
-import api.utils.info.IdInfo;
-import api.utils.info.SelectParametersInfo;
-import api.utils.info.SubjectInfo;
+import api.utils.info.*;
 import api.utils.response.Response;
 import api.utils.response.SelectBody;
 import api.utils.response.SubjectResponse;
@@ -121,6 +118,17 @@ public class SubjectController {
         try {
             return ResponseEntity.ok(new SelectBody(adminService.selectSubjectsWithParams(info, session),
                     adminService.getCount("subjects", info.getFilters())));
+        } catch (PermissionDeniedException e) {
+            return Response.badRequest(ErrorCodes.PERMISSION_DENIED, e.message);
+        }
+    }
+
+
+    @PostMapping("/{id}/setProfessors")
+    public ResponseEntity<?> setProfessors(@PathVariable Long subjectId,@RequestBody IdsInfo info, HttpSession session) {
+        try {
+            adminService.setProfessors(subjectId, info.getIds(), session);
+            return ResponseEntity.ok("success");
         } catch (PermissionDeniedException e) {
             return Response.badRequest(ErrorCodes.PERMISSION_DENIED, e.message);
         }

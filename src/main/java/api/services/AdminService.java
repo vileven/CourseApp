@@ -286,4 +286,17 @@ public class AdminService {
     public List<UserResponseBody> getSubjectProfs(long id) {
         return subjectRepository.getProfessors(id);
     }
+
+
+    @Transactional
+    public void setProfessors(Long subjectId, List<Long> info, HttpSession session) throws PermissionDeniedException {
+        if (!isAdmin(session)) {
+            throw new PermissionDeniedException("permission denied");
+        }
+
+        template.update("DELETE FROM professors WHERE subject_id = ?");
+
+        info.forEach(prof -> template.update("INSERT INTO professors (prof_id, subject_id) VALUES (?, ?)",
+                prof, subjectId));
+    }
 }
