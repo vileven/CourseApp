@@ -178,13 +178,22 @@ public class JdbcUserRepository implements UserRepository {
         if (filters != null && !filters.isEmpty()) {
             sqlConstructor.append(" WHERE ");
             for (int i = 0; i < filters.size(); i++) {
-                sqlConstructor
-                        .append("u.")
-                        .append(filters.get(i).getKey())
-                        .append(" ~* '")
-                        .append(filters.get(i).getValue())
-                        .append('\'')
-                ;
+                if (filters.get(i).getKey().equals("role")) {
+                    sqlConstructor
+                            .append("u.")
+                            .append(filters.get(i).getKey())
+                            .append(" = ")
+                            .append(filters.get(i).getValue())
+                    ;
+                } else {
+                    sqlConstructor
+                            .append("u.")
+                            .append(filters.get(i).getKey())
+                            .append(" ~* '")
+                            .append(filters.get(i).getValue())
+                            .append('\'')
+                    ;
+                }
                 if (i != filters.size() - 1) {
                     sqlConstructor.append(" AND ");
                 }
