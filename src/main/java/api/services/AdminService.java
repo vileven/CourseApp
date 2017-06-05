@@ -239,12 +239,20 @@ public class AdminService {
         if (filters != null && !filters.isEmpty()) {
             sqlBuilder.append(" WHERE  ");
             for (int i = 0; i < filters.size(); i++) {
-                sqlBuilder
-                        .append(filters.get(i).getKey())
-                        .append(" ~* '")
-                        .append(filters.get(i).getValue())
-                        .append('\'')
-                ;
+                if (filters.get(i).getKey().equals("role")) {
+                    sqlBuilder
+                            .append(filters.get(i).getKey())
+                            .append(" = ")
+                            .append(filters.get(i).getValue())
+                    ;
+                } else {
+                    sqlBuilder
+                            .append(filters.get(i).getKey())
+                            .append(" ~* '")
+                            .append(filters.get(i).getValue())
+                            .append('\'')
+                    ;
+                }
                 if (i != filters.size() - 1) {
                     sqlBuilder.append(" AND ");
                 }
