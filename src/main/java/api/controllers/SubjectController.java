@@ -120,6 +120,8 @@ public class SubjectController {
                     adminService.getCount("subjects", info.getFilters())));
         } catch (PermissionDeniedException e) {
             return Response.badRequest(ErrorCodes.PERMISSION_DENIED, e.message);
+        } catch (DataIntegrityViolationException e) {
+            return Response.badRequest(ErrorCodes.USER_NOT_FOUND, "wrong sql query");
         }
     }
 

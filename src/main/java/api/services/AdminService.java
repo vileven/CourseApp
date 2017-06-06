@@ -302,7 +302,7 @@ public class AdminService {
             throw new PermissionDeniedException("permission denied");
         }
 
-        template.update("DELETE FROM professors WHERE subject_id = ?");
+        template.update("DELETE FROM professors WHERE subject_id = ?",subjectId);
 
         info.forEach(prof -> template.update("INSERT INTO professors (prof_id, subject_id) VALUES (?, ?)",
                 prof, subjectId));
