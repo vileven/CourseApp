@@ -125,9 +125,9 @@ public class SubjectController {
 
 
     @PostMapping("/{id}/setProfessors")
-    public ResponseEntity<?> setProfessors(@PathVariable Long subjectId,@RequestBody IdsInfo info, HttpSession session) {
+    public ResponseEntity<?> setProfessors(@PathVariable Long id,@RequestBody IdsInfo info, HttpSession session) {
         try {
-            adminService.setProfessors(subjectId, info.getIds(), session);
+            adminService.setProfessors(id, info.getIds(), session);
             return ResponseEntity.ok("success");
         } catch (PermissionDeniedException e) {
             return Response.badRequest(ErrorCodes.PERMISSION_DENIED, e.message);
