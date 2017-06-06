@@ -1,5 +1,8 @@
 package api.utils.info;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.List;
 
 /**
@@ -13,8 +16,8 @@ public class IdsInfo {
         return ids;
     }
 
-    public IdsInfo(List<Long> ids) {
+    @JsonCreator
+    public IdsInfo(@JsonProperty("ids") List<Long> ids) {
         this.ids = ids;
-
     }
 }
