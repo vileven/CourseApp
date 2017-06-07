@@ -315,8 +315,8 @@ public class AdminService {
         return template.queryForObject(
                 "SELECT " +
                     "   (SELECT count(*) as users FROM users), " +
-                    "   (SELECT count(*) as students FROM applications), " +
-                    "   (SELECT count(*) as professors FROM professors)," +
+                    "   (SELECT count(*) as students FROM users WHERE role = 1), " +
+                    "   (SELECT count(*) as professors FROM users WHERE role = 2)," +
                     "   (SELECT count(*) as courses FROM courses)," +
                     "   (SELECT count(*) as subjects FROM subjects)," +
                     "   (SELECT count(*) as groups FROM groups) " ,
