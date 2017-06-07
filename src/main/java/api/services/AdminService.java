@@ -339,4 +339,8 @@ public class AdminService {
                 rs.getString("course_name"), rs.getString("student_first"),
                 rs.getString("student_last")), limit, offset);
     }
+
+    public Integer getRequestsCount() {
+        return template.queryForObject("SELECT count(*) FROM requests", Integer.class);
+    }
 }

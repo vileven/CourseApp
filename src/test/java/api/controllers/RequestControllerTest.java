@@ -73,7 +73,7 @@ public class RequestControllerTest {
                                 "\"offset\":0" +
                                 '}'))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("length()").value(1))
+                .andExpect(jsonPath("$.entries.length()").value(1))
         ;
     }
 }

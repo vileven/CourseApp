@@ -7,6 +7,7 @@ import api.utils.info.AcceptRequestInfo;
 import api.utils.info.IdInfo;
 import api.utils.info.LimitOffsetInfo;
 import api.utils.response.Response;
+import api.utils.response.SelectBody;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -50,7 +51,8 @@ public class RequestController {
 
     @PostMapping("/select")
     public ResponseEntity<?> selectRequests(@RequestBody LimitOffsetInfo info) {
-        return ResponseEntity.ok(adminService.selectRequests(info.limit, info.offset));
+        return ResponseEntity.ok(new SelectBody(adminService.selectRequests(info.limit, info.offset),
+                adminService.getRequestsCount()));
     }
 
 }
