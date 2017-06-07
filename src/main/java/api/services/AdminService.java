@@ -327,7 +327,9 @@ public class AdminService {
         return template.query("" +
                 "SELECT " +
                 "  r.id, " +
+                "  c.id as course_id, " +
                 "  c.name AS course_name, " +
+                "  u.id as student_id, " +
                 "  u.first_name AS student_first, " +
                 "  u.last_name AS student_last " +
                 "FROM " +
@@ -336,7 +338,8 @@ public class AdminService {
                 "  JOIN courses c ON c.id = r.course_id " +
                 "ORDER BY c.id, u.last_name, u.first_name " +
                 "LIMIT ? OFFSET ?",  (rs, rowNum) -> new Request(rs.getLong("id"),
-                rs.getString("course_name"), rs.getString("student_first"),
+                rs.getLong("course_id"), rs.getString("course_name"),
+                rs.getLong("student_id"), rs.getString("student_first"),
                 rs.getString("student_last")), limit, offset);
     }
 
