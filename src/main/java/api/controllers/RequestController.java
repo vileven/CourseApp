@@ -5,6 +5,7 @@ import api.utils.ErrorCodes;
 import api.utils.error.PermissionDeniedException;
 import api.utils.info.AcceptRequestInfo;
 import api.utils.info.IdInfo;
+import api.utils.info.LimitOffsetInfo;
 import api.utils.response.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -47,5 +48,9 @@ public class RequestController {
         }
     }
 
+    @PostMapping("/select")
+    public ResponseEntity<?> selectRequests(@RequestBody LimitOffsetInfo info) {
+        return ResponseEntity.ok(adminService.selectRequests(info.limit, info.offset));
+    }
 
 }

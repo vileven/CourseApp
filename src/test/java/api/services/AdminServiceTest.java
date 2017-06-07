@@ -2,6 +2,7 @@ package api.services;
 
 import api.Application;
 import api.models.ClassModel;
+import api.models.Request;
 import api.repositories.ClassRepository;
 import api.repositories.GroupRepository;
 import api.utils.error.PermissionDeniedException;
@@ -95,5 +96,11 @@ public class AdminServiceTest {
 
         final List<ClassModel> classes = classRepository.selectWithParams(1000, 0, null, params);
         assertEquals(10, classes.size());
+    }
+
+    @Test
+    public void selectRequests() {
+        final List<Request> requests = adminService.selectRequests(100, 0);
+        assertEquals(1, requests.size());
     }
 }

@@ -322,4 +322,21 @@ public class AdminService {
                 rs.getInt("professors"), rs.getInt("courses"), rs.getInt("subjects"),
                 rs.getInt("groups"), rs.getInt("admins"), rs.getInt("requests")));
     }
+
+    public List<Request> selectRequests(Integer limit, Integer offset) {
+        return template.query("" +
+                "SELECT " +
+                "  r.id, " +
+                "  c.name AS course_name, " +
+                "  u.first_name AS student_first, " +
+                "  u.last_name AS student_last " +
+                "FROM " +
+                "  requests r " +
+                "  JOIN users u ON u.id = r.student_id " +
+                "  JOIN courses c ON c.id = r.course_id " +
+                "ORDER BY c.id, u.last_name, u.first_name " +
+                "LIMIT ? OFFSET ?",  (rs, rowNum) -> new Request(rs.getLong("id"),
+                rs.getString("course_name"), rs.getString("student_first"),
+                rs.getString("student_last")), limit, offset);
+    }
 }
