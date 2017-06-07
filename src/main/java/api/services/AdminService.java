@@ -346,4 +346,5 @@ public class AdminService {
     public Integer getRequestsCount() {
         return template.queryForObject("SELECT count(*) FROM requests", Integer.class);
     }
+
 }
