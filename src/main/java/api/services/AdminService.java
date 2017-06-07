@@ -8,7 +8,6 @@ import api.utils.info.*;
 import api.utils.pair.Pair;
 import api.utils.response.AdminInfoBody;
 import api.utils.response.SubjectResponse;
-import api.utils.response.UserClass;
 import api.utils.response.UserResponseBody;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,10 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpSession;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static api.controllers.SessionController.USER_ID;
@@ -316,12 +312,13 @@ public class AdminService {
                 "SELECT " +
                     "   (SELECT count(*) as users FROM users), " +
                     "   (SELECT count(*) as students FROM users WHERE role = 1), " +
-                    "   (SELECT count(*) as professors FROM users WHERE role = 2)," +
+                    "   (SELECT count(*) as professors FROM users WHERE role = 2), " +
+                    "   (SELECT count(*) as admins FROM users WHERE role = 0)," +
                     "   (SELECT count(*) as courses FROM courses)," +
                     "   (SELECT count(*) as subjects FROM subjects)," +
                     "   (SELECT count(*) as groups FROM groups) " ,
                 (rs, rowNum) -> new AdminInfoBody(rs.getInt("users"), rs.getInt("students"),
                 rs.getInt("professors"), rs.getInt("courses"), rs.getInt("subjects"),
-                rs.getInt("groups")));
+                rs.getInt("groups"), rs.getInt("admins")));
     }
 }

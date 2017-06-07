@@ -10,13 +10,16 @@ public class AdminInfoBody {
     public final Integer courses;
     public final Integer subjects;
     public final Integer groups;
+    public final Integer admins;
 
-    public AdminInfoBody(Integer users, Integer students, Integer professors, Integer courses, Integer subjects, Integer groups) {
+    public AdminInfoBody(Integer users, Integer students, Integer professors, Integer courses, Integer subjects,
+                         Integer groups, Integer admins) {
         this.users = users;
         this.students = students;
         this.professors = professors;
         this.courses = courses;
         this.subjects = subjects;
         this.groups = groups;
+        this.admins = admins;
     }
 }
