@@ -12,8 +12,16 @@ public class SubjectInfoBody {
     @JsonProperty("subject_name")
     public final String subjectName;
 
-    public SubjectInfoBody(Long subjectId, String subjectName) {
+    @JsonProperty("total")
+    public final Integer total;
+
+    @JsonProperty("mark_name")
+    public final String markName;
+
+    public SubjectInfoBody(Long subjectId, String subjectName, Integer total, String markName) {
         this.subjectId = subjectId;
         this.subjectName = subjectName;
+        this.total = total;
+        this.markName = markName;
     }
 }

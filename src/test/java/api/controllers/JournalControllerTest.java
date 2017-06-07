@@ -42,8 +42,8 @@ public class JournalControllerTest {
                 .perform(post("/journal/show")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"subject_id\":-1,\"group_id\":-1}"))
-                .andExpect(jsonPath("length()").value(10))
-                .andExpect(jsonPath("$[2].classes.length()").value(2))
+                .andExpect(jsonPath("$.entries.length()").value(10))
+                .andExpect(jsonPath("$.entries.[2].classes.length()").value(2))
         ;
     }
 

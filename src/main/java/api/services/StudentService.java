@@ -7,7 +7,6 @@ import api.repositories.CourseRepository;
 import api.repositories.GroupRepository;
 import api.repositories.SubjectRepository;
 import api.repositories.UserRepository;
-import api.utils.response.UserClass;
 import api.utils.response.student_info.StudentInfoBody;
 import api.utils.response.student_info.SubjectInfoBody;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +16,6 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -135,15 +133,19 @@ public class StudentService {
                 "  g.id   AS group_id, " +
                 "  g.name as group_name, " +
                 "  s.id   AS subject_id, " +
-                "  s.name AS subject_name " +
+                "  s.name AS subject_name, " +
+                "  COALESCE(ss.total, 0) AS total, " +
+                "  COALESCE(m.name, 'не определено') AS mark_name " +
                 "FROM " +
                 "  users AS u " +
                 "  JOIN applications AS a ON u.id = a.student_id " +
                 "  JOIN groups AS g ON a.group_id = g.id " +
                 "  JOIN courses AS c ON c.id = g.course_id " +
                 "  JOIN subjects AS s ON c.id = s.course_id " +
+                "  LEFT JOIN subject_stats AS ss ON s.id = ss.subject_id AND ss.student_id = u.id " +
+                "  LEFT JOIN marks AS m ON ss.mark_id = m.id " +
                 "WHERE u.id = ? " +
-                "GROUP BY c.id, g.id, s.id " +
+                "GROUP BY c.id, g.id, s.id, ss.total, m.name " +
                 "ORDER BY c.id, g.id, s.id ";
 
         final List<StudentInfoBody> res = new ArrayList<>();
@@ -157,7 +159,8 @@ public class StudentService {
             }
 
             res.get(res.size() - 1).subjects.add(new SubjectInfoBody(rs.getLong("subject_id"),
-                    rs.getString("subject_name")));
+                    rs.getString("subject_name"), rs.getInt("total"),
+                    rs.getString("mark_name")));
         }, studentId);
 
         return res;
