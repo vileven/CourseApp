@@ -6,6 +6,7 @@ import api.utils.error.EntityNotFoundException;
 import api.utils.error.PermissionDeniedException;
 import api.utils.info.*;
 import api.utils.pair.Pair;
+import api.utils.response.AdminInfoBody;
 import api.utils.response.SubjectResponse;
 import api.utils.response.UserClass;
 import api.utils.response.UserResponseBody;
@@ -306,5 +307,21 @@ public class AdminService {
 
         info.forEach(prof -> template.update("INSERT INTO professors (prof_id, subject_id) VALUES (?, ?)",
                 prof, subjectId));
+    }
+
+    public AdminInfoBody getInfo() {
+        template.queryForObject("SELECT count(*) FROM users", Integer.class);
+
+        return template.queryForObject(
+                "SELECT " +
+                    "   (SELECT count(*) as users FROM users), " +
+                    "   (SELECT count(*) as students FROM applications), " +
+                    "   (SELECT count(*) as professors FROM professors)," +
+                    "   (SELECT count(*) as courses FROM courses)," +
+                    "   (SELECT count(*) as subjects FROM subjects)," +
+                    "   (SELECT count(*) as groups FROM groups) " ,
+                (rs, rowNum) -> new AdminInfoBody(rs.getInt("users"), rs.getInt("students"),
+                rs.getInt("professors"), rs.getInt("courses"), rs.getInt("subjects"),
+                rs.getInt("groups")));
     }
 }
