@@ -316,9 +316,10 @@ public class AdminService {
                     "   (SELECT count(*) as admins FROM users WHERE role = 0)," +
                     "   (SELECT count(*) as courses FROM courses)," +
                     "   (SELECT count(*) as subjects FROM subjects)," +
-                    "   (SELECT count(*) as groups FROM groups) " ,
+                    "   (SELECT count(*) as groups FROM groups), " +
+                    "   (SELECT count(*) as requests FROM requests)" ,
                 (rs, rowNum) -> new AdminInfoBody(rs.getInt("users"), rs.getInt("students"),
                 rs.getInt("professors"), rs.getInt("courses"), rs.getInt("subjects"),
-                rs.getInt("groups"), rs.getInt("admins")));
+                rs.getInt("groups"), rs.getInt("admins"), rs.getInt("requests")));
     }
 }
