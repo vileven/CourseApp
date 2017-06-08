@@ -43,9 +43,9 @@ public class JournalService {
                 "  JOIN applications app ON g.id = app.group_id " +
                 "  JOIN users u ON app.student_id = u.id " +
                 "  JOIN classes cl ON g.id = cl.group_id " +
-                "  LEFT JOIN (attendances att LEFT JOIN subject_stats ss ON att.student_id = ss.student_id AND ss.subject_id = ? " +
-                "    LEFT JOIN marks m ON ss.mark_id = m.id) " +
-                "      ON cl.id = att.class_id AND u.id = att.student_id " +
+                "  LEFT JOIN subject_stats ss ON u.id = ss.student_id and ss.subject_id = ? " +
+                "  LEFT JOIN marks m ON ss.mark_id = m.id " +
+                "  LEFT JOIN attendances att ON cl.id = att.class_id AND att.student_id = u.id " +
                 "WHERE g.id = ? AND cl.subject_id = ? " +
                 "ORDER BY u.last_name, u.first_name, u.id, cl.begin_time ";
 
