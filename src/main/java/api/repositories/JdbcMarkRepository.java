@@ -60,7 +60,7 @@ public class JdbcMarkRepository implements MarkRepository {
     public Mark find(long id) {
         try {
             final String query = "SELECT m.id, m.min, m.max, m.name, m.subject_id, s.name as subject_name FROM marks m " +
-                    "JOIN subjects s ON m.subject_id = s.id WHERE m.id = ? ";
+                    "JOIN subjects s ON m.subject_id = s.id WHERE m.id = ? ORDER BY m.min";
             return template.queryForObject(query, markMapper, id);
         } catch (EmptyResultDataAccessException e) {
             return null;
