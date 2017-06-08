@@ -35,13 +35,17 @@ public class JournalService {
                 "  cl.id as class_id, " +
                 "  cl.begin_time as date, " +
                 "  att.mark, " +
-                "  att.comment " +
+                "  att.comment," +
+                "  coalesce(ss.total, 0) as total," +
+                "  m.name as mark_name " +
                 "FROM " +
                 "  groups g " +
                 "  JOIN applications app ON g.id = app.group_id " +
                 "  JOIN users u ON app.student_id = u.id " +
                 "  JOIN classes cl ON g.id = cl.group_id " +
-                "  LEFT JOIN attendances att ON cl.id = att.class_id AND u.id = att.student_id " +
+                "  LEFT JOIN (attendances att JOIN subject_stats ss ON att.student_id = ss.student_id AND ss.subject_id = ?" +
+                "       LEFT JOIN marks m ON ss.mark_id = m.id)" +
+                "  ON cl.id = att.class_id AND u.id = att.student_id " +
                 "WHERE g.id = ? AND cl.subject_id = ? " +
                 "ORDER BY u.last_name, u.first_name, u.id, cl.begin_time ";
 
@@ -52,7 +56,8 @@ public class JournalService {
             if (id != currentStudent[0]) {
                 currentStudent[0] = id;
                 result.add(new JournalResponseRow(id, rs.getString("student_first_name"),
-                        rs.getString("student_last_name"), new ArrayList<>()));
+                        rs.getString("student_last_name"), rs.getInt("total"),
+                        rs.getString("mark_name"), new ArrayList<>()));
             }
 
             result.get(result.size() - 1).getClasses().add(new JournalClass(rs.getLong("class_id"),
@@ -68,7 +73,7 @@ public class JournalService {
 
             final int classSize = result.get(result.size() - 1).getClasses().size();
             result.get(result.size() - 1).getClasses().get(classSize - 1).setMark(mark);
-        }, groupId, subjectId);
+        }, subjectId, groupId, subjectId);
 
         return result;
     }
@@ -78,7 +83,7 @@ public class JournalService {
             template.update("INSERT INTO attendances (class_id, student_id, mark, comment) VALUES " +
                     "(?,?,?,?) " +
                     "ON CONFLICT (class_id, student_id) DO UPDATE " +
-                    "SET mark = ?, comment = ? ", classId, studentId, mark, comment, mark, comment);
+                    "SET mark = EXCLUDED.mark, comment = EXCLUDED.comment ", classId, studentId, mark, comment);
         } else {
 
             try {

@@ -17,12 +17,29 @@ public class JournalResponseRow {
     @JsonProperty("student_last_name")
     private final String studentLastName;
 
+    @JsonProperty("total")
+    private final Integer total;
+
+    @JsonProperty("mark_name")
+    private final String markName;
+
     private final List<JournalClass> classes;
 
-    public JournalResponseRow(Long studentId, String studentFirstName, String studentLastName, List<JournalClass> classes) {
+    public Integer getTotal() {
+        return total;
+    }
+
+    public String getMarkName() {
+        return markName;
+    }
+
+    public JournalResponseRow(Long studentId, String studentFirstName, String studentLastName, Integer total, String markName, List<JournalClass> classes) {
         this.studentId = studentId;
         this.studentFirstName = studentFirstName;
         this.studentLastName = studentLastName;
+        this.total = total;
+
+        this.markName = markName;
         this.classes = classes;
     }
 

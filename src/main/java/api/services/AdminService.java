@@ -323,7 +323,6 @@ public class AdminService {
                 rs.getInt("groups"), rs.getInt("admins"), rs.getInt("requests")));
     }
 
-
     public List<Request> selectRequests(Integer limit, Integer offset) {
         return template.query("" +
                 "SELECT " +
