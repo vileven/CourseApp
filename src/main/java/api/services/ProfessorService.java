@@ -134,8 +134,8 @@ public class ProfessorService {
     public List<SubjectResponse> getSubjects(long id) {
         final String query =
                 " SELECT " +
-                        "  s.id AS subject_id, " +
-                        "  s.name AS subject_name," +
+                        "  s.id, " +
+                        "  s.name," +
                         "   s.course_id, c.name AS course_name " +
                         " FROM " +
                         "  users AS u " +
