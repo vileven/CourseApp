@@ -37,6 +37,11 @@ public class ProfessorController {
         return professorService.getGroupsAndSubjects(id);
     }
 
+    @GetMapping("/{id}/subjects")
+    public ResponseEntity<?> getProfSubjects(@PathVariable Long id) {
+        return ResponseEntity.ok(professorService.getSubjects(id));
+    }
+
     @GetMapping("/{id}/classes")
     public List<ClassModel> getProfClasses(@PathVariable Long id, @RequestParam("from") String from,
                                            @RequestParam("to") String to) {

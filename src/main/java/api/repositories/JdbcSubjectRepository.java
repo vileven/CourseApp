@@ -173,4 +173,9 @@ public class JdbcSubjectRepository implements SubjectRepository {
 
         return template.query(sql, userMapperWithotPassword, id);
     }
+
+    @Override
+    public RowMapper<SubjectResponse> getMapper() {
+        return subjectMapper;
+    }
 }

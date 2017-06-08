@@ -7,6 +7,7 @@ import api.utils.response.SubjectResponse;
 import api.utils.response.UserResponseBody;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.jdbc.core.RowMapper;
 
 import java.util.List;
 
@@ -37,4 +38,6 @@ public interface SubjectRepository {
     void deleteAll();
 
     List<UserResponseBody> getProfessors(long id);
+
+    RowMapper<SubjectResponse> getMapper();
 }

@@ -8,6 +8,7 @@ import api.repositories.UserRepository;
 import api.utils.error.PermissionDeniedException;
 import api.utils.info.AttendancesInfo;
 import api.utils.response.GroupAndSubjectResponse;
+import api.utils.response.SubjectResponse;
 import api.utils.response.UserClass;
 import api.utils.response.prof_info.GroupInfoBody;
 import api.utils.response.prof_info.ProfInfoBody;
@@ -128,6 +129,22 @@ public class ProfessorService {
                 " WHERE u.id = ? ";
 
         return template.query(query, groupAndSubjectMapper, id);
+    }
+
+    public List<SubjectResponse> getSubjects(long id) {
+        final String query =
+                " SELECT " +
+                        "  s.id AS subject_id, " +
+                        "  s.name AS subject_name," +
+                        "   s.course_id, c.name AS course_name " +
+                        " FROM " +
+                        "  users AS u " +
+                        "  JOIN professors AS pr ON u.id = pr.prof_id " +
+                        "  JOIN subjects AS s ON pr.subject_id = s.id " +
+                        "  JOIN courses AS c ON s.course_id = c.id     " +
+                        " WHERE u.id = ? ";
+
+        return template.query(query, subjectRepository.getMapper(), id);
     }
 
     public void addAttendencies(AttendancesInfo info, HttpSession session) throws PermissionDeniedException, DataIntegrityViolationException {
