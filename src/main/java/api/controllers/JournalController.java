@@ -1,6 +1,7 @@
 package api.controllers;
 
 import api.repositories.GroupRepository;
+import api.repositories.MarkRepository;
 import api.repositories.SubjectRepository;
 import api.services.JournalService;
 import api.utils.ErrorCodes;
@@ -25,12 +26,14 @@ public class JournalController {
     private final JournalService journalService;
     private final GroupRepository groupRepository;
     private final SubjectRepository subjectRepository;
+    private final MarkRepository markRepository;
 
     @Autowired
-    public JournalController(JournalService journalService, GroupRepository groupRepository, SubjectRepository subjectRepository) {
+    public JournalController(JournalService journalService, GroupRepository groupRepository, SubjectRepository subjectRepository, MarkRepository markRepository) {
         this.journalService = journalService;
         this.groupRepository = groupRepository;
         this.subjectRepository = subjectRepository;
+        this.markRepository = markRepository;
     }
 
     @PostMapping("/show")
@@ -38,7 +41,8 @@ public class JournalController {
         final List<JournalResponseRow> res = journalService.getGroupJournal(journalInfo.groupId, journalInfo.subjectId);
         try {
             return ResponseEntity.ok(new JournalFinalResponse(groupRepository.find(journalInfo.groupId).getName(),
-                    subjectRepository.find(journalInfo.subjectId).getName(), res));
+                    subjectRepository.find(journalInfo.subjectId).getName(),
+                    markRepository.findBySubject(journalInfo.subjectId), res));
         } catch (NullPointerException e) {
             return Response.badRequest(ErrorCodes.GROUP_NOT_FOUND, "group or subject not found");
         }
