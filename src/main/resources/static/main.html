@@ -1,0 +1,985 @@
+<app-view id="LandingView" extends="BaseView">
+    <h1>Landing page!</h1>
+</app-view>
+<app-view id="LoginView" extends="FormView">
+    <h1>Вход в аккаунт</h1>
+    <hr>
+
+    <view-if condition="$.email !== undefined">
+        <view-then>
+            <div class="success">
+                Вы успешно зарегистрировались! Теперь вы можете войти в свой аккаунт.
+            </div>
+        </view-then>
+        <view-else></view-else>
+    </view-if>
+
+    <form-for model="UserModel" id="LoginForm">
+        <form>
+
+            <form-field for="email">
+                <view-include name="FormFieldView">
+
+                    <view-param name="label">Email:</view-param>
+                    <view-param name="input">
+                        <input form-bind-attribute="value">
+                    </view-param>
+
+                </view-include>
+            </form-field>
+
+            <form-field for="password">
+                <view-include name="FormFieldView">
+
+                    <view-param name="label">Пароль:</view-param>
+                    <view-param name="input">
+                        <input type="password" form-bind-attribute="value">
+                    </view-param>
+
+                </view-include>
+            </form-field>
+
+            <div class="form-spacer"></div>
+            <hr>
+
+            <div class="form-buttons">
+
+                <div class="login-no-account">
+                    Нет аккаунта?
+                    <link-to route="SignUpRoute">Зарегистрироваться</link-to>
+                </div>
+
+                <button type="submit" form-submit="true">Войти</button>
+
+            </div>
+
+        </form>
+    </form-for>
+
+</app-view>
+<app-view id="MainView" extends="BaseView">
+    <view-switch>
+
+        <view-case condition="($.currentUser || {}).role === 0">
+            <view-include name="AdminInfoView"></view-include>
+        </view-case>
+
+        <view-case condition="($.currentUser || {}).role === 1">
+            <view-include name="StudentInfoView"></view-include>
+        </view-case>
+
+        <view-case condition="($.currentUser || {}).role === 2">
+            препод
+        </view-case>
+
+    </view-switch>
+</app-view>
+<app-view id="SignUpView" extends="FormView">
+    <h1>Регистрация нового пользователя</h1>
+    <hr>
+
+    <form-for model="UserModel" id="SignUpForm">
+        <form>
+
+            <form-field for="first_name">
+                <view-include name="FormFieldView">
+
+                    <view-param name="label">Имя:</view-param>
+                    <view-param name="input">
+                        <input form-bind-attribute="value">
+                    </view-param>
+
+                </view-include>
+            </form-field>
+
+            <form-field for="last_name">
+                <view-include name="FormFieldView">
+
+                    <view-param name="label">Фамилия:</view-param>
+                    <view-param name="input">
+                        <input form-bind-attribute="value">
+                    </view-param>
+
+                </view-include>
+            </form-field>
+
+            <form-field for="email" validates="EmailValidator">
+                <view-include name="FormFieldView">
+
+                    <view-param name="label">Email:</view-param>
+                    <view-param name="input">
+                        <input form-bind-attribute="value">
+                    </view-param>
+
+                </view-include>
+            </form-field>
+
+            <form-field for="password" validates="PasswordsMatch1Validator">
+                <view-include name="FormFieldView">
+
+                    <view-param name="label">Пароль:</view-param>
+                    <view-param name="input">
+                        <input type="password" form-bind-attribute="value">
+                    </view-param>
+
+                </view-include>
+            </form-field>
+
+            <form-field validates="PasswordsMatch2Validator">
+                <view-include name="FormFieldView">
+
+                    <view-param name="label">(Ещё раз):</view-param>
+                    <view-param name="input">
+                        <input type="password" form-bind-attribute="value">
+                    </view-param>
+
+                </view-include>
+            </form-field>
+
+            <div class="form-spacer"></div>
+            <hr>
+
+            <div class="form-buttons">
+                <button type="submit" form-submit="true">Отправить</button>
+            </div>
+
+        </form>
+    </form-for>
+
+</app-view>
+<app-view id="TimetableTestView" extends="BaseView">
+    <h1>It Works! Test</h1>
+
+    <view-component name="TimetableComponent" class="tc" id="timetable"></view-component>
+
+    <view-component name="TableComponent" id="table"></view-component>
+
+</app-view>
+<app-view id="AdminClassesView" extends="BaseView">
+
+    <view-component name="TableComponent" id="table"></view-component>
+
+</app-view>
+<app-view id="ClassAddFormView">
+
+    <h1>Добавить занятие</h1>
+    <hr>
+
+    <form-for model="ClassModel" id="AddForm">
+        <form>
+
+            <form-field for="_course_id" validates="CourseValidator">
+                <view-include name="FormFieldView">
+
+                    <view-param name="label">Курс:</view-param>
+                    <view-param name="input">
+                        <select class="select-course" form-bind-attribute="value">
+                        </select>
+                    </view-param>
+
+                </view-include>
+            </form-field>
+
+            <form-field for="_subject_id" validates="CourseValidator">
+                <view-include name="FormFieldView">
+
+                    <view-param name="label">Предмет:</view-param>
+                    <view-param name="input">
+                        <select class="select-subject" form-bind-attribute="value">
+                        </select>
+                    </view-param>
+
+                </view-include>
+            </form-field>
+
+            <form-field for="_group_id" validates="CourseValidator">
+                <view-include name="FormFieldView">
+
+                    <view-param name="label">Группа:</view-param>
+                    <view-param name="input">
+                        <select class="select-group" form-bind-attribute="value">
+                        </select>
+                    </view-param>
+
+                </view-include>
+            </form-field>
+
+            <form-field for="location">
+                <view-include name="FormFieldView">
+
+                    <view-param name="label">Место проведения:</view-param>
+                    <view-param name="input">
+                        <input type="datetime" form-bind-attribute="value">
+                    </view-param>
+
+                </view-include>
+            </form-field>
+
+            <form-field for="topic">
+                <view-include name="FormFieldView">
+
+                    <view-param name="label">Тема занятия:</view-param>
+                    <view-param name="input">
+                        <input type="datetime" form-bind-attribute="value">
+                    </view-param>
+
+                </view-include>
+            </form-field>
+
+            <form-field for="_date">
+                <view-include name="FormFieldView">
+
+                    <view-param name="label">Дата:</view-param>
+                    <view-param name="input">
+                        <input class="show-calendar" readonly="readonly"
+                               placeholder="Нажмите для выбора..." form-bind-attribute="value">
+                    </view-param>
+
+                </view-include>
+            </form-field>
+
+            <view-component name="CalendarComponent" class="select-date"></view-component>
+
+            <form-field for="_time_begin" validates="TimeValidator">
+                <view-include name="FormFieldView">
+
+                    <view-param name="label">Время начала:</view-param>
+                    <view-param name="input">
+                        <input type="datetime" form-bind-attribute="value" value="10:00">
+                    </view-param>
+
+                </view-include>
+            </form-field>
+
+            <form-field for="_time_end" validates="TimeValidator">
+                <view-include name="FormFieldView">
+
+                    <view-param name="label">Время конца:</view-param>
+                    <view-param name="input">
+                        <input type="datetime" form-bind-attribute="value" value="12:00">
+                    </view-param>
+
+                </view-include>
+            </form-field>
+
+
+            <div class="form-spacer"></div>
+            <hr>
+
+            <div class="form-buttons">
+                <button type="button" class="button-close">Отмена</button>
+                <button type="submit" form-submit="true">Добавить</button>
+            </div>
+
+        </form>
+    </form-for>
+
+</app-view><app-view id="AdminCoursesView" extends="BaseView">
+
+    <view-component name="TableComponent" id="table"></view-component>
+
+</app-view>
+<app-view id="CourseAddFormView">
+
+    <h1>Добавить курс</h1>
+    <hr>
+
+    <form-for model="CourseModel" id="AddForm">
+        <form>
+
+            <form-field for="name">
+                <view-include name="FormFieldView">
+
+                    <view-param name="label">Название:</view-param>
+                    <view-param name="input">
+                        <input form-bind-attribute="value">
+                    </view-param>
+
+                </view-include>
+            </form-field>
+
+            <div class="form-spacer"></div>
+            <hr>
+
+            <div class="form-buttons">
+                <button type="button" class="button-close">Отмена</button>
+                <button type="submit" form-submit="true">Добавить</button>
+            </div>
+
+        </form>
+    </form-for>
+
+</app-view><app-view id="AdminGroupsView" extends="BaseView">
+
+    <view-component name="TableComponent" id="table"></view-component>
+
+</app-view>
+<app-view id="GroupAddFormView">
+
+    <h1>Добавить группу</h1>
+    <hr>
+
+    <form-for model="GroupModel" id="AddForm">
+        <form>
+
+            <form-field for="name">
+                <view-include name="FormFieldView">
+
+                    <view-param name="label">Название:</view-param>
+                    <view-param name="input">
+                        <input form-bind-attribute="value">
+                    </view-param>
+
+                </view-include>
+            </form-field>
+
+             <form-field for="_course_id" validates="CourseValidator">
+                <view-include name="FormFieldView">
+
+                    <view-param name="label">Курс:</view-param>
+                    <view-param name="input">
+                        <select form-bind-attribute="value">
+                        </select>
+                    </view-param>
+
+                </view-include>
+            </form-field>
+
+            <div class="form-spacer"></div>
+            <hr>
+
+            <div class="form-buttons">
+                <button type="button" class="button-close">Отмена</button>
+                <button type="submit" form-submit="true">Добавить</button>
+            </div>
+
+        </form>
+    </form-for>
+
+</app-view><app-view id="AdminSubjectsView" extends="BaseView">
+
+    <view-component name="TableComponent" id="table"></view-component>
+
+</app-view>
+<app-view id="SubjectAddFormView">
+
+    <h1>Добавить предмет</h1>
+    <hr>
+
+    <form-for model="SubjectModel" id="AddForm">
+        <form>
+
+            <form-field for="name">
+                <view-include name="FormFieldView">
+
+                    <view-param name="label">Название:</view-param>
+                    <view-param name="input">
+                        <input form-bind-attribute="value">
+                    </view-param>
+
+                </view-include>
+            </form-field>
+
+             <form-field for="_course_id" validates="CourseValidator">
+                <view-include name="FormFieldView">
+
+                    <view-param name="label">Курс:</view-param>
+                    <view-param name="input">
+                        <select form-bind-attribute="value">
+                        </select>
+                    </view-param>
+
+                </view-include>
+            </form-field>
+
+            <div class="form-spacer"></div>
+            <hr>
+
+            <div class="form-buttons">
+                <button type="button" class="button-close">Отмена</button>
+                <button type="submit" form-submit="true">Добавить</button>
+            </div>
+
+        </form>
+    </form-for>
+
+</app-view><app-view id="AdminUsersView" extends="BaseView">
+
+    <view-component name="TableComponent" id="table"></view-component>
+
+</app-view>
+<app-view id="UserAddFormView">
+
+    <h1>Добавить пользователя</h1>
+    <hr>
+
+    <form-for model="UserModel" id="AddForm">
+        <form>
+
+            <form-field for="first_name">
+                <view-include name="FormFieldView">
+
+                    <view-param name="label">Имя:</view-param>
+                    <view-param name="input">
+                        <input form-bind-attribute="value">
+                    </view-param>
+
+                </view-include>
+            </form-field>
+
+            <form-field for="last_name">
+                <view-include name="FormFieldView">
+
+                    <view-param name="label">Фамилия:</view-param>
+                    <view-param name="input">
+                        <input form-bind-attribute="value">
+                    </view-param>
+
+                </view-include>
+            </form-field>
+
+            <form-field for="email" validates="EmailValidator">
+                <view-include name="FormFieldView">
+
+                    <view-param name="label">Email:</view-param>
+                    <view-param name="input">
+                        <input form-bind-attribute="value">
+                    </view-param>
+
+                </view-include>
+            </form-field>
+
+            <form-field for="password" validates="PasswordsMatch1Validator">
+                <view-include name="FormFieldView">
+
+                    <view-param name="label">Пароль:</view-param>
+                    <view-param name="input">
+                        <input type="password" form-bind-attribute="value">
+                    </view-param>
+
+                </view-include>
+            </form-field>
+
+            <form-field validates="PasswordsMatch2Validator">
+                <view-include name="FormFieldView">
+
+                    <view-param name="label">(Ещё раз):</view-param>
+                    <view-param name="input">
+                        <input type="password" form-bind-attribute="value">
+                    </view-param>
+
+                </view-include>
+            </form-field>
+
+            <form-field for="about" style="display: none;">
+                <view-include name="FormFieldView">
+
+                    <view-param name="label"></view-param>
+                    <view-param name="input">
+                        <input form-bind-attribute="value" value="">
+                    </view-param>
+
+                </view-include>
+            </form-field>
+
+            <div class="form-spacer"></div>
+            <hr>
+
+            <div class="form-buttons">
+                <button type="button" class="button-close">Отмена</button>
+                <button type="submit" form-submit="true">Добавить</button>
+            </div>
+
+        </form>
+    </form-for>
+
+</app-view><app-view id="AdminInfoView" >
+
+    <h2>
+        <view-for variable="user" in="[$.currentUser || {}]">
+            <view-eval value="(user.first_name || '') + ' ' + (user.last_name || '')"></view-eval>
+        </view-for>
+        Администратор
+    </h2>
+
+    <h2>Состояние системы</h2>
+
+    <div class="admin-stats">
+        <div class="admin-stats__row">
+            <div>Количество пользователей системы</div>
+            <view-for variable="users" in="[($.info && ($.info.users >= 0))?$.info.users : {}]">
+                <view-eval value="users"></view-eval>
+            </view-for>
+        </div>
+        <div class="admin-stats__row">
+            <div>Количество администраторов</div>
+            <view-for variable="admins" in="[($.info && ($.info.admins >= 0)) ? $.info.admins : {}]">
+                <view-eval value="admins"></view-eval>
+            </view-for>
+        </div>
+        <div class="admin-stats__row">
+            <div>Количество студентов</div>
+            <view-for variable="students" in="[($.info && ($.info.students >= 0))? $.info.students :  {}]">
+                <view-eval value="students"></view-eval>
+            </view-for>
+        </div>
+        <div class="admin-stats__row">
+            <div>Количество преподавателей</div>
+            <view-for variable="professors" in="[($.info && ($.info.professors >= 0))? $.info.professors : {}]">
+                <view-eval value="professors"></view-eval>
+            </view-for>
+        </div>
+        <div class="admin-stats__row">
+            <div>Количество курсов</div>
+            <view-for variable="courses" in="[($.info && ($.info.courses >= 0))? $.info.courses : {}]">
+                <view-eval value="courses"></view-eval>
+            </view-for>
+        </div>
+
+        <div class="admin-stats__row">
+            <div>Количество предметов</div>
+            <view-for variable="subjects" in="[($.info && ($.info.subjects >= 0))? $.info.subjects : {}]">
+                <view-eval value="subjects"></view-eval>
+            </view-for>
+        </div>
+
+        <div class="admin-stats__row">
+            <div>Количество групп</div>
+            <view-for variable="groups" in="[($.info && ($.info.groups >= 0))? $.info.groups : {}]">
+                <view-eval value="groups"></view-eval>
+            </view-for>
+        </div>
+
+        <div class="admin-stats__row">
+            <div>Количество заявок на курсы</div>
+            <view-for variable="requests" in="[($.info && ($.info.requests >= 0)) ? $.info.requests : {}]">
+                <view-eval value="requests"></view-eval>
+            </view-for>
+        </div>
+
+    </div>
+
+</app-view><app-view id="BaseView">
+
+    <div class="base-container">
+
+        <div class="base-left">
+            <div class="base-logo">
+                <link-to route="MainRoute">
+                    <img src="static/logo.png" alt="Электронный журнал">
+                </link-to>
+            </div>
+
+            <div class="base-search">
+                <input placeholder="Поиск...">
+                <button type="button">
+                    <i class="fa fa-search"></i>
+                </button>
+            </div>
+
+            <ul class="base-links">
+                <view-switch>
+
+                    <view-case condition="($.currentUser || {}).role === 0">
+                        <li><link-to route="AdminCoursesRoute">Курсы</link-to></li>
+                        <li><link-to route="AdminSubjectsRoute">Предметы</link-to></li>
+                        <li><link-to route="AdminUsersRoute">Пользователи</link-to></li>
+                        <li><link-to route="AdminGroupsRoute">Группы</link-to></li>
+                        <li><link-to route="AdminClassesRoute">Занятия</link-to></li>
+                        <li><link-to route="AdminRequestsRoute">Заявки</link-to></li>
+                    </view-case>
+
+                </view-switch>
+            </ul>
+        </div>
+
+        <div class="base-content">
+
+            <div class="base-top-menu">
+                <ul>
+                    <li><link-to route="MainRoute">Преподаватели</link-to></li>
+                    <li><link-to route="MainRoute">Курсы</link-to></li>
+                    <li><link-to route="MainRoute">Расписание</link-to></li>
+                </ul>
+                <ul class="user-box">
+                    Здравствуйте,
+                    <view-for variable="user" in="[$.currentUser || {}]">
+                        <view-eval value="(user.first_name || '') + ' ' + (user.last_name || '')"></view-eval>
+                    </view-for>
+                    (<link-to route="MainRoute">Профиль</link-to> |
+                        <link-to route="LogoutRoute" args="{':random': Math.random()}">Выход</link-to>)
+                </ul>
+            </div>
+
+            <div class="base">
+                <view-yield></view-yield>
+            </div>
+        </div>
+
+    </div>
+
+    <view-component name="WindowComponent" id="modal-root"></view-component>
+
+</app-view><app-view id="FormView" form-view="true">
+
+    <div class="form-loading-status">
+        <view-include name="LoadingStatusBlockView"></view-include>
+    </div>
+
+    <div class="form-content">
+
+        <link-to route="MainRoute">
+            <img src="static/logo.png" alt="Электронный журнал">
+        </link-to>
+
+        <div class="form-body">
+            <view-yield></view-yield>
+        </div>
+
+    </div>
+
+</app-view>
+<app-view id="StudentInfoView">
+
+
+    <h4>Краткая сводка успеваемости</h4>
+    <view-for variable="course" in="($.info)? $.info : [{}]">
+
+        <div class="info-container">
+            <div class="info_container__row">
+                Курс:
+                <view-eval value="course.course_name"></view-eval>
+            </div>
+
+            <div class="info_container__row">
+                Группа:
+                <view-eval value="course.group_name"></view-eval>
+            </div>
+
+            <div>Предметы:</div>
+            <view-for variable="subject" in="course.subjects || []" static>
+                <view-eval value="subject.subject_name"></view-eval>
+                <view-eval value="subject.total"></view-eval>
+                <view-eval value="subject.mark_name"></view-eval>
+            </view-for>
+
+        </div>
+    </view-for>
+</app-view>
+<app-view id="FormFieldView">
+
+    <div class="field-label">
+        <view-param name="label"></view-param>
+    </div>
+
+    <div class="field-input">
+        <view-param name="input"></view-param>
+
+        <form-messages>
+            <view-eval value="error.text"></view-eval>
+        </form-messages>
+    </div>
+</app-view>
+<app-view id="LoadingStatusBlockView">
+
+    <view-if condition="$.loading || $.error">
+        <view-then>
+            <div class="curtain">
+
+                <view-if condition="$.loading">
+                    <view-then>
+                        <view-component name="LoadingBlockComponent"></view-component>
+                    </view-then>
+
+                    <view-else>
+                        <div class="component-error">
+                            При загрузке данных произошла ошибка.
+                            <view-for variable="_" in="[Math.random()]">
+                                <view-eval value="$.error"></view-eval>
+                            </view-for>
+                        </div>
+                    </view-else>
+                </view-if>
+            </div>
+        </view-then>
+
+        <view-else></view-else>
+    </view-if>
+
+</app-view>
+<app-view id="DeleteDialogView">
+
+    <div class="dialog-content no-select">
+        Вы уверены, что хотите удалить эту запись?
+    </div>
+
+    <div class="window-buttons">
+        <button type="button" class="dialog-yes">Удалить</button>
+        <button type="button" autofocus="autofocus" class="dialog-no">Отмена</button>
+    </div>
+
+</app-view>
+<app-view id="CalendarView">
+
+    <div class="calendar-container hidden">
+        <div class="calendar-header no-select">
+            <div class="calendar-month-left calendar-scroller">
+                <i class="fa fa-angle-left"></i>
+            </div>
+
+            <div class="calendar-month">
+                <view-for variable="month" in="[$.monthName]">
+                    <view-eval value="month"></view-eval>
+                </view-for>
+            </div>
+
+            <div class="calendar-month-right calendar-scroller">
+                <i class="fa fa-angle-right"></i>
+            </div>
+        </div>
+
+        <view-component name="TableComponent" class="calendar-table"></view-component>
+    </div>
+
+</app-view>
+<app-view id="LoadingBlockView">
+    <div class="c-loading">
+        <div class="loading balls"></div>
+    </div>
+</app-view>
+<app-view id="TableView">
+
+    <div class="table-toolbox no-select">
+        <h1>
+            <view-for variable="title" in="[$.title]">
+                <view-eval value="title"></view-eval>
+            </view-for>
+        </h1>
+
+        <div class="table-toolbox-button table-drop-filters-button">
+            <i class="fa fa-filter"></i>
+            <span>Сбросить</span>
+        </div>
+
+        <div class="table-toolbox-button table-refresh-button">
+            <i class="fa fa-refresh"></i>
+            <span>Обновить</span>
+        </div>
+
+        <div class="table-toolbox-button table-add-button">
+            <i class="fa fa-plus"></i>
+            <span>Добавить</span>
+        </div>
+
+        <view-for variable="_" in="[$.selectedRow === undefined]">
+            <div class="table-toolbox-button table-remove-button${_ ? ' table-inactive-button' : ''}">
+                <i class="fa fa-trash"></i>
+                <span>Удалить</span>
+            </div>
+        </view-for>
+    </div>
+
+
+    <div class="table">
+        <view-include name="LoadingStatusBlockView"></view-include>
+
+        <view-for variable="column" in="$._i = 0, $.columns">
+
+            <div class="table-column" column="${$._i}">
+                <div class="table-header no-select">
+
+                    <view-if condition="$._i++, column.canOrder" static>
+                        <view-then>
+                            <view-switch static>
+
+                                <view-case condition="column.order === 'asc'">
+                                    <i class="fa fa-caret-up table-column-sorter table-column-action"></i>
+                                </view-case>
+
+                                <view-case condition="column.order === 'desc'">
+                                    <i class="fa fa-caret-down table-column-sorter table-column-action"></i>
+                                </view-case>
+
+                                <view-case condition="column.order === undefined">
+                                    <i class="fa fa-caret-up table-column-sorter table-column-action-disabled
+                                                table-column-action"></i>
+                                </view-case>
+
+                            </view-switch>
+                        </view-then>
+                        <view-else></view-else>
+                    </view-if>
+
+                    <view-if condition="column.canFilter" static>
+                        <view-then>
+                            <view-if condition="column.filter !== undefined" static>
+
+                                <view-then>
+                                    <i class="fa fa-filter table-column-filter table-column-action"></i>
+                                </view-then>
+
+                                <view-else>
+                                    <i class="fa fa-filter table-column-filter table-column-action
+                                        table-column-action-disabled"></i>
+                                </view-else>
+
+                            </view-if>
+                        </view-then>
+                        <view-else></view-else>
+                    </view-if>
+
+                    <view-eval value="column.title"></view-eval>
+
+                    <i class="fa fa-filter table-column-filter table-column-action" style="visibility: hidden"></i>
+                </div>
+
+                <div class="table-cells">
+                    <view-for variable="row" in="$._j = 0, $.data" static>
+                        <div class="table-cell${column.isTitle ? ' table-cell-title' : ''}"
+                                row="${$._j}" column="${$._i - 1}">
+
+                            <view-switch static>
+
+                                <view-case condition="column.foreignKey !== undefined">
+                                    <view-for variable="_" in="[column.foreignKey]" static>
+                                        <a href="#">
+                                            <view-eval value="(row || {})[column.name]"></view-eval>
+                                        </a>
+                                    </view-for>
+                                </view-case>
+
+                                <view-case condition="column.type === 'button'">
+                                    <button type="button">
+                                        <view-eval value="column.buttonText || '&nbsp;'"></view-eval>
+                                    </button>
+                                </view-case>
+
+                                <view-case condition="column.type !== 'button'">
+                                    <view-eval value="(row || {})[column.name] || '&nbsp;'"></view-eval>
+                                </view-case>
+
+                            </view-switch>
+
+                            <view-eval value="$._j++" style="display: none;"></view-eval>
+
+                        </div>
+                    </view-for>
+                </div>
+            </div>
+
+        </view-for>
+
+        <view-for variable="_" in="[Math.random()]">
+            <view-eval value="$.controller.onUpdate(), _" style="display: none;"></view-eval>
+        </view-for>
+    </div>
+
+
+    <div class="table-pager">
+
+        <div class="table-pager-button table-pager-start">
+            <i class="fa fa-angle-double-left"></i>
+        </div>
+
+        <div class="table-pager-button table-pager-back">
+            <i class="fa fa-angle-left"></i>
+        </div>
+
+        <div class="table-pager-text no-select">Replace Me</div>
+
+        <div class="table-pager-button table-pager-forward">
+            <i class="fa fa-angle-right"></i>
+        </div>
+
+        <div class="table-pager-button table-pager-end">
+            <i class="fa fa-angle-double-right"></i>
+        </div>
+
+    </div>
+
+
+    <div class="table-filter">
+        <input placeholder="Введите фильтр">
+        <button type="button">
+            <i class="fa fa-check"></i>
+        </button>
+    </div>
+
+</app-view>
+<app-view id="TimetableView">
+
+    <div class="timetable-wrapper no-select">
+
+        <view-include name="LoadingStatusBlockView"></view-include>
+
+        <div class="timetable">
+
+            <div class="timetable-arrow timetable-arrow-left">
+                <i class="fa fa-angle-left"></i>
+            </div>
+
+            <view-for variable="day" in="$.timetable">
+                <div class="timetable-day">
+                    <div class="timetable-day-title">
+
+                        <view-eval value="$._classes = day.classes, day.title"></view-eval>
+
+                    </div>
+
+                    <div class="timetable-classes">
+
+                        <view-for variable="_class" in="$._classes" static>
+
+                            <div class="timetable-class">
+
+                                <div class="timetable-class-time">
+                                    <view-eval value="$.formatTime(_class.beginTime, _class.endTime)"></view-eval>
+                                </div>
+
+                                <div class="timetable-class-location">
+                                    <view-eval value="_class.location"></view-eval>
+                                </div>
+
+                                <div class="timetable-class-body">
+                                    <div class="timetable-class-title">
+                                        <view-eval value="_class.title"></view-eval>
+                                    </div>
+
+                                    <div class="timetable-class-professor">
+                                        <view-eval value="_class.professor"></view-eval>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </view-for>
+
+                    </div>
+                </div>
+
+            </view-for>
+
+            <div class="timetable-arrow timetable-arrow-right">
+                <i class="fa fa-angle-right"></i>
+            </div>
+
+        </div>
+    </div>
+
+
+</app-view>
+<app-view id="WindowView">
+
+    <div class="window-template">
+        <div class="window-curtain">
+            <div class="window-content">
+                <div class="window-body">
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="window-root"></div>
+
+</app-view>

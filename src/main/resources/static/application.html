@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Электронный журнал</title>
+
+    <!-- JSWorks import -->
+    <script src="/jsworks/jsworks.js"></script>
+    <link rel="stylesheet" href="/jsworks/jsworks.css">
+    <!-- JSWorks import end -->
+
+    <script>
+        JSWorks.config = {
+            backendURL: 'https://course-project-app.herokuapp.com',
+            hidePageOnNavigating: false,
+            timerFormFieldUpdates: true,
+        }
+    </script>
+
+    <script src="/application.js"></script>
+    <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/main.css">
+    <link rel="import" href="/main.html">
+</head>
+<body>
+
+    <app-info>
+        <app-routes>
+
+            <app-route id="LandingRoute" page="LandingPage" default></app-route>
+
+            <app-route id="MainRoute" page="MainPage" match="home"></app-route>
+            <app-route id="SignUpRoute" page="SignUpPage" match="signup"></app-route>
+
+            <app-route match="logout">
+                <app-route id="LogoutRoute" page="LandingPage" match=":random"></app-route>
+            </app-route>
+
+            <app-route id="LoginRoute" page="LoginPage" match="login">
+                <app-route id="LoginWithUserRoute" page="LoginPage" match=":email"></app-route>
+            </app-route>
+
+            <app-route match="journal">
+                <app-route id="JournalRoute" page="JournalPage" match=":group_and_subject_ids"></app-route>
+            </app-route>
+
+            <app-route id="AvailableCoursesRoute" page="AvailableCoursesPage" match="courses"></app-route>
+
+            <app-route id="MarksEditRoute" page="MarksEditPage" match="marks"></app-route>
+
+            <app-route match="admin">
+                <app-route id="AdminCoursesRoute" page="AdminCoursesPage" match="courses"></app-route>
+                <app-route id="AdminUsersRoute" page="AdminUsersPage" match="users"></app-route>
+                <app-route id="AdminSubjectsRoute" page="AdminSubjectsPage" match="subjects"></app-route>
+                <app-route id="AdminGroupsRoute" page="AdminGroupsPage" match="groups"></app-route>
+                <app-route id="AdminClassesRoute" page="AdminClassesPage" match="classes"></app-route>
+                <app-route id="AdminRequestsRoute" page="AdminRequestsPage" match="requests"></app-route>
+            </app-route>
+
+
+            <app-route match="test">
+                <app-route id="TimetableTestRoute" page="TimetableTestPage" match="timetable"></app-route>
+            </app-route>
+
+        </app-routes>
+    </app-info>
+
+
+    <app-main></app-main>
+
+
+</body>
+</html>
